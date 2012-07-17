@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true" path="/petrores">
+    <Realm className="org.apache.catalina.realm.JNDIRealm"
+             connectionURL="ldap://lightroom:389"
+             connectionName="ldap"
+             connectionPassword="YdACsX2c9jdgJk95nodE"
+             referrals="follow"
+             userBase="CN=Users,DC=GISPRO,DC=local"
+             userSearch="(sAMAccountName={0})"
+             userSubtree="true"
+             roleBase="CN=Users,DC=GISPRO,DC=local"
+             roleName="cn"
+             roleSubtree="true"
+             roleSearch="(member={0})"
+      />
+    
+    
+</Context>

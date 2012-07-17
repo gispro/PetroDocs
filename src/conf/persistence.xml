@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+  <persistence-unit name="petro21PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>ru.gispro.petrores.doc.entities.Ext</class>
+    <class>ru.gispro.petrores.doc.entities.Site</class>
+    <class>ru.gispro.petrores.doc.entities.Well</class>
+    <class>ru.gispro.petrores.doc.entities.GeoObject</class>
+    <class>ru.gispro.petrores.doc.entities.GeoType</class>
+    <class>ru.gispro.petrores.doc.entities.Type</class>
+    <class>ru.gispro.petrores.doc.entities.Word</class>
+    <class>ru.gispro.petrores.doc.entities.Document</class>
+    <class>ru.gispro.petrores.doc.entities.File</class>
+    <class>ru.gispro.petrores.doc.entities.SuperType</class>
+    <class>ru.gispro.petrores.doc.entities.Domain</class>
+    <class>ru.gispro.petrores.doc.entities.TypeExt</class>
+    <class>ru.gispro.petrores.doc.entities.Author</class>
+    <class>ru.gispro.petrores.doc.entities.Stage</class>
+    <class>ru.gispro.petrores.doc.entities.WorkProcess</class>
+    <class>ru.gispro.petrores.doc.entities.TypeOfWork</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://playground;databaseName=PetroCopy3"/>
+      <property name="javax.persistence.jdbc.password" value="petroresurs"/>
+      <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="javax.persistence.jdbc.user" value="petroresurs"/>
+    </properties>
+  </persistence-unit>
+</persistence>

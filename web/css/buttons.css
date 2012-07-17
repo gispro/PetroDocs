@@ -1,0 +1,19 @@
+/* 
+    Document   : buttons
+    Created on : 14.07.2012, 1:18:42
+    Author     : developer
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.ab_search{
+    background-image: url(../images/edit-find-16-3.png) !important;
+    background-size: 100%;
+    background-position: center;
+}
+
+.ab_add{
+    background-image: url(../images/edit-add-16_2.png) !important;
+    background-size: 100%;
+    background-position: center;
+}

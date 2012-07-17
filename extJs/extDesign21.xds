@@ -1,0 +1,2639 @@
+{
+    "name": "extDesign21.xds",
+    "settings": {
+        "urlPrefix": "http://localhost:8084/petrores/",
+        "directAPI": "",
+        "spacesToIndent": "4",
+        "codeGenFormat": "Class",
+        "exportPath": "C:/Users/fedd/NetBeansProjects/Petro/petro21/web",
+        "extPath": "/petrores/lib/ext4b2/",
+        "lineEnding": "CRLF",
+        "instantiateStore": true,
+        "exportXDSFiles": true,
+        "genTimestamps": true,
+        "appName": "PetroRes"
+    },
+    "xdsVersion": "1.2.2",
+    "components": [
+        {
+            "id": "ExtBox1-ext-gen3060",
+            "type": "gridpanel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "id": "SitesGridPanel",
+                "width": null,
+                "autoScroll": true,
+                "title": null,
+                "store": "SitesJsonStore",
+                "designer|userClassName": "SitesGridPanel",
+                "designer|userAlias": "sitesgridpanel"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen3095",
+                    "type": "gridview",
+                    "reference": {
+                        "name": "viewConfig",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "id": null,
+                        "designer|userClassName": "MyGridView"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3901",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "name",
+                        "editor": "textfield",
+                        "flex": 20,
+                        "text": "Name",
+                        "designer|userClassName": "MyColumn2"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen4707",
+                    "type": "pagingtoolbar",
+                    "reference": {
+                        "name": "dockedItems",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pagingToolBar",
+                        "width": null,
+                        "displayInfo": true,
+                        "prependButtons": true,
+                        "store": "SitesJsonStore",
+                        "designer|userClassName": "MyPagingToolbar",
+                        "dock": "bottom"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen2874",
+                            "type": "button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "id": null,
+                                "itemId": "addButton",
+                                "iconCls": null,
+                                "text": "Add",
+                                "designer|userClassName": "MyButton",
+                                "layout|flex": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen3169",
+                    "type": "gridroweditingplugin",
+                    "reference": {
+                        "name": "plugins",
+                        "type": "array"
+                    },
+                    "codeClass": "Ext.grid.plugin.RowEditing",
+                    "userConfig": {
+                        "designer|userClassName": "MyRowEditingPlugin"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen2555",
+            "type": "gridpanel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "id": "StagesGridPanel",
+                "width": null,
+                "autoScroll": true,
+                "title": null,
+                "store": "StagesJsonStore",
+                "designer|userClassName": "StagesGridPanel"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen2558",
+                    "type": "gridview",
+                    "reference": {
+                        "name": "viewConfig",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "id": null,
+                        "designer|userClassName": "MyGridView"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2561",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "name",
+                        "editor": "textfield",
+                        "flex": 20,
+                        "text": "Name",
+                        "designer|userClassName": "MyColumn2"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2564",
+                    "type": "pagingtoolbar",
+                    "reference": {
+                        "name": "dockedItems",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pagingToolBar",
+                        "width": null,
+                        "displayInfo": true,
+                        "prependButtons": true,
+                        "store": "StagesJsonStore",
+                        "designer|userClassName": "MyPagingToolbar",
+                        "dock": "bottom"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen2569",
+                            "type": "button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "id": null,
+                                "itemId": "addButton",
+                                "iconCls": null,
+                                "text": "Add",
+                                "designer|userClassName": "MyButton",
+                                "layout|flex": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen2574",
+                    "type": "gridroweditingplugin",
+                    "reference": {
+                        "name": "plugins",
+                        "type": "array"
+                    },
+                    "codeClass": "Ext.grid.plugin.RowEditing",
+                    "userConfig": {
+                        "designer|userClassName": "MyRowEditingPlugin"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3045",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "descr",
+                        "editor": "textfield",
+                        "flex": 40,
+                        "text": "Description",
+                        "designer|userClassName": "MyColumn7"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen3805",
+            "type": "gridpanel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "id": "GeoTypesGridPanel",
+                "width": null,
+                "autoScroll": true,
+                "title": null,
+                "store": "GeoTypesJsonStore",
+                "designer|userClassName": "GeoTypesGridPanel"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen3808",
+                    "type": "gridview",
+                    "reference": {
+                        "name": "viewConfig",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "id": null,
+                        "designer|userClassName": "MyGridView"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3811",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "name",
+                        "editor": "textfield",
+                        "flex": 20,
+                        "text": "Name",
+                        "designer|userClassName": "MyColumn2"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3814",
+                    "type": "pagingtoolbar",
+                    "reference": {
+                        "name": "dockedItems",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pagingToolBar",
+                        "width": null,
+                        "displayInfo": true,
+                        "prependButtons": true,
+                        "store": "GeoTypesJsonStore",
+                        "designer|userClassName": "MyPagingToolbar",
+                        "dock": "bottom"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen3819",
+                            "type": "button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "id": null,
+                                "itemId": "addButton",
+                                "iconCls": null,
+                                "text": "Add",
+                                "designer|userClassName": "MyButton",
+                                "layout|flex": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen3824",
+                    "type": "gridroweditingplugin",
+                    "reference": {
+                        "name": "plugins",
+                        "type": "array"
+                    },
+                    "codeClass": "Ext.grid.plugin.RowEditing",
+                    "userConfig": {
+                        "designer|userClassName": "MyRowEditingPlugin"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3827",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "descr",
+                        "editor": "textfield",
+                        "flex": 40,
+                        "text": "Description",
+                        "designer|userClassName": "MyColumn7"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen2224",
+            "type": "gridpanel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "id": "WellsGridPanel",
+                "width": null,
+                "autoScroll": true,
+                "title": null,
+                "store": "WellsJsonStore",
+                "designer|userClassName": "WellsGridPanel"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen2227",
+                    "type": "gridview",
+                    "reference": {
+                        "name": "viewConfig",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "id": null,
+                        "designer|userClassName": "MyGridView"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2230",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "name",
+                        "editor": "textfield",
+                        "flex": 20,
+                        "text": "Name",
+                        "designer|userClassName": "MyColumn2"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2233",
+                    "type": "pagingtoolbar",
+                    "reference": {
+                        "name": "dockedItems",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pagingToolBar",
+                        "width": null,
+                        "displayInfo": true,
+                        "prependButtons": true,
+                        "store": "WellsJsonStore",
+                        "designer|userClassName": "MyPagingToolbar",
+                        "dock": "bottom"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen2238",
+                            "type": "button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "id": null,
+                                "itemId": "addButton",
+                                "iconCls": null,
+                                "text": "Add",
+                                "designer|userClassName": "MyButton",
+                                "layout|flex": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen2243",
+                    "type": "gridroweditingplugin",
+                    "reference": {
+                        "name": "plugins",
+                        "type": "array"
+                    },
+                    "codeClass": "Ext.grid.plugin.RowEditing",
+                    "userConfig": {
+                        "designer|userClassName": "MyRowEditingPlugin"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2377",
+                    "type": "templatecolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "tpl": "{site.name}",
+                        "dataIndex": "site",
+                        "editor": "{\nxtype: 'combo', \nstore: 'SitesJsonStore',\ndisplayField: 'name',\nvalueField: 'uri',\nlisteners:{\n   select: function(){\n     this.value = this.valueModels[0].raw;\n   }\n}}",
+                        "flex": 20,
+                        "text": "Site",
+                        "designer|userClassName": "MyColumn6"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen4780",
+            "type": "gridpanel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "id": "SuperTypesGridPanel",
+                "width": null,
+                "autoScroll": true,
+                "title": null,
+                "store": "SuperTypesJsonStore",
+                "designer|userClassName": "SuperTypesGridPanel"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen4783",
+                    "type": "gridview",
+                    "reference": {
+                        "name": "viewConfig",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "id": null,
+                        "designer|userClassName": "MyGridView"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen4786",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "name",
+                        "editor": "textfield",
+                        "flex": 20,
+                        "text": "Name",
+                        "designer|userClassName": "MyColumn2"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen4789",
+                    "type": "pagingtoolbar",
+                    "reference": {
+                        "name": "dockedItems",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pagingToolBar",
+                        "width": null,
+                        "displayInfo": true,
+                        "prependButtons": true,
+                        "store": "SuperTypesJsonStore",
+                        "designer|userClassName": "MyPagingToolbar",
+                        "dock": "bottom"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen4794",
+                            "type": "button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "id": null,
+                                "itemId": "addButton",
+                                "iconCls": null,
+                                "text": "Add",
+                                "designer|userClassName": "MyButton",
+                                "layout|flex": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen4799",
+                    "type": "gridroweditingplugin",
+                    "reference": {
+                        "name": "plugins",
+                        "type": "array"
+                    },
+                    "codeClass": "Ext.grid.plugin.RowEditing",
+                    "userConfig": {
+                        "designer|userClassName": "MyRowEditingPlugin"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen6737",
+            "type": "gridpanel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "id": "ExtsGridPanel",
+                "width": null,
+                "autoScroll": true,
+                "title": null,
+                "store": "ExtsJsonStore",
+                "designer|userClassName": "ExtsGridPanel"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen6740",
+                    "type": "gridview",
+                    "reference": {
+                        "name": "viewConfig",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "id": null,
+                        "designer|userClassName": "MyGridView"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6746",
+                    "type": "pagingtoolbar",
+                    "reference": {
+                        "name": "dockedItems",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pagingToolBar",
+                        "width": null,
+                        "displayInfo": true,
+                        "prependButtons": true,
+                        "store": "ExtsJsonStore",
+                        "designer|userClassName": "MyPagingToolbar",
+                        "dock": "bottom"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen6751",
+                            "type": "button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "id": null,
+                                "itemId": "addButton",
+                                "iconCls": null,
+                                "text": "Add",
+                                "designer|userClassName": "MyButton",
+                                "layout|flex": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen6756",
+                    "type": "gridroweditingplugin",
+                    "reference": {
+                        "name": "plugins",
+                        "type": "array"
+                    },
+                    "codeClass": "Ext.grid.plugin.RowEditing",
+                    "userConfig": {
+                        "designer|userClassName": "MyRowEditingPlugin"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7711",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "ext",
+                        "editor": "textfield",
+                        "flex": 3,
+                        "text": "Extension",
+                        "designer|userClassName": "MyColumn3"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7720",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "mimeTypeDef",
+                        "editor": "textfield",
+                        "flex": 8,
+                        "text": "Default MimeType",
+                        "designer|userClassName": "MyColumn6"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen6682",
+            "type": "gridpanel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "id": "TypesGridPanel",
+                "width": null,
+                "autoScroll": true,
+                "title": null,
+                "store": "TypesJsonStore",
+                "designer|userClassName": "TypesGridPanel"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen6685",
+                    "type": "gridview",
+                    "reference": {
+                        "name": "viewConfig",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "id": null,
+                        "designer|userClassName": "MyGridView"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6691",
+                    "type": "pagingtoolbar",
+                    "reference": {
+                        "name": "dockedItems",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pagingToolBar",
+                        "width": null,
+                        "displayInfo": true,
+                        "prependButtons": true,
+                        "store": "TypesJsonStore",
+                        "designer|userClassName": "MyPagingToolbar",
+                        "dock": "bottom"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen6696",
+                            "type": "button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "id": null,
+                                "itemId": "addButton",
+                                "iconCls": null,
+                                "text": "Add",
+                                "designer|userClassName": "MyButton",
+                                "layout|flex": null
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen6701",
+                    "type": "gridroweditingplugin",
+                    "reference": {
+                        "name": "plugins",
+                        "type": "array"
+                    },
+                    "codeClass": "Ext.grid.plugin.RowEditing",
+                    "userConfig": {
+                        "designer|userClassName": "MyRowEditingPlugin"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen8929",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "name",
+                        "editor": "textfield",
+                        "flex": 20,
+                        "text": "Name",
+                        "designer|userClassName": "MyColumn4"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen8947",
+                    "type": "booleancolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "isMultiFile",
+                        "editor": "checkbox",
+                        "flex": 5,
+                        "text": "Multi",
+                        "designer|userClassName": "MyColumn6"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen8956",
+                    "type": "booleancolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "isGeo",
+                        "editor": "checkbox",
+                        "flex": 5,
+                        "text": "Is Geo",
+                        "designer|userClassName": "MyColumn7"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen11391",
+                    "type": "templatecolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "tpl": "{superType.name}",
+                        "dataIndex": "superType",
+                        "editor": "{\nxtype: 'combo', \nstore: 'SuperTypesJsonStore',\ndisplayField: 'name',\nvalueField: 'uri',\nlisteners:{\n   select: function(){\n     this.value = this.valueModels[0].raw;\n   }\n}}",
+                        "flex": 10,
+                        "text": "Supertype",
+                        "designer|userClassName": "MyColumn3"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen10599",
+            "type": "window",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "width": null,
+                "layout": "fit",
+                "title": "Petroresource Documents System",
+                "designer|userClassName": "MainWindow"
+            }
+        },
+        {
+            "id": "ExtBox1-ext-gen10074",
+            "type": "treepanel",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": null,
+                "width": null,
+                "title": "Domains",
+                "store": "DomainsJsonTreeStore",
+                "rootVisible": false,
+                "designer|userClassName": "DomainsTreePanel"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen10077",
+                    "type": "treeview",
+                    "reference": {
+                        "name": "viewConfig",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "designer|userClassName": "MyTreeView1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen10080",
+                    "type": "treecolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "name",
+                        "editor": "textfield",
+                        "flex": 15,
+                        "text": "Domain",
+                        "designer|userClassName": "MyTreeColumn"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen10083",
+                    "type": "gridcolumn",
+                    "reference": {
+                        "name": "columns",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "dataIndex": "level",
+                        "editor": "textfield",
+                        "flex": 4,
+                        "text": "Level",
+                        "designer|userClassName": "MyColumn10"
+                    }
+                }
+            ]
+        }
+    ],
+    "stores": [
+        {
+            "id": "ExtBox1-ext-gen1770",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "GeoObjJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "GeoObjJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen1774",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/geoObjects",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen1780",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "geoObjects",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen2708",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2715",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "idInTable",
+                        "designer|userClassName": "MyField1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen9264",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "tableName",
+                        "designer|userClassName": "MyField42"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen11395",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "DocumentsJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "DocumentsJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen11398",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/documents",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen11401",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "documents",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen11404",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12105",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "year",
+                        "designer|userClassName": "MyField48"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12112",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "number",
+                        "designer|userClassName": "MyField49"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12119",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "archiveNumber",
+                        "designer|userClassName": "MyField50"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12126",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "title",
+                        "designer|userClassName": "MyField51"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12133",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "fullTitle",
+                        "designer|userClassName": "MyField52"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12925",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "type",
+                        "designer|userClassName": "MyField53"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12932",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "comment",
+                        "designer|userClassName": "MyField54"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12939",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "originationDetails",
+                        "designer|userClassName": "MyField55"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12946",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "originationDate",
+                        "type": "date",
+                        "designer|userClassName": "MyField56"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen12953",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "approvalDate",
+                        "type": "date",
+                        "designer|userClassName": "MyField57"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen13951",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "registrationDate",
+                        "type": "date",
+                        "designer|userClassName": "MyField58"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen13958",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "placementDate",
+                        "type": "date",
+                        "designer|userClassName": "MyField59"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen13965",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "placer",
+                        "designer|userClassName": "MyField60"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen13972",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "updateDate",
+                        "type": "date",
+                        "designer|userClassName": "MyField61"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen13979",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "pageCount",
+                        "designer|userClassName": "MyField62"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen15102",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "geometryType",
+                        "designer|userClassName": "MyField63"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen15109",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "scale",
+                        "designer|userClassName": "MyField64"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen15116",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "resolution",
+                        "designer|userClassName": "MyField65"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen15123",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "projectionCode",
+                        "designer|userClassName": "MyField66"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen10504",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "WordsJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "WordsJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen10507",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/words",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen10510",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "word",
+                                "root": "words",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen10513",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "word",
+                        "type": null,
+                        "designer|userClassName": "MyField"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen9917",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "GeoTypesJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "GeoTypesJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen9920",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/geoTypes",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen9923",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "geoTypes",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen9926",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen9929",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen9932",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "descr",
+                        "designer|userClassName": "MyField42"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen8528",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "SitesJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "SitesJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen8531",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/sites",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen8534",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "sites",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen8537",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen8540",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField1"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen7467",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "FilesJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "FilesJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen7470",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/files",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen7473",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "files",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen7476",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7479",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "document",
+                        "designer|userClassName": "MyField1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7875",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "path",
+                        "designer|userClassName": "MyField37"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7882",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "mimeType",
+                        "designer|userClassName": "MyField38"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7889",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "isDeleted",
+                        "type": "boolean",
+                        "designer|userClassName": "MyField39"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen5456",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "AuthorsJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "AuthorsJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen5459",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/authors",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen5462",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "authors",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen5465",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen5860",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "code",
+                        "designer|userClassName": "MyField28"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen5468",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen5867",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "shortName",
+                        "designer|userClassName": "MyField29"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen5874",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "description",
+                        "designer|userClassName": "MyField30"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen5881",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "contact",
+                        "designer|userClassName": "MyField31"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen5888",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "email",
+                        "designer|userClassName": "MyField32"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6881",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "phone",
+                        "designer|userClassName": "MyField33"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6888",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "isInternal",
+                        "type": "boolean",
+                        "designer|userClassName": "MyField34"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen2339",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "StagesJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "StagesJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen2342",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/stages",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen2345",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "stages",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen2348",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2351",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2767",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "descr",
+                        "designer|userClassName": "MyField17"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen3163",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "DomainsJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "DomainsJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen3166",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/domains",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen3169",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "domains",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen3172",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3175",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3699",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "parent",
+                        "designer|userClassName": "MyField21"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3706",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "level",
+                        "type": "int",
+                        "designer|userClassName": "MyField22"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3178",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "fullName",
+                        "designer|userClassName": "MyField17"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3720",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "pathPart",
+                        "designer|userClassName": "MyField24"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3713",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "site",
+                        "designer|userClassName": "MyField23"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3727",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "well",
+                        "designer|userClassName": "MyField25"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen2693",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "WellsJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "WellsJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen2696",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/wells",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen2699",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "wells",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen2702",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2705",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3229",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "site",
+                        "designer|userClassName": "MyField14"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen5252",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "SuperTypesJsonStore",
+                "buffered": true,
+                "pageSize": 100,
+                "remoteSort": true,
+                "designer|userClassName": "SuperTypesJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen5255",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/superTypes",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen5258",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "superTypes",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen5261",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen5264",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField1"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen6017",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "ExtsJsonStore",
+                "buffered": true,
+                "pageSize": 10,
+                "remoteSort": true,
+                "designer|userClassName": "ExtsJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen6020",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "limitParam": null,
+                        "url": "rest/exts",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen6023",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "ext",
+                                "root": "exts",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen6026",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "ext",
+                        "type": null,
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6029",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "mimeTypeDef",
+                        "designer|userClassName": "MyField1"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen7210",
+            "type": "jsonstore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "TypesJsonStore",
+                "buffered": true,
+                "pageSize": 20,
+                "remoteSort": true,
+                "designer|userClassName": "TypesJsonStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen7213",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "api": null,
+                        "extraParams": null,
+                        "limitParam": null,
+                        "url": "rest/types",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen7216",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "types",
+                                "totalProperty": null,
+                                "designer|userClassName": "Json Reader"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen7219",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7222",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField1"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen8396",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "isMultiFile",
+                        "designer|userClassName": "MyField9"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen8403",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "isGeo",
+                        "designer|userClassName": "MyField10"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen11171",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "superType",
+                        "designer|userClassName": "MyField11"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen2259",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "typeExt",
+                        "designer|userClassName": "MyField11"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ExtBox1-ext-gen4205",
+            "type": "treestore",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoLoad": true,
+                "autoSync": true,
+                "storeId": "DomainsJsonTreeStore",
+                "defaultRootId": null,
+                "nodeParam": "parent",
+                "designer|userClassName": "DomainsJsonTreeStore"
+            },
+            "cn": [
+                {
+                    "id": "ExtBox1-ext-gen4209",
+                    "type": "ajaxproxy",
+                    "reference": {
+                        "name": "proxy",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "url": "rest/domains",
+                        "headers": "{Accept: 'application/json'}",
+                        "designer|userClassName": "Ajax Proxy13"
+                    },
+                    "cn": [
+                        {
+                            "id": "ExtBox1-ext-gen4215",
+                            "type": "jsonreader",
+                            "reference": {
+                                "name": "reader",
+                                "type": "object"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "idProperty": "id",
+                                "root": "domains",
+                                "designer|userClassName": "Json Reader13"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "ExtBox1-ext-gen6558",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "id",
+                        "type": "int",
+                        "designer|userClassName": "MyField67"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6565",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "name",
+                        "designer|userClassName": "MyField68"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen3531",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "fullName",
+                        "designer|userClassName": "MyField74"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6572",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "parent",
+                        "designer|userClassName": "MyField69"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6579",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "level",
+                        "type": "int",
+                        "designer|userClassName": "MyField70"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen6586",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "pathPart",
+                        "designer|userClassName": "MyField71"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7659",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "site",
+                        "designer|userClassName": "MyField72"
+                    }
+                },
+                {
+                    "id": "ExtBox1-ext-gen7666",
+                    "type": "datafield",
+                    "reference": {
+                        "name": "fields",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "name": "well",
+                        "designer|userClassName": "MyField73"
+                    }
+                }
+            ]
+        }
+    ],
+    "framework": "ext40"
+}

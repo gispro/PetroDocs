@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>documentsPath</param-name>
+        <param-value>\\nas\Disk1\SHARE\fedd</param-value>
+        <!--<param-value>/mnt/NAS/Disk1/SHARE/fedd</param-value>-->
+    </context-param>
+    <context-param>
+        <param-name>roleReader</param-name>
+        <param-value>Cert Publishers</param-value>
+    </context-param>
+    <context-param>
+        <param-name>roleEditor</param-name>
+        <param-value>Cert Publishers</param-value>
+    </context-param>
+    <context-param>
+        <param-name>roleAdmin</param-name>
+        <param-value>Cert Publishers</param-value>
+    </context-param>
+    <context-param>
+        <param-name>domainRootId</param-name>
+        <param-value>3</param-value>
+    </context-param>
+    <context-param>
+        <param-name>solrUrl</param-name>
+        <param-value>http://uno:8080/solr</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>controllers</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>ServletAdaptor</servlet-name>
+        <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+        <init-param>
+            <description>Multiple packages, separated by semicolon(;), can be specified in param-value</description>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>ru.gispro.petrores.doc.service</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>*.htm</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>controllers</servlet-name>
+        <url-pattern>/form/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServletAdaptor</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>redirect.jsp</welcome-file>
+    </welcome-file-list>
+    
+ 
+    
+    <security-constraint>
+        
+        <web-resource-collection>
+            <web-resource-name>restricted methods</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method>PUT</http-method>
+            <http-method>POST</http-method>
+            <http-method>DELETE</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+        
+    </security-constraint>
+
+    <!--<security-constraint>
+        
+        <web-resource-collection>
+            <web-resource-name>restricted methods rest</web-resource-name>
+            <url-pattern>/rest/*</url-pattern>
+            <http-method>PUT</http-method>
+            <http-method>POST</http-method>
+            <http-method>DELETE</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        
+        <auth-constraint>
+            <role-name>Domain Admins</role-name>
+        </auth-constraint>
+        
+    </security-constraint>-->
+    
+    <security-role>
+        <role-name>Domain Admins</role-name>
+    </security-role>
+    <security-role>
+        <role-name>Cert Publishers</role-name>
+    </security-role>
+    
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+            <form-login-page>/login.htm</form-login-page>
+            <form-error-page>/error.htm</form-error-page>
+        </form-login-config>
+    </login-config>
+    
+</web-app>

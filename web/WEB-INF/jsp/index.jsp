@@ -9,7 +9,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!--<link rel="stylesheet" type="text/css" href="lib/ext4/resources/css/ext-all.css"/>-->
         <link rel="stylesheet" type="text/css" href="lib/ext41/resources/css/ext-all.css"/>
-        <link rel="stylesheet" type="text/css" href="css/buttons.css"/>
+        <link rel="stylesheet" type="text/css"  href="css/buttons.css"/>
         <!--<script src="lib/openlayers/OpenLayers.js"></script>-->
         <script src="lib/openlayers212/OpenLayers.debug.js"></script>
         <script src="lib/proj4js-combined.js"></script>

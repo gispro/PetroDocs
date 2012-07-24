@@ -21,7 +21,7 @@ Ext.define('PetroRes.store.TypesOfWorkJsonStore', {
             autoSync: true,
             storeId: 'TypesOfWorkJsonStore',
             //buffered: true,
-            pageSize: 10,
+            pageSize: 65535,
             remoteSort: true,
             proxy: {
                 type: 'ajax',

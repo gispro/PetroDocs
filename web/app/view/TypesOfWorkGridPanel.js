@@ -65,7 +65,7 @@ Ext.define('PetroRes.view.TypesOfWorkGridPanel', {
             xtype:'actioncolumn',
             flex:1,
             items: [{
-                icon: 'lib/ext4/examples/restful/images/delete.png',
+                icon: 'lib/ext41/examples/restful/images/delete.png',
                 tooltip: 'Delete',
                 handler: function(grid, rowIndex, colIndex) {
                     grid.store.removeAt(rowIndex);

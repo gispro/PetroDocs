@@ -236,7 +236,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                     xtype: 'button',
                                     //text: '-',
                                     //flex: 1,
-                                    icon: 'lib/ext4/examples/restful/images/delete.png',
+                                    icon: 'lib/ext41/examples/restful/images/delete.png',
                                     listeners: {
                                         click: function(){
                                             //console.log([this.ownerCt, this.ownerCt.ownerCt.items.getAt(this.ownerCt.fileFieldNumber)]);
@@ -267,7 +267,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                             {
                                 xtype: 'button',
                                 //text: '+',
-                                icon: 'lib/ext4/resources/themes/images/default/dd/drop-add.gif',
+                                icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
                                 listeners: {
                                     beforerender: function(){
                                         this.fileFieldMe = this.up("[xtype='fieldcontainer']");
@@ -837,7 +837,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                         xtype: 'button',
                                         style: 'position: absolute; top: 0px; right: 40px; padding: 0px;',
                                         //text: '+',
-                                        icon: 'lib/ext4/resources/themes/images/default/dd/drop-add.gif',
+                                        icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
                                         handler: function(th){
                                             //console.log(th.ownerCt.ownerCt.ownerCt.items.getAt(0));
                                             th.ownerCt.add(
@@ -887,7 +887,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                         style: 'position: absolute; top: 0px; right: 20px; padding: 0px;',
                                         xtype: 'button',
                                         //text: '-',
-                                        icon: 'lib/ext4/examples/restful/images/delete.png',
+                                        icon: 'lib/ext41/examples/restful/images/delete.png',
                                         handler: function(th){
                                             //console.log(th.ownerCt.ownerCt.ownerCt.items.getAt(0));
                                             th.ownerCt.remove(th.ownerCt.items.getAt(3));

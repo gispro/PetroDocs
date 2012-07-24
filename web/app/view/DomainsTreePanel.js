@@ -44,7 +44,7 @@ Ext.define('PetroRes.view.DomainsTreePanel', {
                 xtype:'actioncolumn',
                 flex:1,
                 items: [{
-                    icon: 'lib/ext4/examples/restful/images/delete.png',
+                    icon: 'lib/ext41/examples/restful/images/delete.png',
                     //iconCls: 'remove',
                     tooltip: 'Delete',
                     handler: function(grid, rowIndex, colIndex) {
@@ -55,7 +55,7 @@ Ext.define('PetroRes.view.DomainsTreePanel', {
                         node.destroy(false);
                     }
                 },{
-                    icon: 'lib/ext4/resources/themes/images/default/dd/drop-add.gif',
+                    icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
                     //iconCls: 'remove',
                     tooltip: 'Add',
                     handler: function(grid, rowIndex, colIndex) {

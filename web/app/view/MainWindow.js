@@ -272,8 +272,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                     , displayProjection: new OpenLayers.Projection("EPSG:900913")
                                     ,projection: new OpenLayers.Projection("EPSG:900913")
                                     ,layers: layers,
-                                    region: "center",
-                                    selectControl: selectControl
+                                    region: "center"
+                                    ,selectControl: selectControl
                                 });
                                 
                         mapPanel.map.addControl(selectControl)
@@ -329,7 +329,7 @@ Ext.define('PetroRes.view.MainWindow', {
                             width: 200,
                             split: true,
                             collapsible: true,
-                            collapseMode: "mini",
+                            collapseMode: "header",
                             autoScroll: true,
                             store: store,
                             rootVisible: false,
@@ -346,7 +346,7 @@ Ext.define('PetroRes.view.MainWindow', {
                             bodyStyle: 'padding:5px',
                             split: true,
                             collapsible: true,
-                            collapseMode: "mini",
+                            collapseMode: "header",
                             width: 180,
                             autoScroll: true,
                             region: 'east'

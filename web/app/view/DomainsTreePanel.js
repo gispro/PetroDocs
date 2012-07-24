@@ -48,11 +48,14 @@ Ext.define('PetroRes.view.DomainsTreePanel', {
                     //iconCls: 'remove',
                     tooltip: 'Delete',
                     handler: function(grid, rowIndex, colIndex) {
-                        //console.log([grid, rowIndex, colIndex]);
                         var node = grid.store.getAt(rowIndex);
-                        //console.log(node);
-                        //node.remove(true); 
-                        node.destroy(false);
+                        Ext.MessageBox.confirm('Confirm', 
+                        'Are you sure you want to delete ' + node.data.name + '?', 
+                        function(yesNo){
+                            //console.log(arguments);
+                            if(yesNo==='yes')
+                                node.destroy(false);
+                        });
                     }
                 },{
                     icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',

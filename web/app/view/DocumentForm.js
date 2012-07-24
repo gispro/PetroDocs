@@ -92,6 +92,15 @@ Ext.define('PetroRes.view.DocumentForm', {
                     {
                         plugins: [
                             {
+                                ptype: 'gx_overlaylayercontainer'
+                                ,loader: {store: mapPanel.layers}
+                                //,store: layers
+                            }
+                        ],
+                        expanded: true
+                    }, {
+                        plugins: [
+                            {
                                 ptype: 'gx_baselayercontainer'
                                 //,store: layers
                                 ,loader: {store: mapPanel.layers}
@@ -99,15 +108,6 @@ Ext.define('PetroRes.view.DocumentForm', {
                         ],
                         expanded: true,
                         text: "Base Maps"
-                    }, {
-                        plugins: [
-                            {
-                                ptype: 'gx_overlaylayercontainer'
-                                ,loader: {store: mapPanel.layers}
-                                //,store: layers
-                            }
-                        ],
-                        expanded: true
                     }
                 ]
             }
@@ -120,7 +120,7 @@ Ext.define('PetroRes.view.DocumentForm', {
             width: 200,
             split: true,
             collapsible: true,
-            collapseMode: "mini",
+            collapseMode: "header",
             autoScroll: true,
             store: layerStore,
             rootVisible: false,

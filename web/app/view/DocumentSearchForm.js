@@ -91,6 +91,15 @@ Ext.define('PetroRes.view.DocumentSearchForm', {
                     {
                         plugins: [
                             {
+                                ptype: 'gx_overlaylayercontainer'
+                                ,loader: {store: mapPanel.layers}
+                                //,store: layers
+                            }
+                        ],
+                        expanded: true
+                    }, {
+                        plugins: [
+                            {
                                 ptype: 'gx_baselayercontainer'
                                 //,store: layers
                                 ,loader: {store: mapPanel.layers}
@@ -98,15 +107,6 @@ Ext.define('PetroRes.view.DocumentSearchForm', {
                         ],
                         expanded: true,
                         text: "Base Maps"
-                    }, {
-                        plugins: [
-                            {
-                                ptype: 'gx_overlaylayercontainer'
-                                ,loader: {store: mapPanel.layers}
-                                //,store: layers
-                            }
-                        ],
-                        expanded: true
                     }
                 ]
             }
@@ -119,7 +119,7 @@ Ext.define('PetroRes.view.DocumentSearchForm', {
             width: 200,
             split: true,
             collapsible: true,
-            collapseMode: "mini",
+            collapseMode: "header",
             autoScroll: true,
             store: layerStore,
             rootVisible: false,

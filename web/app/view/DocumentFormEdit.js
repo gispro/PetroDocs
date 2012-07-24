@@ -121,7 +121,7 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
             width: 200,
             split: true,
             collapsible: true,
-            collapseMode: "mini",
+            collapseMode: "header",
             autoScroll: true,
             store: layerStore,
             rootVisible: false,

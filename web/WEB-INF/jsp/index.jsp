@@ -46,6 +46,7 @@
                 }
             }
             %>
+            //petroresConfig.vectorWfs = 'http://localhost/geoserver/wfs';
             petroresConfig.vectorWfs = 'http://playground:9000/geoserver/wfs';
             //petroresConfig.vectorWfs = 'http://oceanviewer.ru/geoserver/wfs';
             petroresConfig.domainRootId = ${initParam.domainRootId};

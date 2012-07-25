@@ -7,19 +7,21 @@
     <context-param>
         <param-name>documentsPath</param-name>
         <param-value>\\nas\Disk1\SHARE\fedd</param-value>
+        <!--<param-value>\\192.168.0.20\subsurface</param-value>-->
         <!--<param-value>/mnt/NAS/Disk1/SHARE/fedd</param-value>-->
     </context-param>
     <context-param>
         <param-name>roleReader</param-name>
-        <param-value>Cert Publishers</param-value>
+        <param-value>MO-SUB_GIS-RX</param-value>
     </context-param>
     <context-param>
         <param-name>roleEditor</param-name>
-        <param-value>Cert Publishers</param-value>
+        <param-value>MO-SUB_GIS-RX</param-value>
     </context-param>
     <context-param>
         <param-name>roleAdmin</param-name>
-        <param-value>Cert Publishers</param-value>
+        <!--<param-value>Cert Publishers</param-value>        -->
+        <param-value>MO-SUB_GIS-RW</param-value>
     </context-param>
     <context-param>
         <param-name>domainRootId</param-name>
@@ -28,6 +30,7 @@
     <context-param>
         <param-name>solrUrl</param-name>
         <param-value>http://uno:8080/solr</param-value>
+        <!--<param-value>http://localhost/solr</param-value>-->
     </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -110,10 +113,11 @@
     </security-constraint>-->
     
     <security-role>
-        <role-name>Domain Admins</role-name>
+        <role-name>MO-SUB_GIS-RW</role-name>
     </security-role>
     <security-role>
-        <role-name>Cert Publishers</role-name>
+        <!--<role-name>MO-SUB_GIS-RX</role-name>-->
+          <role-name>Cert Publishers</role-name>
     </security-role>
     
     <login-config>

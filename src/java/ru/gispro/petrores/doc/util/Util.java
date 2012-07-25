@@ -26,7 +26,7 @@ import org.apache.http.params.HttpParams;
 //import org.apache.solr.common.SolrInputDocument;
 //import org.apache.solr.common.util.ContentStream;
 //import org.apache.solr.common.util.ContentStreamBase;
-import org.apache.solr.common.util.NamedList;
+//import org.apache.solr.common.util.NamedList;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;

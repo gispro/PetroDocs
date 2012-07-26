@@ -166,6 +166,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                 addFileField: function(){
                     this.alreadyAddedFiles++;
                     var superCont = this;
+                    var typpExxts = this.typExts;
                     
                     this.items.getAt(1).add(
                         {
@@ -210,25 +211,38 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                 fileName = fileName.substring(fileName.lastIndexOf('\\')+ 1);
                                                 fileName = path + '\\' + fileName;
                                                 
-                                                Ext.Ajax.request({
-                                                    url: 'rest/files',
-                                                    method: 'GET',
-                                                    params: {
-                                                        path: fileName
-                                                    },
-                                                    headers: {
-                                                        Accept: 'application/json'
-                                                    },
-                                                    success: function(response){
-                                                        var obj = Ext.decode(response.responseText);
-                                                        if(obj.total>=1){
-                                                            that.fileExistsCheck = 'File with the name '+fileName+' is already registered';
-                                                            //that.markInvalid('File with this name is already registered');
-                                                        }else{
-                                                            delete that.fileExistsCheck;
-                                                        }
+                                                var nowExt = fileName.substring(fileName.lastIndexOf('.')+ 1);
+                                                var matched = false;
+
+                                                for(var xxx in typpExxts){
+                                                    if(nowExt.toUpperCase() === typpExxts[xxx].toUpperCase()){
+                                                        matched = true;
+                                                        break;
                                                     }
-                                                });                                                
+                                                }
+                                                if( !matched ){
+                                                    that.fileExistsCheck = 'Choose file with the right extention here';
+                                                }else{
+                                                    Ext.Ajax.request({
+                                                        url: 'rest/files',
+                                                        method: 'GET',
+                                                        params: {
+                                                            path: fileName
+                                                        },
+                                                        headers: {
+                                                            Accept: 'application/json'
+                                                        },
+                                                        success: function(response){
+                                                            var obj = Ext.decode(response.responseText);
+                                                            if(obj.total>=1){
+                                                                that.fileExistsCheck = 'File with the name '+fileName+' is already registered';
+                                                                //that.markInvalid('File with this name is already registered');
+                                                            }else{
+                                                                delete that.fileExistsCheck;
+                                                            }
+                                                        }
+                                                    });     
+                                                }
                                             }
                                         }
                                     }
@@ -1023,14 +1037,18 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                     fs.setTitle(typ.name + ' file');
                                                     fileField = Ext.clone(me.fileFieldPattern);
                                                     var label = "";
+                                                    var typExts = [];
                                                     if(Ext.isArray(typ.typeExt)){
                                                         for(i in typ.typeExt){
                                                             label = label + ' or ' + typ.typeExt[i].ext.ext;
+                                                            typExts.push(typ.typeExt[i].ext.ext);
                                                         }
                                                         label = label.substring(4);
                                                     }else{
                                                         label = typ.typeExt.ext.ext;
+                                                        typExts.push(typ.typeExt.ext.ext);
                                                     }
+                                                    fileField.typExts = typExts;
                                                     fileField.fieldLabel = label;
                                                     fileField.maxAllowedFiles = typ.typeExt.maxCount;
                                                     fileField.minAllowedFiles = typ.typeExt.minCount;
@@ -1044,6 +1062,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                     }
                                                     for(i in typeExt){
                                                         fileField = Ext.clone(me.fileFieldPattern);
+                                                        fileField.typExts = [typeExt[i].ext.ext];
                                                         fileField.fieldLabel = typeExt[i].ext.ext;
                                                         fileField.maxAllowedFiles = typ.typeExt[i].maxCount;
                                                         fileField.minAllowedFiles = typ.typeExt[i].minCount;

@@ -14,9 +14,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.gispro.petrores.doc.entities.*;
 import ru.gispro.petrores.doc.util.Util;
 
@@ -27,9 +32,10 @@ import ru.gispro.petrores.doc.util.Util;
 @Path("documents")
 @Singleton
 @Autowire
-public class DocumentRESTFacade {
+public class DocumentRESTFacade{
     @PersistenceContext(unitName = "petro21PU")
     protected EntityManager entityManager;
+    private String rootPath = null;
 
     public DocumentRESTFacade() {
     }
@@ -58,9 +64,33 @@ public class DocumentRESTFacade {
     @Transactional
     public void remove(Document entity) {
         entity = entityManager.getReference(Document.class, entity.getId());
+        
+        // deleting files
+        Collection<File> files = entity.getFiles();
+        for(File f: files){
+            String path = f.getPath();
+            java.io.File file = new java.io.File(getRootPath() + path);
+            if(file.exists() && file.isFile())
+                file.delete();
+        }
+        
+        
         entityManager.remove(entity);
     }
 
+    private String getRootPath(){
+        if(rootPath==null){
+            HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+            rootPath = req.getSession().getServletContext().getInitParameter("documentsPath");
+            if(rootPath==null)
+                rootPath = java.io.File.separator;
+            else if(!rootPath.endsWith(java.io.File.separator))
+                rootPath = rootPath + java.io.File.separator;
+        }
+        return rootPath;
+    }
+    
+    
     @GET
     @Path("{id}")
     @Produces({"application/xml", "application/json"})
@@ -547,6 +577,6 @@ public class DocumentRESTFacade {
         }
         return ((String)item).trim().length()>0;
     }
-    
+
     
 }

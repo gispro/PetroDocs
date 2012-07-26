@@ -20,8 +20,8 @@
     </context-param>
     <context-param>
         <param-name>roleAdmin</param-name>
-        <!--<param-value>Cert Publishers</param-value>        -->
-        <param-value>MO-SUB_GIS-RW</param-value>
+        <param-value>Cert Publishers</param-value>        
+        <!--<param-value>MO-SUB_GIS-RW</param-value>-->
     </context-param>
     <context-param>
         <param-name>domainRootId</param-name>
@@ -55,6 +55,14 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <filter>
+        <filter-name>contextFilter</filter-name>
+        <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>contextFilter</filter-name>
+        <url-pattern>*</url-pattern>
+    </filter-mapping>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>

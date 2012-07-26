@@ -383,7 +383,7 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                                                     var matched = false;
                                                     
                                                     for(var xxx in typpExxts){
-                                                        if(nowExt === typpExxts[xxx]){
+                                                        if(nowExt.toUpperCase() === typpExxts[xxx].toUpperCase()){
                                                             matched = true;
                                                             break;
                                                         }

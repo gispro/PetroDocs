@@ -353,6 +353,29 @@ Ext.define('PetroRes.view.MainWindow', {
                             //preferredTypes: ["Point", "Line", "Polygon"]
                         });                        
                         
+                        /*var printPage;
+                        var printProvider = Ext.create('GeoExt.data.MapfishPrintProvider', {
+                            url: "form/proxy?url=http://oceanviewer.ru/print/pdf"
+                            //capabilities: printCapabilities
+                            ,autoLoad: true
+                            ,listeners: {
+                                "loadcapabilities": function() {
+                                    printPage = Ext.create('GeoExt.data.PrintPage', {
+                                        printProvider: printProvider
+                                    });
+                                    Ext.getCmp('pdfButton').setDisabled(false);
+                                }
+                            }
+                             
+                        });*/
+                        //printPage = Ext.create('GeoExt.data.PrintPage', {
+                        //    printProvider: printProvider
+                        //});
+                        
+                        //var printPage = Ext.create('GeoExt.data.PrintPage', {
+                        //    printProvider: printProvider
+                        //});                        
+                        
                         var tbar = [
                                     {
                                         xtype: 'button',
@@ -530,7 +553,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
                                             eventListeners: {
                                                 measure: function(evt) {
-                                                    alert("The length is " + evt.measure + evt.units);
+                                                    Ext.Msg.alert('Distance',
+                                                        'The distance is ' + evt.measure.toFixed(2) + ' '+ evt.units);
                                                 }
                                             }                                        
                                         }),
@@ -544,17 +568,28 @@ Ext.define('PetroRes.view.MainWindow', {
                                         control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
                                             eventListeners: {
                                                 measure: function(evt) {
-                                                    alert("The area is " + evt.measure + evt.units);
+                                                    Ext.Msg.alert('Area',
+                                                        'The area is ' + + evt.measure.toFixed(2) + ' '+ evt.units + '<sup>2</sup>');
+                                                    //alert("The area is " + evt.measure + evt.units);
                                                 }
                                             }                                        
                                         }),
                                         map: mapPanel.map
                                     }))                                    
+                                    /*, Ext.create('Ext.button.Button', {
+                                        text: 'PDF',
+                                        disabled: true,
+                                        id: 'pdfButton',
+                                        handler: function() {
+                                            printPage.fit(mapPanel, true);
+                                            printProvider.print(mapPanel, printPage);
+                                        }
+                                    })*/                                         
                                 ];                        
                         var wnd = Ext.getCmp('MainWindow');
                         wnd.openPetroWindow('geMapWindow', {
                             closable: true,
-                            title: 'GeoExt Map',
+                            title: 'Caspian Sea',
                             maximizable: true,
                             maximized: true,
                             id: 'geMapWindow',

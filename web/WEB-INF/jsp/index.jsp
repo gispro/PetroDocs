@@ -47,7 +47,8 @@
             }
             %>
             //petroresConfig.vectorWfs = 'http://localhost/geoserver/wfs';
-            petroresConfig.vectorWfs = 'http://playground:9000/geoserver/wfs';
+            petroresConfig.vectorWfs = '${initParam.vectorWfs}';
+            //petroresConfig.vectorWfs = 'http://playground:9000/geoserver/wfs';
             //petroresConfig.vectorWfs = 'http://oceanviewer.ru/geoserver/wfs';
             petroresConfig.domainRootId = ${initParam.domainRootId};
             //petroresConfig.saveStrategy = new OpenLayers.Strategy.Save();
@@ -295,6 +296,15 @@
                         key: 'AlSjFhANk1LeS8B3SimhN04C4fxfzNAuLuG_ZpKTD2fhvtTLFAXG1MRsbuk68qqI',
                         type: "AerialWithLabels"
                     }),
+                /*new OpenLayers.Layer.WMS(
+                'Blank', 
+                'http://oceanviewer.ru/cache/service/wms', 
+                {
+                    layers: 'eko_blank',
+                    projection: 'EPSG:900913'
+                }, {
+                    transitionEffect: 'resize'
+                }),*/
 
 
 
@@ -575,6 +585,7 @@
         <!--<script type="text/javascript" src="lib/ext4/ext-all-debug.js"></script>-->
         <script type="text/javascript" src="lib/ext41/ext-all-debug.js"></script>
         <script type="text/javascript" src="lib/boxselect/Boxselect.js"></script>
+        <!--<script type="text/javascript" src="/print/pdf/info.json?var=printCapabilities"></script>-->
         <link rel="stylesheet" type="text/css" href="lib/boxselect/boxselect.css"/>
         <!--<script type="text/javascript" src="lib/geoext2/src/GeoExt/GeoExt.js"></script>-->
         <script type="text/javascript">
@@ -585,6 +596,11 @@
                 });
             }, 1000 * 60 * 10);
 
+
+            //var mapfish = {
+            //    SERVER_BASE_URL: 'http://oceanviewer.ru/print/pdf/'
+           //}
+            
         </script>
         <script type="text/javascript" src="app.js"></script>
         <title>Petroresource Documents System</title>

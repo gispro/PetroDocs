@@ -13,6 +13,17 @@
              roleSubtree="true"
              roleSearch="(member={0})"
       />
-    
-    
+    <!--<Realm className="org.apache.catalina.realm.JNDIRealm"
+             connectionURL="ldap://192.168.0.10:389"
+             connectionName="ldap"
+             connectionPassword="GIS!2012"
+             referrals="follow"
+             userBase="OU=UsersMoscow,DC=petroresurs,DC=com"
+             userSearch="(sAMAccountName={0})"
+             userSubtree="true"
+             roleBase="OU=File,OU=Groups,DC=petroresurs,DC=com"
+             roleName="cn"
+             roleSubtree="true"
+             roleSearch="(member={0})"
+      />-->
 </Context>

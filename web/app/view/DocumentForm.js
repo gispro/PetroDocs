@@ -313,6 +313,10 @@ Ext.define('PetroRes.view.DocumentForm', {
             
             items: [
                 
+            /*{
+                xtype: 'label',
+                html: '<a href="file://C:\\Users\\fedd\\tmp\\">jope</a>'
+            },*/
                 
             {
                 xtype: 'fieldset',

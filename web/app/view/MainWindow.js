@@ -641,12 +641,12 @@ Ext.define('PetroRes.view.MainWindow', {
                         },
                         {
                             xtype: 'menuitem',
-                            text: 'Sites',
+                            text: 'Projects',
                             handler: function(){
                                 var wnd = Ext.getCmp('MainWindow');
                                 wnd.openPetroWindow('sites', {
                                     closable: true,
-                                    title: 'Sites',
+                                    title: 'Projects',
                                     maximizable: true,
                                     maximized: false,
                                     layout: 'fit',

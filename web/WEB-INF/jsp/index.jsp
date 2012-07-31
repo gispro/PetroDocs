@@ -586,6 +586,7 @@
         <script type="text/javascript" src="lib/ext41/ext-all-debug.js"></script>
         <script type="text/javascript" src="lib/boxselect/Boxselect.js"></script>
         <!--<script type="text/javascript" src="/print/pdf/info.json?var=printCapabilities"></script>-->
+        <script type="text/javascript" src="config/helpInfo.js"></script>
         <link rel="stylesheet" type="text/css" href="lib/boxselect/boxselect.css"/>
         <!--<script type="text/javascript" src="lib/geoext2/src/GeoExt/GeoExt.js"></script>-->
         <script type="text/javascript">

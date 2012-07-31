@@ -145,7 +145,7 @@ Ext.define('PetroRes.view.MainWindow', {
                         var wnd = Ext.getCmp('MainWindow'),
                             pnlTree = Ext.create('PetroRes.view.DomainsTreePanel',
                                                  {editable:false, store:'DocsViewDomainsJsonTreeStore'}),
-                            pnlDocumentsGreed = Ext.create('PetroRes.view.DomainDocumentsGridPanel',{ region:'center', domainsTree: pnlTree }),
+                            pnlDocumentsGreed = Ext.create('PetroRes.view.DomainDocumentsGridPanel',{region:'center', domainsTree: pnlTree}),
                             pnlTools = Ext.create('Ext.panel.Panel', {
                                                     region:'north', layout:'fit', height:26,
                                                     items:[
@@ -874,6 +874,66 @@ Ext.define('PetroRes.view.MainWindow', {
                 ]
             }
         }:undefined
+        , {
+            xtype: 'button',
+            //xtype: 'menuitem',
+            text: 'Help',
+            handler: function(){
+                var wnd = Ext.getCmp('MainWindow');
+                wnd.openPetroWindow('helpWindow', {
+                    closable: true,
+                    title: 'Help',
+                    maximizable: true,
+                    maximized: false,
+                    layout: 'fit',
+                    items: [
+                    {
+                        layout:'border',
+                        defaults: {
+                            collapsible: true,
+                            split: true
+                        },
+                        items: [
+                        {
+                            xtype:'treepanel',
+                            listeners: {
+                                itemclick: function(a, b, c){
+                                    console.log (arguments);
+                                    if(b.raw.url){
+                                        Ext.getCmp('helpIframe').body.dom.innerHTML= 
+                                            '<iframe style="border: none;" height="100%" width="100%" src="' + b.raw.url + '"></iframe>'
+                                    }
+//if(a.attributes.url) Ext.getCmp('helpIframe').body.dom.innerHTML= '<iframe style="border: none;" height="100%" width="100%" src="' + a.attributes.url + '"></iframe>'
+                                }
+                            },
+                            rootVisible: false,
+                            region:'west',
+                            //margins: '5 0 0 0',
+                            //cmargins: '5 5 0 0',
+                            width: 175,
+                            minSize: 100,
+                            maxSize: 250,
+                            useArrows:true,
+                            autoScroll:true,
+                            animate:true,
+                            containerScroll: true,
+                            border: false,
+                            root: {
+                                children: petroresConfig.helpInfo
+                            }
+                        },
+                        {
+                            collapsible: false,
+                            region:'center',
+                            margins: '5 0 0 0',
+                            id: 'helpIframe'
+                        }
+                        ]
+                    }
+                    ]
+                });
+            }
+        }
         ]
     }
     ],

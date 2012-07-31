@@ -25,7 +25,7 @@
             </c:forEach>
             ];
             
-            <c:set var="roles" scope="page" value="${pageContext.request.userPrincipal.roles}"/>
+         <c:set var="roles" scope="page" value="${pageContext.request.userPrincipal.roles}"/>
             <%
             for(String role: (String[])pageContext.getAttribute("roles")){
                 if(role.equalsIgnoreCase((String)application.getInitParameter("roleReader"))){

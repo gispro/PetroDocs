@@ -146,50 +146,24 @@ Ext.define('PetroRes.view.MainWindow', {
                             pnlTree = Ext.create('PetroRes.view.DomainsTreePanel',
                                                  {editable:false, store:'DocsViewDomainsJsonTreeStore'}),
                             pnlDocumentsGreed = Ext.create('PetroRes.view.DomainDocumentsGridPanel',{ region:'center', domainsTree: pnlTree }),
-                            pnlTools = Ext.create('Ext.panel.Panel', {
-                                                    region:'north', layout:'fit', height:26,
-                                                    items:[
-                                                        Ext.create('PetroRes.view.DocumentSimpleSearchPanel')
-/*                                                        {xtype:'panel', layout:'fit',
-                                                         items:[
-                                                             {xtype: 'textfield', region:'center', height:24},
-                                                             {xtype:'button', iconCls:'ab_search', cls:'album-btn', width:23, height:24, region:'east'},
-                                                             {xtype:'button', iconCls:'ab_add', cls:'album-btn', width:23, height:24, region:'east'},
-                                                         ]
-                                                        }*/
-                                                    ]})
-                            /*
-                                layout:'border',
-                                bodyPadding: 5,  // Don't want content to crunch against the borders
-                                items: [
-                                    Ext.create('Ext.panel.Panel',
-                                        {   layout:'border',
-                                            region:'east',
-                                            items:[ {xtype: 'textfield',
-                                                    region:'center'}, 
-                                                    {xtype: 'button',
-                                                     region:'east',
-                                                     iconCls:'search'
-                                                    }]}),
-                                    Ext.create('Ext.panel.Panel',
-                                        {   layout:'fit',
-                                            region:'center',
-                                            items:[]
-                                        })
-                                ]
-                            })*/;
+                            pnlAddDocument = Ext.create('PetroRes.view.DomainDocumentsAddPanel',{ region:'north', height:27});
+                            
                             Ext.apply(pnlTree,{
-                                region: 'west',
-                                split: true,
-                                width: wnd.getWidth()*0.4,
-                                collapsible: true
+                                region: 'center'
                             });
                             pnlTree.addListener('select', 
                                                 function( selRowModel, record, index, eOpts ){
                                                     //Ext.selection.RowModel this, Ext.data.Model record, Number index, Object eOpts
+                                                    pnlAddDocument.setTemplateDomain(record);
+                                                    //tf.labelEl.update(record.raw.name+': ');
                                                     var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore');
                                                     ddStore.loadDocuments(record.raw.id, record.raw.level, record.raw.name, record.raw.fullName);
                                                 });
+                             pnlDocumentsGreed.addListener('select',
+                                                                    //( Ext.selection.RowModel this, Ext.data.Model record, Number index, Object eOpts){
+                                                            function( selRowModel, record, index, eOpts){
+                                                                pnlAddDocument.setTemplateDocument(record);
+                                                            });
                         wnd.openPetroWindow('domaindocuments', {
                             closable: true,
                             width:wnd.getWidth()*0.9,
@@ -198,9 +172,19 @@ Ext.define('PetroRes.view.MainWindow', {
                             maximized: false,
                             layout: 'border',//'fit',
                             items: [
-                                pnlTools,
-                                pnlTree,
-                                pnlDocumentsGreed
+                                {xtype:'panel', layout:'border', region:'west', width: wnd.getWidth()*0.3, split: true,
+                                  items:[
+                                        Ext.create('PetroRes.view.DocumentSimpleSearchPanel',{region:'north', height:27}),
+                                        pnlTree
+                                    ]},
+                                {xtype:'panel', layout:'border', region:'center',
+                                    items:[
+                                        pnlAddDocument,
+                                        pnlDocumentsGreed
+                                    ]}
+                                //pnlTools,
+                                //pnlTree,
+                                //pnlDocumentsGreed
                             ]
                         });
                     }

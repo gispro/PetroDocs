@@ -17,3 +17,11 @@
     background-size: 100%;
     background-position: center;
 }
+
+.ab_TextFieldLabel{
+    font-weight: bold;
+    padding-left: 3px;
+    padding-right: 7px;
+    padding-top: 5px;
+}
+

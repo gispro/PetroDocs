@@ -9,7 +9,6 @@ Ext.define('PetroRes.view.DomainDocumentsGridPanel', {
     id: 'DomainDocumentsGridPanel',
     autoScroll: true,
     //store: 'AuthorsJsonStore',
-
     initComponent: function() {
         var me = this;
         Ext.create(  'PetroRes.store.DomainDocumentsJsonStore', 

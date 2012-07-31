@@ -26,6 +26,15 @@ Ext.require([
     'GeoExt.container.VectorLegend'
 ]);
 
+Ext.override(Ext.form.Field, {
+  setFieldLabel : function(text) {
+    if (this.rendered) {
+        var el = this.el.up('.x-form-item', 10, true);
+        el.child('.x-form-item-label').update(text);
+    }
+    this.fieldLabel = text;
+  }
+});
 
 ////// extjs 4.0 bug override
 ////// http://stackoverflow.com/questions/8653445/extjs-treestore-update-event-fire-instead-of-create/9228517#9228517

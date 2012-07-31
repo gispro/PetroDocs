@@ -512,79 +512,10 @@ Ext.define('PetroRes.view.DocumentForm', {
                                         editable: false,
                                         listeners: {
                                             select: function(that, domain){
-                                                var oldDomain = domain;
-                                                var path = domain.pathPart;
-                                                while(domain.parent){
-                                                    domain = domain.parent;
-                                                    path = domain.pathPart + petroresConfig.pathFolderSeparator + path;
-                                                }
-                                                me.getForm().findField('path').setValue(path);
-                                                
-                                                // get stage and site
-                                                var curDomain = oldDomain;
-                                                var site, stage, nextDomain;
-                                                var tow, wp;
-                                                while(true){
-                                                    if(curDomain.site){
-                                                        site = curDomain.site;
-                                                    }
-                                                    if(curDomain.typeOfWork){
-                                                        tow = curDomain.typeOfWork;
-                                                    }
-                                                    if(curDomain.workProcess){
-                                                        wp = curDomain.workProcess;
-                                                    }
-                                                    
-                                                    if(curDomain.name=='New Ventures'){
-                                                        stage = 1;
-                                                    }else if(curDomain.name=='Exploration'){
-                                                        stage = 2;
-                                                    }else if (curDomain.name=='Production'){
-                                                        stage = 3;
-                                                    }
-                                                        
-                                                    if(site && stage && wp && tow){
-                                                        break;
-                                                    }
-                                                    
-                                                    nextDomain = curDomain.parent;
-                                                    if(!nextDomain || nextDomain.id==curDomain.id){
-                                                        break;
-                                                    }
-                                                    
-                                                    curDomain = nextDomain;
-                                                }
-                                                
-                                                console.log([site, stage, wp, tow]);
-                                                
-                                                var stageCombo = me.getForm().
-                                                    findField('stage');
-                                                var siteCombo = me.getForm().
-                                                    findField('site');
-                                                var towCombo = me.getForm().
-                                                    findField('typeOfWork');
-                                                var wpCombo = me.getForm().
-                                                    findField('workProcess');
-                                                
-                                                if(stage){
-                                                    stageCombo.select(stageCombo.getStore().getById(stage));
-                                                    stageCombo.fireEvent('select', stageCombo);
-                                                }
-                                                if(site){
-                                                    siteCombo.select(siteCombo.getStore().getById(parseInt(site.id)));
-                                                    siteCombo.fireEvent('select', siteCombo);
-                                                }
-                                                if(tow){
-                                                    towCombo.select(towCombo.getStore().getById(parseInt(tow.id)));
-                                                    towCombo.fireEvent('select', towCombo);
-                                                }
-                                                if(wp){
-                                                    wpCombo.select(wpCombo.getStore().getById(parseInt(wp.id)));
-                                                    wpCombo.fireEvent('select', wpCombo);
-                                                }
+                                                me.fillDomainForm(domain); //record.raw
                                             }
                                         },
-                                        valueToRaw: function(){  
+                                        valueToRaw: function(valll){  
                                             if(this.selectedDomain){
                                                 //this.selectedDomain = data;
                                                 var data = this.selectedDomain;
@@ -597,6 +528,11 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                 }
                                                 ret = ret.substring((data.name + " :: ").length);
                                                 return ret;
+                                            } else if(valll){
+                                                this.selectedDomain = valll;
+                                                return this.valueToRaw();
+                                            }else{
+                                                return '';
                                             }
                                         }, 
                                         rawToValue: function(arg){
@@ -618,6 +554,10 @@ Ext.define('PetroRes.view.DocumentForm', {
                                         getSubmitValue: function(){
                                             return Ext.encode(this.selectedDomain);
                                         },
+                                        /*setValue: function( vle ){
+                                          var _v = vle;
+                                          Ext.form.Picker.setValue.apply(this, arguments);
+                                        },*/
                                         createPicker: function() {
                                             return Ext.create("Ext.Window",{
                                                 pickerField: this,
@@ -633,6 +573,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                     xtype: 'treepanel',
                                                     store: 'DomainsJsonTreeStore',
                                                     //height: 250,
+                                                    id: 'docFormDomainPickerInnerTree',
                                                     hideHeaders: true,
                                                     columns: [
                                                     {
@@ -1359,5 +1300,91 @@ Ext.define('PetroRes.view.DocumentForm', {
         });
 
         me.callParent(arguments);
+    },
+    listeners:{
+      afterrender:function(me, eOpts ){
+        if(me.domain){
+            var pick = this.getForm().findField('domain');
+            pick.selectedDomain = me.domain;
+            pick.setValue(me.domain);
+            pick.fireEvent('select', pick, me.domain);
+        }
+      }  
+    },
+    fillDomainForm: function(domain, needSetDomainPath){
+        if( needSetDomainPath ) {
+            var domainPath = this.getForm().findField('domain');
+        
+        }
+        var oldDomain = domain;
+        var path = domain.pathPart;
+        while(domain.parent){
+            domain = domain.parent;
+            path = domain.pathPart + petroresConfig.pathFolderSeparator + path;
+        }
+        this.getForm().findField('path').setValue(path);
+
+        // get stage and site
+        var curDomain = oldDomain;
+        var site, stage, nextDomain;
+        var tow, wp;
+        while(true){
+            if(curDomain.site){
+                site = curDomain.site;
+            }
+            if(curDomain.typeOfWork){
+                tow = curDomain.typeOfWork;
+            }
+            if(curDomain.workProcess){
+                wp = curDomain.workProcess;
+            }
+
+            if(curDomain.name=='New Ventures'){
+                stage = 1;
+            }else if(curDomain.name=='Exploration'){
+                stage = 2;
+            }else if (curDomain.name=='Production'){
+                stage = 3;
+            }
+
+            if(site && stage && wp && tow){
+                break;
+            }
+
+            nextDomain = curDomain.parent;
+            if(!nextDomain || nextDomain.id==curDomain.id){
+                break;
+            }
+
+            curDomain = nextDomain;
+        }
+
+        console.log([site, stage, wp, tow]);
+
+        var stageCombo = this.getForm().
+            findField('stage');
+        var siteCombo = this.getForm().
+            findField('site');
+        var towCombo = this.getForm().
+            findField('typeOfWork');
+        var wpCombo = this.getForm().
+            findField('workProcess');
+
+        if(stage){
+            stageCombo.select(stageCombo.getStore().getById(stage));
+            stageCombo.fireEvent('select', stageCombo);
+        }
+        if(site){
+            siteCombo.select(siteCombo.getStore().getById(parseInt(site.id)));
+            siteCombo.fireEvent('select', siteCombo);
+        }
+        if(tow){
+            towCombo.select(towCombo.getStore().getById(parseInt(tow.id)));
+            towCombo.fireEvent('select', towCombo);
+        }
+        if(wp){
+            wpCombo.select(wpCombo.getStore().getById(parseInt(wp.id)));
+            wpCombo.fireEvent('select', wpCombo);
+        }
     }
 });

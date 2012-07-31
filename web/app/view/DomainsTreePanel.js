@@ -179,6 +179,10 @@ Ext.define('PetroRes.view.DomainsTreePanel', {
                                             node.set('typeOfWork', newDomain.typeOfWork);
                                         if(newDomain.workProcess && newDomain.workProcess!=="")
                                             node.set('workProcess', newDomain.workProcess);
+
+                                        node.set('name', newDomain.name);
+                                        node.set('fullName', newDomain.fullName);
+                                        node.set('pathPart', newDomain.pathPart);
                                         //grid.store.sync();
                                     }                                    
                                 }

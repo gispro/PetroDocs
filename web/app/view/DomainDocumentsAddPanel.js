@@ -8,6 +8,9 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
       this.tfAdd.setValue('');
       this.doLayout();
     },
+    getTemplateDomain: function(){ 
+        return this.temlateDomain; 
+    },
     setTemplateDocument: function( record ){
       this.temlateObj = record.raw;
       this.tfAdd.setValue(this.temlateObj.fullTitle);
@@ -30,6 +33,11 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
             {
                 xtype:'button', iconCls:'ab_add', cls:'album-btn', width:23, height:24, region:'east',
                 handler:function(){
+                   var df = Ext.create('PetroRes.view.DocumentForm', {domain:me.temlateDomain});
+                   df.addListener(  'documentadded', 
+                                    function(p1, p2){
+                                        me.fireEvent('documentadded', {form:df})},
+                                    me);
                    var wnd = Ext.getCmp('MainWindow');
                         wnd.openPetroWindow('newDoc', {
                             closable: true,
@@ -40,7 +48,7 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
                             width:wnd.getWidth()*0.8,
                             layout: 'fit',
                             items: [
-                            Ext.create('PetroRes.view.DocumentForm', {domain:me.temlateDomain})
+                                df
                             ]
                         }); 
                 }

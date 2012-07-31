@@ -3,8 +3,10 @@ Ext.define('PetroRes.view.DocumentForm', {
 
     bodyPadding: 10,
 
+    
     initComponent: function() {
         var me = this;
+        me.addEvents('documentadded');
         
         var layers = petroresConfig.layersCreator();
         var vectorLayers = [];
@@ -1308,6 +1310,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                     'Success', 
                                     'Your document "' + o.result.documents[0].title + '" has been uploaded.',
                                     function(){
+                                        me.fireEvent('documentadded', {form:me});
                                         me.theMap.destroy();
                                         me.up().close();
                                     }
@@ -1324,7 +1327,7 @@ Ext.define('PetroRes.view.DocumentForm', {
 
         me.callParent(arguments);
     },
-    listeners:{
+    listeners: {
       afterrender:function(me, eOpts ){
         if(me.domain){
             var pick = this.getForm().findField('domain');

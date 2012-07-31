@@ -148,6 +148,13 @@ Ext.define('PetroRes.view.MainWindow', {
                             pnlDocumentsGreed = Ext.create('PetroRes.view.DomainDocumentsGridPanel',{ region:'center', domainsTree: pnlTree }),
                             pnlAddDocument = Ext.create('PetroRes.view.DomainDocumentsAddPanel',{ region:'north', height:27});
                             
+                            pnlAddDocument.addListener('documentadded',
+                                                        function(p1, p2){
+                                                            var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore'),
+                                                                raw = this.getTemplateDomain();
+                                                            ddStore.loadDocuments(raw.id, raw.level, raw.name, raw.fullName);
+                                                        },
+                                                        pnlAddDocument);
                             Ext.apply(pnlTree,{
                                 region: 'center'
                             });

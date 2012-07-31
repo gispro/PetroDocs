@@ -44,18 +44,21 @@ Ext.define('PetroRes.view.DomainsTreePanel', {
                 xtype:'actioncolumn',
                 flex:1,
                 items: [{
-                    icon: 'lib/ext4/examples/restful/images/delete.png',
+                    icon: 'lib/ext41/examples/restful/images/delete.png',
                     //iconCls: 'remove',
                     tooltip: 'Delete',
                     handler: function(grid, rowIndex, colIndex) {
-                        //console.log([grid, rowIndex, colIndex]);
                         var node = grid.store.getAt(rowIndex);
-                        //console.log(node);
-                        //node.remove(true); 
-                        node.destroy(false);
+                        Ext.MessageBox.confirm('Confirm', 
+                        'Are you sure you want to delete ' + node.data.name + '?', 
+                        function(yesNo){
+                            //console.log(arguments);
+                            if(yesNo==='yes')
+                                node.destroy(false);
+                        });
                     }
                 },{
-                    icon: 'lib/ext4/resources/themes/images/default/dd/drop-add.gif',
+                    icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
                     //iconCls: 'remove',
                     tooltip: 'Add',
                     handler: function(grid, rowIndex, colIndex) {
@@ -176,6 +179,10 @@ Ext.define('PetroRes.view.DomainsTreePanel', {
                                             node.set('typeOfWork', newDomain.typeOfWork);
                                         if(newDomain.workProcess && newDomain.workProcess!=="")
                                             node.set('workProcess', newDomain.workProcess);
+
+                                        node.set('name', newDomain.name);
+                                        node.set('fullName', newDomain.fullName);
+                                        node.set('pathPart', newDomain.pathPart);
                                         //grid.store.sync();
                                     }                                    
                                 }

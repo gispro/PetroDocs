@@ -19,14 +19,14 @@ import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.BinaryRequestWriter;
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
-import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
-import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.util.ContentStream;
-import org.apache.solr.common.util.ContentStreamBase;
-import org.apache.solr.common.util.NamedList;
+//import org.apache.solr.client.solrj.SolrServer;
+//import org.apache.solr.client.solrj.impl.BinaryRequestWriter;
+//import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
+//import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
+//import org.apache.solr.common.SolrInputDocument;
+//import org.apache.solr.common.util.ContentStream;
+//import org.apache.solr.common.util.ContentStreamBase;
+//import org.apache.solr.common.util.NamedList;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -86,7 +86,7 @@ public class Util {
             return "";
         }
     }
-    public static void inputToOutWithIndex2(
+    /*public static void inputToOutWithIndex2(
             String solrUrl, 
             final InputStream input, 
             final OutputStream output, 
@@ -108,7 +108,7 @@ public class Util {
         //req.setParam(ExtractingParams.EXTRACT_ONLY, "true");
         NamedList<Object> result = server.request(req);
         System.out.println("Result: " + result);        
-    }
+    }*/
     
     //private static CommonsHttpSolrServer _solr = null;
     public static void inputToOutWithIndex(

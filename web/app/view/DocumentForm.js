@@ -92,6 +92,15 @@ Ext.define('PetroRes.view.DocumentForm', {
                     {
                         plugins: [
                             {
+                                ptype: 'gx_overlaylayercontainer'
+                                ,loader: {store: mapPanel.layers}
+                                //,store: layers
+                            }
+                        ],
+                        expanded: true
+                    }, {
+                        plugins: [
+                            {
                                 ptype: 'gx_baselayercontainer'
                                 //,store: layers
                                 ,loader: {store: mapPanel.layers}
@@ -99,15 +108,6 @@ Ext.define('PetroRes.view.DocumentForm', {
                         ],
                         expanded: true,
                         text: "Base Maps"
-                    }, {
-                        plugins: [
-                            {
-                                ptype: 'gx_overlaylayercontainer'
-                                ,loader: {store: mapPanel.layers}
-                                //,store: layers
-                            }
-                        ],
-                        expanded: true
                     }
                 ]
             }
@@ -120,7 +120,7 @@ Ext.define('PetroRes.view.DocumentForm', {
             width: 200,
             split: true,
             collapsible: true,
-            collapseMode: "mini",
+            collapseMode: "header",
             autoScroll: true,
             store: layerStore,
             rootVisible: false,
@@ -166,6 +166,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                 addFileField: function(){
                     this.alreadyAddedFiles++;
                     var superCont = this;
+                    var typpExxts = this.typExts;
                     
                     this.items.getAt(1).add(
                         {
@@ -210,25 +211,38 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                 fileName = fileName.substring(fileName.lastIndexOf('\\')+ 1);
                                                 fileName = path + '\\' + fileName;
                                                 
-                                                Ext.Ajax.request({
-                                                    url: 'rest/files',
-                                                    method: 'GET',
-                                                    params: {
-                                                        path: fileName
-                                                    },
-                                                    headers: {
-                                                        Accept: 'application/json'
-                                                    },
-                                                    success: function(response){
-                                                        var obj = Ext.decode(response.responseText);
-                                                        if(obj.total>=1){
-                                                            that.fileExistsCheck = 'File with the name '+fileName+' is already registered';
-                                                            //that.markInvalid('File with this name is already registered');
-                                                        }else{
-                                                            delete that.fileExistsCheck;
-                                                        }
+                                                var nowExt = fileName.substring(fileName.lastIndexOf('.')+ 1);
+                                                var matched = false;
+
+                                                for(var xxx in typpExxts){
+                                                    if(nowExt.toUpperCase() === typpExxts[xxx].toUpperCase()){
+                                                        matched = true;
+                                                        break;
                                                     }
-                                                });                                                
+                                                }
+                                                if( !matched ){
+                                                    that.fileExistsCheck = 'Choose file with the right extention here';
+                                                }else{
+                                                    Ext.Ajax.request({
+                                                        url: 'rest/files',
+                                                        method: 'GET',
+                                                        params: {
+                                                            path: fileName
+                                                        },
+                                                        headers: {
+                                                            Accept: 'application/json'
+                                                        },
+                                                        success: function(response){
+                                                            var obj = Ext.decode(response.responseText);
+                                                            if(obj.total>=1){
+                                                                that.fileExistsCheck = 'File with the name '+fileName+' is already registered';
+                                                                //that.markInvalid('File with this name is already registered');
+                                                            }else{
+                                                                delete that.fileExistsCheck;
+                                                            }
+                                                        }
+                                                    });     
+                                                }
                                             }
                                         }
                                     }
@@ -236,7 +250,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                     xtype: 'button',
                                     //text: '-',
                                     //flex: 1,
-                                    icon: 'lib/ext4/examples/restful/images/delete.png',
+                                    icon: 'lib/ext41/examples/restful/images/delete.png',
                                     listeners: {
                                         click: function(){
                                             //console.log([this.ownerCt, this.ownerCt.ownerCt.items.getAt(this.ownerCt.fileFieldNumber)]);
@@ -267,7 +281,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                             {
                                 xtype: 'button',
                                 //text: '+',
-                                icon: 'lib/ext4/resources/themes/images/default/dd/drop-add.gif',
+                                icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
                                 listeners: {
                                     beforerender: function(){
                                         this.fileFieldMe = this.up("[xtype='fieldcontainer']");
@@ -299,6 +313,10 @@ Ext.define('PetroRes.view.DocumentForm', {
             
             items: [
                 
+            /*{
+                xtype: 'label',
+                html: '<a href="file://C:\\Users\\fedd\\tmp\\">jope</a>'
+            },*/
                 
             {
                 xtype: 'fieldset',
@@ -778,7 +796,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                         xtype: 'button',
                                         style: 'position: absolute; top: 0px; right: 40px; padding: 0px;',
                                         //text: '+',
-                                        icon: 'lib/ext4/resources/themes/images/default/dd/drop-add.gif',
+                                        icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
                                         handler: function(th){
                                             //console.log(th.ownerCt.ownerCt.ownerCt.items.getAt(0));
                                             th.ownerCt.add(
@@ -828,7 +846,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                         style: 'position: absolute; top: 0px; right: 20px; padding: 0px;',
                                         xtype: 'button',
                                         //text: '-',
-                                        icon: 'lib/ext4/examples/restful/images/delete.png',
+                                        icon: 'lib/ext41/examples/restful/images/delete.png',
                                         handler: function(th){
                                             //console.log(th.ownerCt.ownerCt.ownerCt.items.getAt(0));
                                             th.ownerCt.remove(th.ownerCt.items.getAt(3));
@@ -964,14 +982,18 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                     fs.setTitle(typ.name + ' file');
                                                     fileField = Ext.clone(me.fileFieldPattern);
                                                     var label = "";
+                                                    var typExts = [];
                                                     if(Ext.isArray(typ.typeExt)){
                                                         for(i in typ.typeExt){
                                                             label = label + ' or ' + typ.typeExt[i].ext.ext;
+                                                            typExts.push(typ.typeExt[i].ext.ext);
                                                         }
                                                         label = label.substring(4);
                                                     }else{
                                                         label = typ.typeExt.ext.ext;
+                                                        typExts.push(typ.typeExt.ext.ext);
                                                     }
+                                                    fileField.typExts = typExts;
                                                     fileField.fieldLabel = label;
                                                     fileField.maxAllowedFiles = typ.typeExt.maxCount;
                                                     fileField.minAllowedFiles = typ.typeExt.minCount;
@@ -985,6 +1007,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                     }
                                                     for(i in typeExt){
                                                         fileField = Ext.clone(me.fileFieldPattern);
+                                                        fileField.typExts = [typeExt[i].ext.ext];
                                                         fileField.fieldLabel = typeExt[i].ext.ext;
                                                         fileField.maxAllowedFiles = typ.typeExt[i].maxCount;
                                                         fileField.minAllowedFiles = typ.typeExt[i].minCount;

@@ -256,8 +256,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                     , displayProjection: new OpenLayers.Projection("EPSG:900913")
                                     ,projection: new OpenLayers.Projection("EPSG:900913")
                                     ,layers: layers,
-                                    region: "center",
-                                    selectControl: selectControl
+                                    region: "center"
+                                    ,selectControl: selectControl
                                 });
                                 
                         mapPanel.map.addControl(selectControl)
@@ -313,7 +313,7 @@ Ext.define('PetroRes.view.MainWindow', {
                             width: 200,
                             split: true,
                             collapsible: true,
-                            collapseMode: "mini",
+                            collapseMode: "header",
                             autoScroll: true,
                             store: store,
                             rootVisible: false,
@@ -330,12 +330,35 @@ Ext.define('PetroRes.view.MainWindow', {
                             bodyStyle: 'padding:5px',
                             split: true,
                             collapsible: true,
-                            collapseMode: "mini",
+                            collapseMode: "header",
                             width: 180,
                             autoScroll: true,
                             region: 'east'
                             //preferredTypes: ["Point", "Line", "Polygon"]
                         });                        
+                        
+                        /*var printPage;
+                        var printProvider = Ext.create('GeoExt.data.MapfishPrintProvider', {
+                            url: "form/proxy?url=http://oceanviewer.ru/print/pdf"
+                            //capabilities: printCapabilities
+                            ,autoLoad: true
+                            ,listeners: {
+                                "loadcapabilities": function() {
+                                    printPage = Ext.create('GeoExt.data.PrintPage', {
+                                        printProvider: printProvider
+                                    });
+                                    Ext.getCmp('pdfButton').setDisabled(false);
+                                }
+                            }
+                             
+                        });*/
+                        //printPage = Ext.create('GeoExt.data.PrintPage', {
+                        //    printProvider: printProvider
+                        //});
+                        
+                        //var printPage = Ext.create('GeoExt.data.PrintPage', {
+                        //    printProvider: printProvider
+                        //});                        
                         
                         var tbar = [
                                     {
@@ -514,7 +537,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
                                             eventListeners: {
                                                 measure: function(evt) {
-                                                    alert("The length is " + evt.measure + evt.units);
+                                                    Ext.Msg.alert('Distance',
+                                                        'The distance is ' + evt.measure.toFixed(2) + ' '+ evt.units);
                                                 }
                                             }                                        
                                         }),
@@ -528,17 +552,28 @@ Ext.define('PetroRes.view.MainWindow', {
                                         control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
                                             eventListeners: {
                                                 measure: function(evt) {
-                                                    alert("The area is " + evt.measure + evt.units);
+                                                    Ext.Msg.alert('Area',
+                                                        'The area is ' + + evt.measure.toFixed(2) + ' '+ evt.units + '<sup>2</sup>');
+                                                    //alert("The area is " + evt.measure + evt.units);
                                                 }
                                             }                                        
                                         }),
                                         map: mapPanel.map
                                     }))                                    
+                                    /*, Ext.create('Ext.button.Button', {
+                                        text: 'PDF',
+                                        disabled: true,
+                                        id: 'pdfButton',
+                                        handler: function() {
+                                            printPage.fit(mapPanel, true);
+                                            printProvider.print(mapPanel, printPage);
+                                        }
+                                    })*/                                         
                                 ];                        
                         var wnd = Ext.getCmp('MainWindow');
                         wnd.openPetroWindow('geMapWindow', {
                             closable: true,
-                            title: 'GeoExt Map',
+                            title: 'Caspian Sea',
                             maximizable: true,
                             maximized: true,
                             id: 'geMapWindow',
@@ -590,12 +625,12 @@ Ext.define('PetroRes.view.MainWindow', {
                         },
                         {
                             xtype: 'menuitem',
-                            text: 'Sites',
+                            text: 'Projects',
                             handler: function(){
                                 var wnd = Ext.getCmp('MainWindow');
                                 wnd.openPetroWindow('sites', {
                                     closable: true,
-                                    title: 'Sites',
+                                    title: 'Projects',
                                     maximizable: true,
                                     maximized: false,
                                     layout: 'fit',
@@ -823,6 +858,66 @@ Ext.define('PetroRes.view.MainWindow', {
                 ]
             }
         }:undefined
+        , {
+            xtype: 'button',
+            //xtype: 'menuitem',
+            text: 'Help',
+            handler: function(){
+                var wnd = Ext.getCmp('MainWindow');
+                wnd.openPetroWindow('helpWindow', {
+                    closable: true,
+                    title: 'Help',
+                    maximizable: true,
+                    maximized: false,
+                    layout: 'fit',
+                    items: [
+                    {
+                        layout:'border',
+                        defaults: {
+                            collapsible: true,
+                            split: true
+                        },
+                        items: [
+                        {
+                            xtype:'treepanel',
+                            listeners: {
+                                itemclick: function(a, b, c){
+                                    console.log (arguments);
+                                    if(b.raw.url){
+                                        Ext.getCmp('helpIframe').body.dom.innerHTML= 
+                                            '<iframe style="border: none;" height="100%" width="100%" src="' + b.raw.url + '"></iframe>'
+                                    }
+//if(a.attributes.url) Ext.getCmp('helpIframe').body.dom.innerHTML= '<iframe style="border: none;" height="100%" width="100%" src="' + a.attributes.url + '"></iframe>'
+                                }
+                            },
+                            rootVisible: false,
+                            region:'west',
+                            //margins: '5 0 0 0',
+                            //cmargins: '5 5 0 0',
+                            width: 175,
+                            minSize: 100,
+                            maxSize: 250,
+                            useArrows:true,
+                            autoScroll:true,
+                            animate:true,
+                            containerScroll: true,
+                            border: false,
+                            root: {
+                                children: petroresConfig.helpInfo
+                            }
+                        },
+                        {
+                            collapsible: false,
+                            region:'center',
+                            margins: '5 0 0 0',
+                            id: 'helpIframe'
+                        }
+                        ]
+                    }
+                    ]
+                });
+            }
+        }
         ]
     }
     ],

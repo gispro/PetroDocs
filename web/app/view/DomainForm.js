@@ -42,7 +42,7 @@ Ext.define('PetroRes.view.DomainForm', {
             {
                 xtype: 'combobox',
                 name: 'site',
-                fieldLabel: 'Site',
+                fieldLabel: 'Project',
                 displayField: 'name',
                 store: 'SitesJsonStore',
                 anchor: '100%'

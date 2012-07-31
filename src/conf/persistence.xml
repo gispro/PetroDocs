@@ -24,6 +24,10 @@
       <property name="javax.persistence.jdbc.password" value="petroresurs"/>
       <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
       <property name="javax.persistence.jdbc.user" value="petroresurs"/>
+      <!--<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://192.168.0.205:1433;databaseName=PetroDocsDist"/>
+      <property name="javax.persistence.jdbc.password" value="petrodocs"/>
+      <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="javax.persistence.jdbc.user" value="petrodocs"/>-->
     </properties>
   </persistence-unit>
 </persistence>

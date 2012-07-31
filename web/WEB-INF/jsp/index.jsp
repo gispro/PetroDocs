@@ -46,7 +46,9 @@
                 }
             }
             %>
-            petroresConfig.vectorWfs = 'http://playground:9000/geoserver/wfs';
+            //petroresConfig.vectorWfs = 'http://localhost/geoserver/wfs';
+            petroresConfig.vectorWfs = '${initParam.vectorWfs}';
+            //petroresConfig.vectorWfs = 'http://playground:9000/geoserver/wfs';
             //petroresConfig.vectorWfs = 'http://oceanviewer.ru/geoserver/wfs';
             petroresConfig.domainRootId = ${initParam.domainRootId};
             //petroresConfig.saveStrategy = new OpenLayers.Strategy.Save();
@@ -80,6 +82,9 @@
                 CLASS_NAME: "OpenLayers.Control.DeleteFeature"
             });            
 
+            petroresConfig.proj4326 = new OpenLayers.Projection('EPSG:4326');
+            petroresConfig.proj32639 = new OpenLayers.Projection('EPSG:32639');
+            petroresConfig.projGoog = new OpenLayers.Projection('EPSG:900913');
             petroresConfig.showFeatureEditor = function(layer, features){
                             var wnd = Ext.getCmp('MainWindow');
                             for(var featNum in features){
@@ -95,10 +100,11 @@
                                                         feature.attributes = form.getForm().getFieldValues(true);
                                                         wnd.openPetroWindows.attrWnd.close();
                                                         // what the hack?
-                                                        //OpenLayers.Projection.transform(
-                                                        feature.geometry.transform( 
-                                                        feature.layer.projection, 
-                                                        feature.layer.map.projection);
+                                                        // one
+                                                        feature.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
+                                                        // two
+                                                        feature.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
+                                                        // profit
                                                         layer.saveStrategy.save([feature]);
                                                     }
                                                 }
@@ -262,147 +268,62 @@
                         layer.schemaLoaded = schemaLoaded;
                     }
                 });                
-            }
+            };
 
             petroresConfig.layersCreator = function(){ 
                 return [
+                    new OpenLayers.Layer.OSM("OpenStreetMap"),   
+                    new OpenLayers.Layer.XYZ(
+                    "MapBox",
+                    [
+                        "http://a.tiles.mapbox.com/v3/mapbox.mapbox-streets/\${z}/\${x}/\${y}.png",
+                        "http://b.tiles.mapbox.com/v3/mapbox.mapbox-streets/\${z}/\${x}/\${y}.png",
+                        "http://c.tiles.mapbox.com/v3/mapbox.mapbox-streets/\${z}/\${x}/\${y}.png",
+                        "http://d.tiles.mapbox.com/v3/mapbox.mapbox-streets/\${z}/\${x}/\${y}.png"
+
+                    ], {
+                        attribution: "Tiles &copy; <a href='http://mapbox.com/'>MapBox</a> | " + 
+                            "Data &copy; <a href='http://www.openstreetmap.org/'>OpenStreetMap</a> " +
+                            "and contributors, CC-BY-SA",
+                        sphericalMercator: true,
+                        wrapDateLine: true,
+                        transitionEffect: "resize",
+                        buffer: 1,
+                        numZoomLevels: 17
+                    }),  
+                    new OpenLayers.Layer.Bing({
+                        name: "Satellite",
+                        key: 'AlSjFhANk1LeS8B3SimhN04C4fxfzNAuLuG_ZpKTD2fhvtTLFAXG1MRsbuk68qqI',
+                        type: "AerialWithLabels"
+                    }),
                 /*new OpenLayers.Layer.WMS(
-                'Base', 
-                'http://oceanviewer.ru/cache/service/wms', 
-                {
-                    isBaseLayer: true,
-                    layers: 'eko_merge'
-                }, {
-                    transitionEffect: 'resize'
-                }), 
-                new OpenLayers.Layer.WMS(
                 'Blank', 
                 'http://oceanviewer.ru/cache/service/wms', 
                 {
-                    isBaseLayer: true,
-                    layers: 'eko_blank'
+                    layers: 'eko_blank',
+                    projection: 'EPSG:900913'
                 }, {
                     transitionEffect: 'resize'
-                })
-                , */
-                
-                //new OpenLayers.Layer.Bing({
-                //    name: "Bing Aerial",
-                //    type: "AerialWithLabels",
-                //    apiKey: ''
-                //}),
-                
-                
-new OpenLayers.Layer.XYZ(
-    "MapBox Streets",
-    [
-    //"http://a.tiles.mapbox.com/v3/ru.map-47coodrk/\${z}/\${x}/\${y}.png",
-    //"http://b.tiles.mapbox.com/v3/ru.map-47coodrk/\${z}/\${x}/\${y}.png",
-    //"http://c.tiles.mapbox.com/v3/ru.map-47coodrk/\${z}/\${x}/\${y}.png",
-    //"http://d.tiles.mapbox.com/v3/ru.map-47coodrk/\${z}/\${x}/\${y}.png"
-        "http://a.tiles.mapbox.com/v3/mapbox.mapbox-streets/\${z}/\${x}/\${y}.png",
-        "http://b.tiles.mapbox.com/v3/mapbox.mapbox-streets/\${z}/\${x}/\${y}.png",
-        "http://c.tiles.mapbox.com/v3/mapbox.mapbox-streets/\${z}/\${x}/\${y}.png",
-        "http://d.tiles.mapbox.com/v3/mapbox.mapbox-streets/\${z}/\${x}/\${y}.png"
-    
-    ], {
-        attribution: "Tiles &copy; <a href='http://mapbox.com/'>MapBox</a> | " + 
-            "Data &copy; <a href='http://www.openstreetmap.org/'>OpenStreetMap</a> " +
-            "and contributors, CC-BY-SA",
-        sphericalMercator: true,
-        wrapDateLine: true,
-        transitionEffect: "resize",
-        buffer: 1,
-        numZoomLevels: 17
-    }
-),  
-    
-new OpenLayers.Layer.OSM( "OSM Map"),    
-/*new OpenLayers.Layer.TMS(
-    "MapBox World Light",
-    [
-        "http://a.tiles.mapbox.com/v1/mapbox.world-light/\${z}/\${y}/\${x}.png",
-        "http://b.tiles.mapbox.com/v1/mapbox.world-light/\${z}/\${y}/\${x}.png",
-        "http://c.tiles.mapbox.com/v1/mapbox.world-light/\${z}/\${y}/\${x}.png",
-        "http://d.tiles.mapbox.com/v1/mapbox.world-light/\${z}/\${y}/\${x}.png"
-    
-    ], {
-        attribution: "Tiles &copy; <a href='http://mapbox.com/'>MapBox</a> | " + 
-            "Data &copy; <a href='http://www.openstreetmap.org/'>OpenStreetMap</a> " +
-            "and contributors, CC-BY-SA",
-        sphericalMercator: true,
-        wrapDateLine: true,
-        transitionEffect: "resize",
-        buffer: 1,
-        numZoomLevels: 17
-    }
-),*/        
-                
-                new OpenLayers.Layer.Vector('Wells', {
-                    psLayerType: 'point',
-                    isBaseLayer: false,
-                    defaultLabelField: 'NAME',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
-                    protocol: new OpenLayers.Protocol.WFS({
-                        url: petroresConfig.vectorWfs,
-                        featureType: "Wells_PRS",
-                        featureNS: "http://gispro.ru/petrores",
-                        geometryName: "GEOM"
-                    })
-                    ,defaultIdField: 'OBJECTID'
-                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=petrores:Wells_PRS"
-                    ,projection: new OpenLayers.Projection("EPSG:32639")
-                    ,version: "1.1.0"
-                    , eventListeners: {
-                        beforefeaturesadded: function(obj){
-                            petroresConfig.showFeatureEditor(obj.object, obj.features)
-                        },
-                        loadend: function(eventsObj){
-                            petroresConfig.loadWfsSchema(eventsObj.object);
-                            petroresConfig.createEditingPanel(eventsObj.object)
-                        }
-                    }
-                }), 
-                new OpenLayers.Layer.Vector('Other Licenses', {
+                }),*/
+
+
+
+
+
+                new OpenLayers.Layer.Vector('Regional Geology', {
                     psLayerType: 'poly',
                     isBaseLayer: false,
-                    defaultLabelField: 'BLOCK_NAME',
-                    defaultIdField: 'OBJECTID',
+                    visibility: false,
+                    defaultLabelField: 'Name',
                     strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
-                        featureType: "Other_Licenses",
-                        featureNS: "http://gispro.ru/petrores",
+                        featureType: "Regional_Geology",
+                        featureNS: "http://petroresurs.com/geoportal",
                         geometryName: "GEOM"
-                    }),
-                    styleMap: new OpenLayers.StyleMap({
-                        "default": new OpenLayers.Style({
-                            name: "проверка",
-                            fillColor: "#9555d4",
-                            fillOpacity: 0,
-                            strokeColor: "#9555d4",
-                            strokeWidth: 0.4
-                        }/*, {
-                            rules: [
-                                new OpenLayers.Rule({
-                                    name: "проверка 3",
-                                    
-                                    fillColor: "#9555d4",
-                                    fillOpacity: 0,
-                                    strokeColor: "#9555d4",
-                                    strokeWidth: 0.4
-                                })
-                            ]
-                        }*/),
-                        "select": new OpenLayers.Style({
-                            name: "проверка2",
-                            fillColor: "#9555d4",
-                            fillOpacity: 0.4,
-                            strokeColor: "#9555d4",
-                            strokeWidth: 1.5
-                        })
-                    }),
-                    schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=petrores:Other_Licenses"
+                    })
+                    ,defaultIdField: 'OBJECTID'
+                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:Regional_Geology"
                     ,projection: new OpenLayers.Projection("EPSG:32639")
                     ,version: "1.1.0"
                     , eventListeners: {
@@ -414,21 +335,49 @@ new OpenLayers.Layer.OSM( "OSM Map"),
                             petroresConfig.createEditingPanel(eventsObj.object)
                         }
                     }
-                }), 
-                new OpenLayers.Layer.Vector('Islands', {
+                }),                 
+
+                new OpenLayers.Layer.Vector('Ecological Limitations', {
                     psLayerType: 'poly',
                     isBaseLayer: false,
-                    defaultLabelField: 'OBJECTID',
+                    visibility: false,
+                    defaultLabelField: 'Name',
+                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    protocol: new OpenLayers.Protocol.WFS({
+                        url: petroresConfig.vectorWfs,
+                        featureType: "Ecological_limitations",
+                        featureNS: "http://petroresurs.com/geoportal",
+                        geometryName: "GEOM"
+                    })
+                    ,defaultIdField: 'OBJECTID'
+                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:Ecological_limitations"
+                    ,projection: new OpenLayers.Projection("EPSG:32639")
+                    ,version: "1.1.0"
+                    , eventListeners: {
+                        beforefeaturesadded: function(obj){
+                            petroresConfig.showFeatureEditor(obj.object, obj.features)
+                        },
+                        loadend: function(eventsObj){
+                            petroresConfig.loadWfsSchema(eventsObj.object);
+                            petroresConfig.createEditingPanel(eventsObj.object)
+                        }
+                    }
+                }),
+                
+                new OpenLayers.Layer.Vector('Seismic 3D', {
+                    psLayerType: 'poly',
+                    isBaseLayer: false,
+                    defaultLabelField: 'Name',
                     defaultIdField: 'OBJECTID',
                     strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
-                        featureType: "Islands",
-                        featureNS: "http://gispro.ru/petrores",
+                        featureType: "Seismic_3D_PRS",
+                        featureNS: "http://petroresurs.com/geoportal",
                         geometryName: "GEOM"
                     })
                     ,defaultIdField: 'OBJECTID'
-                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=petrores:Wells_PRS"
+                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:Seismic_3D_PRS"
                     ,projection: new OpenLayers.Projection("EPSG:32639")
                     ,version: "1.1.0"
                     , eventListeners: {
@@ -441,20 +390,21 @@ new OpenLayers.Layer.OSM( "OSM Map"),
                         }
                     }
                 }), 
-                new OpenLayers.Layer.Vector('Seismic 2D 4C 2011', {
+
+                new OpenLayers.Layer.Vector('Seismic 2D', {
                     psLayerType: 'line',
                     isBaseLayer: false,
-                    //defaultLabelField: 'OBJECTID',
+                    defaultLabelField: 'Name',
                     defaultIdField: 'OBJECTID',
                     strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
-                        featureType: "Seismic_2D_4C_2011",
-                        featureNS: "http://gispro.ru/petrores",
+                        featureType: "Seismic_2D_PRS",
+                        featureNS: "http://petroresurs.com/geoportal",
                         geometryName: "GEOM"
                     })
                     ,defaultIdField: 'OBJECTID'
-                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=petrores:Wells_PRS"
+                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:Seismic_2D_PRS"
                     ,projection: new OpenLayers.Projection("EPSG:32639")
                     ,version: "1.1.0"
                     , eventListeners: {
@@ -467,84 +417,7 @@ new OpenLayers.Layer.OSM( "OSM Map"),
                         }
                     }
                 }), 
-                new OpenLayers.Layer.Vector('Seismic 2D Lines Old', {
-                    psLayerType: 'line',
-                    isBaseLayer: false,
-                    //defaultLabelField: 'OBJECTID',
-                    defaultIdField: 'OBJECTID',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
-                    protocol: new OpenLayers.Protocol.WFS({
-                        url: petroresConfig.vectorWfs,
-                        featureType: "Seismic_2D_Lines_old",
-                        featureNS: "http://gispro.ru/petrores",
-                        geometryName: "GEOM"
-                    })
-                    ,defaultIdField: 'OBJECTID'
-                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=petrores:Wells_PRS"
-                    ,projection: new OpenLayers.Projection("EPSG:32639")
-                    ,version: "1.1.0"
-                    , eventListeners: {
-                        beforefeaturesadded: function(obj){
-                            petroresConfig.showFeatureEditor(obj.object, obj.features)
-                        },
-                        loadend: function(eventsObj){
-                            petroresConfig.loadWfsSchema(eventsObj.object);
-                            petroresConfig.createEditingPanel(eventsObj.object)
-                        }
-                    }
-                }), 
-                new OpenLayers.Layer.Vector('Seismic 3D 2009', {
-                    psLayerType: 'line',
-                    isBaseLayer: false,
-                    defaultLabelField: 'OBJECTID',
-                    defaultIdField: 'OBJECTID',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
-                    protocol: new OpenLayers.Protocol.WFS({
-                        url: petroresConfig.vectorWfs,
-                        featureType: "Seismic_3D_2009",
-                        featureNS: "http://gispro.ru/petrores",
-                        geometryName: "GEOM"
-                    })
-                    ,defaultIdField: 'OBJECTID'
-                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=petrores:Wells_PRS"
-                    ,projection: new OpenLayers.Projection("EPSG:32639")
-                    ,version: "1.1.0"
-                    , eventListeners: {
-                        beforefeaturesadded: function(obj){
-                            petroresConfig.showFeatureEditor(obj.object, obj.features)
-                        },
-                        loadend: function(eventsObj){
-                            petroresConfig.loadWfsSchema(eventsObj.object);
-                            petroresConfig.createEditingPanel(eventsObj.object)
-                        }
-                    }
-                }), 
-                new OpenLayers.Layer.Vector('Seismic 3D 2010', {
-                    psLayerType: 'line',
-                    isBaseLayer: false,
-                    defaultLabelField: 'NAME',
-                    defaultIdField: 'OBJECTID',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
-                    protocol: new OpenLayers.Protocol.WFS({
-                        url: petroresConfig.vectorWfs,
-                        featureType: "Seismic_3D_2010",
-                        featureNS: "http://gispro.ru/petrores",
-                        geometryName: "GEOM"
-                    })
-                    ,defaultIdField: 'OBJECTID'
-                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=petrores:Wells_PRS"
-                    ,projection: new OpenLayers.Projection("EPSG:32639")
-                    ,version: "1.1.0"
-                    , eventListeners: {
-                        beforefeaturesadded: function(obj){
-                            petroresConfig.showFeatureEditor(obj.object, obj.features)
-                        },
-                        loadend: function(eventsObj){
-                            petroresConfig.loadWfsSchema(eventsObj.object);
-                            petroresConfig.createEditingPanel(eventsObj.object)
-                        }
-                    }
-                }), 
+
                 new OpenLayers.Layer.Vector('Structures', {
                     psLayerType: 'poly',
                     isBaseLayer: false,
@@ -554,7 +427,7 @@ new OpenLayers.Layer.OSM( "OSM Map"),
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
                         featureType: "Structures_PRS",
-                        featureNS: "http://gispro.ru/petrores",
+                        featureNS: "http://petroresurs.com/geoportal",
                         geometryName: "GEOM"
                     }),
                     styleMap: new OpenLayers.StyleMap({
@@ -565,16 +438,106 @@ new OpenLayers.Layer.OSM( "OSM Map"),
                             strokeWidth: 0.4
                         }),
                         "select": new OpenLayers.Style({
-                        fillColor: "#ddf7d0",
-                        fillOpacity: 0.8,
-                        strokeColor: "#385827",
-                        strokeOpacity: 0.7,
-                        strokeWidth: 1.5
+                            fillColor: "#ddf7d0",
+                            fillOpacity: 0.8,
+                            strokeColor: "#385827",
+                            strokeOpacity: 0.7,
+                            strokeWidth: 1.5
                         })
                     })
                     ,defaultIdField: 'OBJECTID'
-                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=petrores:Wells_PRS"
+                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:Structures_PRS"
                     ,projection: new OpenLayers.Projection("EPSG:32639")
+                    ,version: "1.1.0"
+                    , eventListeners: {
+                        beforefeaturesadded: function(obj){
+                            petroresConfig.showFeatureEditor(obj.object, obj.features)
+                        },
+                        loadend: function(eventsObj){
+                            petroresConfig.loadWfsSchema(eventsObj.object);
+                            petroresConfig.createEditingPanel(eventsObj.object)
+                        }
+                    }
+                }),
+                new OpenLayers.Layer.Vector('Licenses', {
+                    psLayerType: 'poly',
+                    isBaseLayer: false,
+                    defaultLabelField: 'Name',
+                    defaultIdField: 'OBJECTID',
+                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    protocol: new OpenLayers.Protocol.WFS({
+                        url: petroresConfig.vectorWfs,
+                        featureType: "Licenses",
+                        featureNS: "http://petroresurs.com/geoportal",
+                        geometryName: "GEOM"
+                    }),
+                    styleMap: new OpenLayers.StyleMap({
+                        "default": new OpenLayers.Style({
+                            fillColor: "#9555d4",
+                            fillOpacity: 0,
+                            strokeColor: "#9555d4",
+                            strokeWidth: 0.4
+                        }),
+                        "select": new OpenLayers.Style({
+                            fillColor: "#9555d4",
+                            fillOpacity: 0.4,
+                            strokeColor: "#9555d4",
+                            strokeWidth: 1.5
+                        })
+                    })
+                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:Licenses"
+                    ,projection: new OpenLayers.Projection("EPSG:32639")
+                    ,version: "1.1.0"
+                    , eventListeners: {
+                        beforefeaturesadded: function(obj){
+                            petroresConfig.showFeatureEditor(obj.object, obj.features)
+                        },
+                        loadend: function(eventsObj){
+                            petroresConfig.loadWfsSchema(eventsObj.object);
+                            petroresConfig.createEditingPanel(eventsObj.object)
+                        }
+                    }
+                }), 
+                new OpenLayers.Layer.Vector('Wells', {
+                    psLayerType: 'point',
+                    isBaseLayer: false,
+                    defaultLabelField: 'Name',
+                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    protocol: new OpenLayers.Protocol.WFS({
+                        url: petroresConfig.vectorWfs,
+                        featureType: "Wells",
+                        featureNS: "http://petroresurs.com/geoportal",
+                        geometryName: "GEOM"
+                    })
+                    ,defaultIdField: 'OBJECTID'
+                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:Wells"
+                    ,projection: new OpenLayers.Projection("EPSG:32639")
+                    ,version: "1.1.0"
+                    , eventListeners: {
+                        beforefeaturesadded: function(obj){
+                            petroresConfig.showFeatureEditor(obj.object, obj.features)
+                        },
+                        loadend: function(eventsObj){
+                            petroresConfig.loadWfsSchema(eventsObj.object);
+                            petroresConfig.createEditingPanel(eventsObj.object)
+                        }
+                    }
+                })
+                
+                ,new OpenLayers.Layer.Vector('Wells 4326', {
+                    psLayerType: 'point',
+                    isBaseLayer: false,
+                    defaultLabelField: 'Name',
+                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    protocol: new OpenLayers.Protocol.WFS({
+                        url: petroresConfig.vectorWfs,
+                        featureType: "Wells_4326",
+                        featureNS: "http://petroresurs.com/geoportal",
+                        geometryName: "GEOM"
+                    })
+                    ,defaultIdField: 'OBJECTID'
+                    ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:Wells_4326"
+                    ,projection: new OpenLayers.Projection("EPSG:4326")
                     ,version: "1.1.0"
                     , eventListeners: {
                         beforefeaturesadded: function(obj){
@@ -587,6 +550,8 @@ new OpenLayers.Layer.OSM( "OSM Map"),
                     }
                 })
             ]};
+
+            
             petroresConfig.hasDuplicates = function(array) {
                 var valuesSoFar = {};
                 for (var i = 0; i < array.length; ++i) {
@@ -620,6 +585,8 @@ new OpenLayers.Layer.OSM( "OSM Map"),
         <!--<script type="text/javascript" src="lib/ext4/ext-all-debug.js"></script>-->
         <script type="text/javascript" src="lib/ext41/ext-all-debug.js"></script>
         <script type="text/javascript" src="lib/boxselect/Boxselect.js"></script>
+        <!--<script type="text/javascript" src="/print/pdf/info.json?var=printCapabilities"></script>-->
+        <script type="text/javascript" src="config/helpInfo.js"></script>
         <link rel="stylesheet" type="text/css" href="lib/boxselect/boxselect.css"/>
         <!--<script type="text/javascript" src="lib/geoext2/src/GeoExt/GeoExt.js"></script>-->
         <script type="text/javascript">
@@ -630,6 +597,11 @@ new OpenLayers.Layer.OSM( "OSM Map"),
                 });
             }, 1000 * 60 * 10);
 
+
+            //var mapfish = {
+            //    SERVER_BASE_URL: 'http://oceanviewer.ru/print/pdf/'
+           //}
+            
         </script>
         <script type="text/javascript" src="app.js"></script>
         <title>Petroresource Documents System</title>

@@ -21,7 +21,7 @@ Ext.define('PetroRes.store.SitesJsonStore', {
             autoSync: true,
             storeId: 'SitesJsonStore',
             //buffered: true,
-            pageSize: 10,
+            pageSize: 65535,
             remoteSort: true,
             proxy: {
                 type: 'ajax',

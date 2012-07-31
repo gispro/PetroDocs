@@ -24,6 +24,8 @@ Ext.require([
     'GeoExt.tree.Column',
     'GeoExt.panel.Legend',
     'GeoExt.container.VectorLegend'
+    //,'GeoExt.data.MapfishPrintProvider'
+    //,'GeoExt.data.PrintPage'
 ]);
 
 Ext.override(Ext.form.Field, {

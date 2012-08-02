@@ -15,6 +15,9 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
       this.temlateObj = record.raw;
       this.tfAdd.setValue(this.temlateObj.fullTitle);
     },
+    getTemplateDocument: function(){
+      return this.temlateObj;
+    },
     initComponent: function() {
         var me = this;
 
@@ -31,9 +34,10 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
             });
         this.btnAddOpen = Ext.create('Ext.Button',
             {
-                xtype:'button', iconCls:'ab_add', cls:'album-btn', width:23, height:24, region:'east',
+                xtype:'button', iconCls:'ab_add', cls:'album-btn', width:23, height:24, 
+                
                 handler:function(){
-                   var df = Ext.create('PetroRes.view.DocumentForm', {domain:me.temlateDomain});
+                   var df = Ext.create('PetroRes.view.DocumentForm', {domain:me.temlateDomain, fullTitle:me.tfAdd.getValue()});
                    df.addListener(  'documentadded', 
                                     function(p1, p2){
                                         me.fireEvent('documentadded', {form:df})},
@@ -53,7 +57,45 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
                         }); 
                 }
             });
-        
+        this.btnDelete = Ext.create('Ext.Button',
+            {
+                xtype:'button', iconCls:'ab_delete', cls:'album-btn', width:23, height:24,
+                handler:function(){
+                    if( me.getTemplateDocument()){
+                        Ext.Msg.confirm('Delete document', 'Delete "'+ me.getTemplateDocument().fullTitle +'" ?', 
+                                         function(button) {
+                                            if (button === 'yes') {
+                                                Ext.Ajax.request({
+                                                url: 'rest/documents',
+                                                method: 'DELETE',
+                                                jsonData: me.getTemplateDocument(),
+                                                success: function() {
+                                                    Ext.Msg.alert(
+                                                        'Success', 
+                                                        'Your document has been deleted.',
+                                                        function(p1, p2){
+                                                           me.fireEvent('documentdeleted', {domain:me.getTemplateDomain,  obj:me.getTemplateDocument()});
+                                                        }
+                                                    );
+                                                },
+                                                failure: function(fp, o){
+                                                    Ext.Msg.alert('Failure', o.result.msg);
+                                                }
+                                            });     
+                                            }
+                                        });
+                    }}
+            });
+        var pnlButtons = 
+            Ext.create('Ext.panel.Panel',
+                        { region:'east',
+                          layout:{
+                            type: 'hbox',
+                            width:60, height:24,
+                            align:'top'
+                          },
+                          items:[this.btnAddOpen, this.btnDelete]});
+
         Ext.applyIf(me, {
             listeners:{
                 afterRender: function(thisForm, options){
@@ -67,7 +109,7 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
                 }
             },
             layout:'border',
-            items: [ me.lblDomain, me.tfAdd, me.btnAddOpen]
+            items: [ me.lblDomain, me.tfAdd, pnlButtons]
         });
 
         me.callParent(arguments);

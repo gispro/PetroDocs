@@ -155,6 +155,13 @@ Ext.define('PetroRes.view.MainWindow', {
                                                             ddStore.loadDocuments(raw.id, raw.level, raw.name, raw.fullName);
                                                         },
                                                         pnlAddDocument);
+                            pnlAddDocument.addListener('documentdeleted',
+                                                        function(p1, p2){
+                                                            var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore'),
+                                                                raw = this.getTemplateDomain();
+                                                            ddStore.loadDocuments(raw.id, raw.level, raw.name, raw.fullName);
+                                                        },
+                                                        pnlAddDocument);
                             Ext.apply(pnlTree,{
                                 region: 'center'
                             });

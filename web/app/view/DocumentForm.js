@@ -1335,6 +1335,10 @@ Ext.define('PetroRes.view.DocumentForm', {
             pick.setValue(me.domain);
             pick.fireEvent('select', pick, me.domain);
         }
+        if(me.fullTitle){
+            var tf = this.getForm().findField('fullTitle');
+            tf.setValue(me.fullTitle);
+        }
       }  
     },
     fillDomainForm: function(domain, needSetDomainPath){

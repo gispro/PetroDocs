@@ -18,6 +18,13 @@
     background-position: center;
 }
 
+.ab_delete{
+    background-image: url(../images/dialog-close.png) !important;
+    background-size: 100%;
+    background-position: center;
+}
+
+
 .ab_TextFieldLabel{
     font-weight: bold;
     padding-left: 3px;

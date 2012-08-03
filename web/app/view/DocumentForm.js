@@ -293,7 +293,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                         this.fileFieldMe.addFileField();
                                     }
                                 }
-                            },                        
+                            }                        
                         ]
                     },
                     {

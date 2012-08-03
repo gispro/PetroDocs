@@ -481,7 +481,7 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                                         this.fileFieldMe.addFileField();
                                     }
                                 }
-                            },                        
+                            }                        
                         ]
                     },
                     {

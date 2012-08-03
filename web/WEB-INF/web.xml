@@ -22,6 +22,8 @@
     <context-param>
         <param-name>vectorWfs</param-name>
         <param-value>http://playground:9000/geoserver/wfs</param-value>
+        <!--<param-value>http://oceanviewer.ru/geoserver/wfs</param-value>-->
+        <!--<param-value>http://localhost/geoserver/wfs</param-value>-->
     </context-param>
     <context-param>
         <param-name>roleReader</param-name>

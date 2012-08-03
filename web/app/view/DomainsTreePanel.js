@@ -134,7 +134,7 @@ Ext.define('PetroRes.view.DomainsTreePanel', {
                         
                         var node = grid.store.getAt(rowIndex);
                         
-                        console.log(node);
+                        //console.log(node);
                         
                         
                         var domainForm = Ext.create('PetroRes.view.DomainForm');

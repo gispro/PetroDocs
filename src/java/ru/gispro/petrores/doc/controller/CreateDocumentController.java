@@ -234,7 +234,15 @@ public class CreateDocumentController{// implements ServletContextAware{
                             return;
                         }
 
-                        java.io.File realFile = new java.io.File(realPath, item.getName());
+                        String itemGetName = item.getName();
+                        {
+                            int lastSlash = itemGetName.lastIndexOf('\\');
+                            if(lastSlash>=0){
+                                itemGetName = itemGetName.substring(lastSlash+1);
+                            }
+                            
+                        }
+                        java.io.File realFile = new java.io.File(realPath, itemGetName);
                         if(realFile.exists()){
                             //throw new RuntimeException("file " + realFile.getAbsolutePath() + " exists");
                             JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
@@ -250,7 +258,7 @@ public class CreateDocumentController{// implements ServletContextAware{
                                 req.getSession().getServletContext().getInitParameter("solrUrl"), 
                                 stream, 
                                 fos,
-                                midPath + item.getName(),
+                                midPath + itemGetName,
                                 item.getContentType());
                         //BufferedInputStream bis = new BufferedInputStream(stream);
                         //BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -264,8 +272,8 @@ public class CreateDocumentController{// implements ServletContextAware{
                         fos.close();
 
                         File file = new File();
-                        file.setPath(midPath + item.getName());
-                        file.setFileName(item.getName());
+                        file.setPath(midPath + itemGetName);
+                        file.setFileName(itemGetName);
                         file.setMimeType(item.getContentType());
 
                         entityManager.persist(file);

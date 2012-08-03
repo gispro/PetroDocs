@@ -896,7 +896,7 @@ Ext.define('PetroRes.view.MainWindow', {
                             xtype:'treepanel',
                             listeners: {
                                 itemclick: function(a, b, c){
-                                    console.log (arguments);
+                                    //console.log (arguments);
                                     if(b.raw.url){
                                         Ext.getCmp('helpIframe').body.dom.innerHTML= 
                                             '<iframe style="border: none;" height="100%" width="100%" src="' + b.raw.url + '"></iframe>'

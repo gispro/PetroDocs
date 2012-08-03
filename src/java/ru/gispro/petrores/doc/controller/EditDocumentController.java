@@ -494,8 +494,15 @@ public class EditDocumentController{// implements ServletContextAware{
                         }
 
                     } else {
-                        
-                        if(item.getName()!=null && item.getName().trim().length()>0){
+                        String itemGetName = item.getName();
+                        if(itemGetName!=null && itemGetName.trim().length()>0){
+                            {
+                                int lastSlash = itemGetName.lastIndexOf('\\');
+                                if(lastSlash>=0){
+                                    itemGetName = itemGetName.substring(lastSlash+1);
+                                }
+
+                            }
 
                             if(midPath==null){
                                 //throw new RuntimeException("No path met");
@@ -509,7 +516,7 @@ public class EditDocumentController{// implements ServletContextAware{
                             }
 
                             boolean cantDelete = true;
-                            java.io.File realFile = new java.io.File(realPath, item.getName());
+                            java.io.File realFile = new java.io.File(realPath, itemGetName);
                             if(realFile.exists()){
                                 if(wereFiles!=null){
                                     for(File fff : wereFiles){
@@ -545,7 +552,7 @@ public class EditDocumentController{// implements ServletContextAware{
                                     req.getSession().getServletContext().getInitParameter("solrUrl"), 
                                     stream, 
                                     fos,
-                                    midPath + item.getName(),
+                                    midPath + itemGetName,
                                     item.getContentType());
                             
                             /*int byt;
@@ -560,8 +567,8 @@ public class EditDocumentController{// implements ServletContextAware{
 
                             if(!cantDelete){
                                 File file = new File();
-                                file.setPath(midPath + item.getName());
-                                file.setFileName(item.getName());
+                                file.setPath(midPath + itemGetName);
+                                file.setFileName(itemGetName);
                                 file.setMimeType(item.getContentType());
 
                                 entityManager.persist(file);

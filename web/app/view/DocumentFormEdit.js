@@ -162,7 +162,7 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                     var frm = me.getForm();
                     var oldLoadRecord = frm.loadRecord;
                     frm.loadRecord = function(){
-                        console.log(arguments);
+                        //console.log(arguments);
 
                         if(!Ext.isArray(arguments[0].data.geoObjects))
                             arguments[0].set('geoObjects', [arguments[0].data.geoObjects]);
@@ -747,7 +747,7 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                                                     curDomain = nextDomain;
                                                 }
                                                 
-                                                console.log([site, stage, wp, tow]);
+                                                //console.log([site, stage, wp, tow]);
                                                 
                                                 var stageCombo = me.getForm().
                                                     findField('stage');

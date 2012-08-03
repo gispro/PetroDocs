@@ -158,7 +158,7 @@ Ext.define('PetroRes.view.DocumentSimpleSearchPanel', {
                             success: function(resp, opts){
                                 var ret = Ext.decode(resp.responseText);
                                 petroresConfig.makeAllIdsNumbers(ret);
-                                console.log(["вот, получилось", ret])
+                                //console.log(["вот, получилось", ret])
 
                                 var wnd = Ext.getCmp('MainWindow');
 

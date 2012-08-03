@@ -1389,7 +1389,7 @@ Ext.define('PetroRes.view.DocumentForm', {
             curDomain = nextDomain;
         }
 
-        console.log([site, stage, wp, tow]);
+        //console.log([site, stage, wp, tow]);
 
         var stageCombo = this.getForm().
             findField('stage');

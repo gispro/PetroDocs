@@ -26,6 +26,7 @@ Ext.require([
     'GeoExt.container.VectorLegend'
     //,'GeoExt.data.MapfishPrintProvider'
     //,'GeoExt.data.PrintPage'
+    , 'GeoExt.slider.LayerOpacity'
 ]);
 
 Ext.override(Ext.form.Field, {

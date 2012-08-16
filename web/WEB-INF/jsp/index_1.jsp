@@ -1,3 +1,4 @@
+<%@page import="waffle.servlet.WindowsPrincipal"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="java.io.File"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -18,16 +19,47 @@
             Proj4js.defs["EPSG:32639"] = "+proj=utm +zone=39 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
             petroresConfig = {};
             petroresConfig.pathFolderSeparator = '\<%=File.separator%>';
-            petroresConfig.loggedInAs = '${pageContext.request.userPrincipal.name}';
-            petroresConfig.userRoles = [
-            <c:forEach items="${pageContext.request.userPrincipal.roles}" varStatus="varSt" var="rol">
-                <c:if test="${varSt.count>1}">,</c:if>'${rol}'
-        </c:forEach>
-            ];
+            petroresConfig.loggedInAs = '<%=request.getUserPrincipal().getName().replace("\\", "\\\\")%>'
+            var slashPos = petroresConfig.loggedInAs.lastIndexOf('\\');
+            if(petroresConfig.loggedInAs && slashPos > 0){
+                petroresConfig.loggedInAs = petroresConfig.loggedInAs.substring(slashPos+1);
+            }
+        <c:if test="${!empty pageContext.request.userPrincipal.groups[initParam.roleAdmin]}">
+            petroresConfig.userIsAdmin = true;
+        </c:if>
+        <c:if test="${!empty pageContext.request.userPrincipal.groups[initParam.roleEditor]}">
+            petroresConfig.userIsEditor = true;
+        </c:if>
+        <c:if test="${!empty pageContext.request.userPrincipal.groups[initParam.roleReader]}">
+            petroresConfig.userIsReader = true;
+        </c:if>
             
-         <c:set var="roles" scope="page" value="${pageContext.request.userPrincipal.roles}"/>
+            //petroresConfig.userRoles = [
+            //c:forEach items=" $ {pageContext.request.userPrincipal.roles}" varStatus="varSt" var="rol">
+            //    c:if test="$ {varSt.count>1}">,c:if>'$ {rol}'
+            //c:forEach>
+            //];
+            
+            // principal: ${pageContext.request.userPrincipal}
+            // roles string: ${pageContext.request.userPrincipal.rolesString}
+            // groups map: 
+        <c:forEach items="${pageContext.request.userPrincipal.groups}" var="entry">
+            // key: ${entry.key}; value: ${entry.value}
+            // acc details: name: ${entry.value.name}; fqn: ${entry.value.fqn}
+        </c:forEach>
+            
+            //c:set var="roles" scope="page" value="$ {pageContext.request.userPrincipal.roles}"/>
             <%
-            for(String role: (String[])pageContext.getAttribute("roles")){
+            
+            //if(((WindowsPrincipal)request.getUserPrincipal()).hasRole((String)application.getInitParameter("roleReader")))
+            //    out.print("petroresConfig.userIsReader = true; \n");
+            //if(((WindowsPrincipal)request.getUserPrincipal()).hasRole((String)application.getInitParameter("roleEditor")))
+            //    out.print("petroresConfig.userIsEditor = true; \n");
+            //if(((WindowsPrincipal)request.getUserPrincipal()).hasRole((String)application.getInitParameter("roleAdmin")))
+            //    out.print("petroresConfig.userIsAdmin = true; \n");
+            
+            
+            /*for(String role: (String[])pageContext.getAttribute("roles")){
                 if(role.equalsIgnoreCase((String)application.getInitParameter("roleReader"))){
                     out.print("petroresConfig.userIsReader = true; //" + role + "\n");
                     break;
@@ -44,7 +76,7 @@
                     out.print("petroresConfig.userIsAdmin = true; //" + role + "\n");
                     break;
                 }
-            }
+            }*/
             %>
             //petroresConfig.vectorWfs = 'http://localhost/geoserver/wfs';
             petroresConfig.vectorWfs = '${initParam.vectorWfs}';

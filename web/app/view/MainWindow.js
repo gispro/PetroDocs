@@ -254,14 +254,24 @@ Ext.define('PetroRes.view.MainWindow', {
                                     displayInLayerSwitcher: false
                                 });
 
+                        var opacitySlider = Ext.create('GeoExt.slider.LayerOpacity',{
+                            aggressive: true,
+                            vertical: true,
+                            inverse: true,
+                            height: 100,
+                            x: 12,
+                            y: 60,
+                            hidden: true
+                        });
+                        
                         var mapPanel = 
                                 Ext.create('GeoExt.panel.Map', {
                                     id: 'bigGextMapPanel',
-                                    map: {allOverlays: false},
+                                    map: {allOverlays: false}
                                     //extent: new OpenLayers.Bounds(45.00, 36.18, 55, 47.50)
                                     //, displayProjection: new OpenLayers.Projection("EPSG:4326")
                                     //,projection: new OpenLayers.Projection("EPSG:4326")
-                                    extent: new OpenLayers.Bounds(
+                                    ,extent: new OpenLayers.Bounds(
                                         5082754.0816867,
                                         5417407.5350582,
                                         5806765.6135031,
@@ -272,10 +282,13 @@ Ext.define('PetroRes.view.MainWindow', {
                                     ,layers: layers,
                                     region: "center"
                                     ,selectControl: selectControl
+                                    ,items: [
+                                        opacitySlider
+                                    ]
                                 });
                                 
                         mapPanel.map.addControl(selectControl)
-                                
+                        
                         var store = Ext.create('Ext.data.TreeStore', {
                             model: 'GeoExt.data.LayerTreeModel',
                             storeId: 'BigMapLayers',
@@ -321,6 +334,11 @@ Ext.define('PetroRes.view.MainWindow', {
                         });
                         
                         var tree = Ext.create('GeoExt.tree.Panel', {
+                            viewConfig: {
+                                plugins: {
+                                    ptype: 'treeviewdragdrop'
+                                }
+                            },
                             border: true,
                             region: "west",
                             title: "Layers",
@@ -331,7 +349,14 @@ Ext.define('PetroRes.view.MainWindow', {
                             autoScroll: true,
                             store: store,
                             rootVisible: false,
-                            lines: false
+                            lines: false,
+                            listeners: {
+                                itemclick: function(){
+                                    //console.log(arguments[1].data.layer);
+                                    opacitySlider.show();
+                                    opacitySlider.setLayer(arguments[1].data.layer);
+                                }
+                            }
                         });
                         
                         var legendPanel = Ext.create('GeoExt.panel.Legend', {
@@ -351,21 +376,32 @@ Ext.define('PetroRes.view.MainWindow', {
                             //preferredTypes: ["Point", "Line", "Polygon"]
                         });                        
                         
-                        /*var printPage;
+                        var printPage;
                         var printProvider = Ext.create('GeoExt.data.MapfishPrintProvider', {
                             url: "form/proxy?url=http://oceanviewer.ru/print/pdf"
+                            ,method: 'POST'
                             //capabilities: printCapabilities
                             ,autoLoad: true
                             ,listeners: {
                                 "loadcapabilities": function() {
                                     printPage = Ext.create('GeoExt.data.PrintPage', {
                                         printProvider: printProvider
+                                        ,customParams: {
+                                            
+                                            "outputFormat":"jpg",
+                                            "outputFilename":"map-print",
+                                            "mapTitle":"bububu OceanViewer",
+                                            "comment":"bubub OceanViewer"
+                                            
+                                            //outputFormat:"jpg",
+                                            //outputFilename:"map-print"
+                                        }
                                     });
                                     Ext.getCmp('pdfButton').setDisabled(false);
                                 }
                             }
                              
-                        });*/
+                        });
                         //printPage = Ext.create('GeoExt.data.PrintPage', {
                         //    printProvider: printProvider
                         //});
@@ -574,7 +610,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }),
                                         map: mapPanel.map
                                     }))                                    
-                                    /*, Ext.create('Ext.button.Button', {
+                                    , Ext.create('Ext.button.Button', {
                                         text: 'PDF',
                                         disabled: true,
                                         id: 'pdfButton',
@@ -582,7 +618,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                             printPage.fit(mapPanel, true);
                                             printProvider.print(mapPanel, printPage);
                                         }
-                                    })*/                                         
+                                    })
                                 ];                        
                         var wnd = Ext.getCmp('MainWindow');
                         wnd.openPetroWindow('geMapWindow', {

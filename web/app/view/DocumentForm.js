@@ -964,7 +964,26 @@ Ext.define('PetroRes.view.DocumentForm', {
                                                 
                                                 if(!Ext.isArray(typ.typeExt)){
                                                     typ.typeExt = [typ.typeExt];
-                                                }                                               
+                                                }               
+                                                
+                                                if(typ.typeExt.length == 1 && typ.typeExt[0]===""){
+                                                    var fs = Ext.getCmp('fileFieldSetDF');
+                                                    fs.removeAll();
+                                                    fs.add({
+                                                        xtype: 'textfield',
+                                                        layout: 'column',   
+                                                        anchor: '100%',
+                                                        fieldLabel: 'Directory',
+                                                        //labelWidth: 60,
+                                                        combineErrors: false,
+                                                        msgTarget: 'under',
+                                                        name: 'directory'
+                                                    });
+                                                    typ.typeExt = [];
+                                                    fs.setTitle(typ.name);
+                                                    this.value = typ; //!!!
+                                                    return;
+                                                }                                                
                                                 
                                                 //this.value = typ.id; //!!!
                                                 this.value = typ; //!!!

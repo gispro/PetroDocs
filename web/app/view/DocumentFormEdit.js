@@ -201,18 +201,29 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                                 files = [];
                             }
                             for(i=0;i<files.length;i++){
-                                me.fileObjects[i].ext = files[i].path.substr(files[i].path.lastIndexOf('.') + 1);
+                                if(me.fileObjects[i].mimeType!=='directory'){
+                                    me.fileObjects[i].ext = files[i].path.substr(files[i].path.lastIndexOf('.') + 1);
+                                }
                             }
                             var filesCont = Ext.getCmp('loadedFileFieldSetDFE');
                             for(i = 0; i < files.length; i++){
 
-                                var nm = files[i].path.substr(files[i].path.lastIndexOf(petroresConfig.pathFolderSeparator) + 1);
+                                if(files[i].mimeType==='directory'){
+                                    filesCont.add({
+                                        xtype: 'label',
+                                        html: '<a target="_blank" href="' + files[i].path +'">'+files[i].path+'</a> '
+                                        //text: files[i].path
+                                    });
+                                }else{
 
-                                filesCont.add({
-                                    xtype: 'label',
-                                    html: '<a target="_blank" href="form/file/' + files[i].id + '/'+nm+'">'+nm+'</a> '
-                                    //text: files[i].path
-                                });
+                                    var nm = files[i].path.substr(files[i].path.lastIndexOf(petroresConfig.pathFolderSeparator) + 1);
+                                    filesCont.add({
+                                        xtype: 'label',
+                                        html: '<a target="_blank" href="form/file/' + files[i].id + '/'+nm+'">'+nm+'</a> '
+                                        //text: files[i].path
+                                    });
+
+                                }
 
                             }
                         }
@@ -224,6 +235,22 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
 
                         var typeCombo = Ext.getCmp('typeComboDFE');
                         typeCombo.fireEvent('select', typeCombo, [{data: type}]);
+                        
+                        for(i=0;i<files.length;i++){
+                            var fs = Ext.getCmp('fileFieldSetDFE');
+                            fs.removeAll();
+                            fs.add({
+                                xtype: 'textfield',
+                                layout: 'column',   
+                                anchor: '100%',
+                                fieldLabel: 'Directory',
+                                value: files[i].path,
+                                combineErrors: false,
+                                msgTarget: 'under',
+                                name: 'directory'
+                            });
+                        }
+                        
 
                         var domainPicker = Ext.getCmp('domainPickerDFE');
                         domainPicker.fireEvent('select', domainPicker, domainPicker.selectedDomain);
@@ -1251,6 +1278,24 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                                                 if(!Ext.isArray(typ.typeExt)){
                                                     typ.typeExt = [typ.typeExt];
                                                 }                                               
+                                                
+                                                if(typ.typeExt.length == 1 && (!typ.typeExt[0] || typ.typeExt[0]==="" )){
+                                                    var fs = Ext.getCmp('fileFieldSetDFE');
+                                                    fs.removeAll();
+                                                    fs.add({
+                                                        xtype: 'textfield',
+                                                        layout: 'column',   
+                                                        anchor: '100%',
+                                                        fieldLabel: 'Directory',
+                                                        combineErrors: false,
+                                                        msgTarget: 'under',
+                                                        name: 'directory'
+                                                    });
+                                                    typ.typeExt = [];
+                                                    fs.setTitle(typ.name);
+                                                    this.value = typ;
+                                                    return;
+                                                }                                                
                                                 
                                                 //this.value = typ.id; //!!!
                                                 this.value = typ; //!!!

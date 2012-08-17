@@ -92,6 +92,7 @@ public class EditDocumentController{// implements ServletContextAware{
 
                 //ArrayList<File> files = new ArrayList<File>(3);
                 ArrayList<Author>authors = new ArrayList<Author>(3);
+                ArrayList<String>directories = new ArrayList<String>(3);
                 ArrayList<GeoObject>geoObjects = new ArrayList<GeoObject>(3);
                 ArrayList<Word>words = new ArrayList<Word>(3);
                 
@@ -201,6 +202,10 @@ public class EditDocumentController{// implements ServletContextAware{
                                 for(String val: value){
                                     authors.add(mapper.readValue(val, Author.class));
                                 }
+                            }else if("directory".equals(name)){
+                                for(String val: value){
+                                    directories.add(val);
+                                }
                             }else if("geoObjects".equals(name)){
                                 if(!value[0].equals("\"\"")){
                                     GeoObject[] gos = mapper.readValue(value[0], GeoObject[].class);
@@ -263,8 +268,42 @@ public class EditDocumentController{// implements ServletContextAware{
                     }
                     w2.add(w);
                 }
-                ArrayList<GeoObject> go2 = new ArrayList(geoObjects.size());
+                if(directories.size()>0){
+                    File[]fls = new File[files.size()];
+                    fls = files.toArray(fls);
+                    for(File f: fls){
+                        if(!directories.contains(f.getPath())){
+                            files.remove(f);
+                            entityManager.remove(f);
+                            if(!f.getMimeType().equalsIgnoreCase("directory")){
+                                java.io.File delFile = new java.io.File(getRootPath(req), f.getPath());
+                                delFile.delete();
+                            }
+                        }else{
+                            directories.remove(f.getPath());
+                        }
+                    }
+                }
                 Query q = entityManager.createQuery(
+                    "SELECT f FROM File f WHERE f.path = :path");
+                for(String a: directories){
+                    q.setParameter("path", a);
+                    File f;
+                    List<File>fs = q.getResultList();
+                    if(!fs.isEmpty()){
+                        f = fs.get(0);
+                    }else{
+                        f = new File();
+                        f.setPath(a);
+                        f.setDocument(doc);
+                        f.setFileName("");
+                        f.setMimeType("directory");
+                    }
+                    files.add(f);
+                }
+                
+                ArrayList<GeoObject> go2 = new ArrayList(geoObjects.size());
+                q = entityManager.createQuery(
                         "SELECT object(o) "
                         + "FROM GeoObject AS o "
                         + "WHERE o.idInTable = :idInTable "
@@ -349,6 +388,7 @@ public class EditDocumentController{// implements ServletContextAware{
 
                 ArrayList<File> loadingFiles = new ArrayList<File>(3);
                 ArrayList<File> unchangedFiles = new ArrayList<File>(3);
+                ArrayList<String>directories = new ArrayList<String>(3);
                 List<File> wereFiles = null;
                 ArrayList<Author>authors = new ArrayList<Author>(3);
                 ArrayList<GeoObject>geoObjects = new ArrayList<GeoObject>(3);
@@ -455,6 +495,8 @@ public class EditDocumentController{// implements ServletContextAware{
                                 doc.setSite(mapper.readValue(stream, Site.class));
                             }else if("author".equals(name)){
                                 authors.add(mapper.readValue(stream, Author.class));
+                            }else if("directory".equals(name)){
+                                directories.add(Streams.asString(stream, "UTF-8"));
                             }else if("unchangedFiles".equals(name)){
                                 unchangedFiles.add(mapper.readValue(stream, File.class));
                             }else if("geoObjects".equals(name)){
@@ -595,8 +637,24 @@ public class EditDocumentController{// implements ServletContextAware{
                     }
                     w2.add(w);
                 }
-                ArrayList<GeoObject> go2 = new ArrayList(geoObjects.size());
                 Query q = entityManager.createQuery(
+                    "SELECT f FROM File f WHERE f.path = :path");
+                for(String a: directories){
+                    q.setParameter("path", a);
+                    File f;
+                    List<File>fs = q.getResultList();
+                    if(!fs.isEmpty()){
+                        f = fs.get(0);
+                    }else{
+                        f = new File();
+                        f.setPath(a);
+                        f.setFileName("");
+                        f.setMimeType("directory");
+                    }
+                    loadingFiles.add(f);
+                }
+                ArrayList<GeoObject> go2 = new ArrayList(geoObjects.size());
+                q = entityManager.createQuery(
                         "SELECT object(o) "
                         + "FROM GeoObject AS o "
                         + "WHERE o.idInTable = :idInTable "

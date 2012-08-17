@@ -6,13 +6,16 @@ package ru.gispro.petrores.doc.service;
 
 import com.sun.jersey.api.spring.Autowire;
 import com.sun.jersey.spi.resource.Singleton;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gispro.petrores.doc.entities.Type;
+import ru.gispro.petrores.doc.entities.TypeExt;
 import ru.gispro.petrores.doc.entities.Types;
 import ru.gispro.petrores.doc.util.Util;
 
@@ -29,12 +32,36 @@ public class TypeRESTFacade {
 
     public TypeRESTFacade() {
     }
+    
+    private void deleteEmpty(Type entity){
+        if(entity.getSuperType()!=null && entity.getSuperType().getId()==null){
+            entity.setSuperType(null);
+        }
+        if(entity.getTypeExt()!=null){
+            Collection<TypeExt>typeExts = entity.getTypeExt();
+            ArrayList<TypeExt>newTypeExts = new ArrayList<TypeExt>(typeExts.size());
+            for(TypeExt te: typeExts){
+                if(te.getExt()!=null){
+                    newTypeExts.add(te);
+                }
+            }
+            int newSize = newTypeExts.size();
+            if(newSize!=typeExts.size()){
+                if(newSize==0){
+                    entity.setTypeExt(null);
+                }else{
+                    entity.setTypeExt(newTypeExts);
+                }
+            }
+        }
+    }
 
     @POST
     @Consumes({"application/xml", "application/json"})
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Types create(Type entity) {
+        deleteEmpty(entity);
         entity = entityManager.merge(entity);
         entityManager.flush();
         return new Types(Arrays.asList(entity), 1);// entity;
@@ -45,6 +72,7 @@ public class TypeRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Types edit(Type entity) {
+        deleteEmpty(entity);
         entity = entityManager.merge(entity);
         entityManager.flush();
         return new Types(Arrays.asList(entity), 1);

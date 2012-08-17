@@ -82,8 +82,260 @@ public class CreateDocumentController{// implements ServletContextAware{
         
         try{
         
-            if(ServletFileUpload.isMultipartContent(req)){
+            if(!ServletFileUpload.isMultipartContent(req)){
+                
+                Document doc = new Document(); 
 
+                ArrayList<Author>authors = new ArrayList<Author>(3);
+                ArrayList<String>directories = new ArrayList<String>(3);
+                ArrayList<GeoObject>geoObjects = new ArrayList<GeoObject>(3);
+                ArrayList<Word>words = new ArrayList<Word>(3);
+                
+                // Parse the request
+                
+                Map<String, String[]> params = req.getParameterMap();
+                Iterator<Map.Entry<String, String[]>>iter = params.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry<String, String[]> item = iter.next();
+                    String name = item.getKey();
+                    String[]value = item.getValue();
+                    {
+
+                        if("domain".equals(name)){
+                            //Long id = Long.parseLong(Streams.asString(stream, "UTF-8"));
+                            //Domain domain = entityManager.find(Domain.class, id);
+                            Domain domain = mapper.readValue(value[0], Domain.class);
+                            //Domain domain = entityManager.find(Domain.class, mapper.readValue(stream, Domain.class).getId());
+
+                            doc.setDomain(domain);
+
+                            /*midPath = domain.getPathPart();
+                            while(domain.getParent()!=null && domain.getParent().getId()!=domain.getId()){
+                                domain = domain.getParent();
+                                midPath = domain.getPathPart() + java.io.File.separator + midPath;
+                            }
+
+                            midPath = getMidPath(midPath);
+
+                            realPath = new java.io.File(getRootPath(req) + midPath);
+                            realPath.mkdirs();*/
+                        }else{
+
+                            if("year".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setYear(Integer.parseInt(s));
+                            }else if("id".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setId(Long.parseLong(s));
+                            }else if("number".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setNumber(s);
+                            }else if("archiveNumber".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setArchiveNumber(s);
+                            }else if("title".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setTitle(s);
+                            }else if("fullTitle".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setFullTitle(s);
+                            }else if("comment".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setComment(s);
+                            }else if("originationDetails".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setOriginationDetails(s);
+                            }else if("limitationDetails".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setLimitationDetails(s);
+                            }else if("originationDate".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setOriginationDate(df.parse(s));
+                            }else if("approvalDate".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setApprovalDate(df.parse(s));
+                            }else if("registrationDate".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setRegistrationDate(df.parse(s));
+                            }else if("placementDate".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setPlacementDate(df.parse(s));
+                            }else if("type".equals(name)){
+                                    doc.setType(mapper.readValue(value[0], Type.class));
+                            }else if("stage".equals(name)){
+                                doc.setStage(mapper.readValue(value[0], Stage.class));
+                            }else if("site".equals(name)){
+                                doc.setSite(mapper.readValue(value[0], Site.class));
+                            }else if("author".equals(name)){
+                                for(String val: value){
+                                    authors.add(mapper.readValue(val, Author.class));
+                                }
+                            }else if("directory".equals(name)){
+                                for(String val: value){
+                                    directories.add(val);
+                                }
+                            }else if("geoObjects".equals(name)){
+                                if(!value[0].equals("\"\"")){
+                                    GeoObject[] gos = mapper.readValue(value[0], GeoObject[].class);
+                                    geoObjects.addAll(Arrays.asList(gos));
+                                }
+                            }else if("words".equals(name)){
+                                if(!value[0].equals("\"\"")){
+                                    Word[] gos = mapper.readValue(value[0], Word[].class);
+                                    words.addAll(Arrays.asList(gos));
+                                }
+                            }else if("geometryType".equals(name)){
+                                if(!value[0].equals("\"\""))
+                                    doc.setGeometryType(mapper.readValue(value[0], GeoType.class));
+                            }else if("periodicity".equals(name)){
+                                if(!value[0].equals("\"\""))
+                                    doc.setPeriodicity(mapper.readValue(value[0], Periodicity.class));
+                            }else if("classification".equals(name)){
+                                if(!value[0].equals("\"\""))
+                                    doc.setClassification(mapper.readValue(value[0], Classification.class));
+                            }else if("typeOfWork".equals(name)){
+                                if(!value[0].equals("\"\""))
+                                    doc.setTypeOfWork(mapper.readValue(value[0], TypeOfWork.class));
+                            }else if("workProcess".equals(name)){
+                                if(!value[0].equals("\"\""))
+                                    doc.setWorkProcess(mapper.readValue(value[0], WorkProcess.class));
+                            }else if("scale".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setScale(Integer.parseInt(s));
+                            }else if("resolution".equals(name)){
+                                String s = value[0].trim();
+                                if(s.length()!=0)
+                                    doc.setResolution(Integer.parseInt(s));
+                            }else if("projection".equals(name)){
+                                if(!value[0].equals("\"\""))
+                                    doc.setProjection(mapper.readValue(value[0], Projection.class));
+                                //String s = value[0].trim();
+                                //if(s.length()!=0)
+                                //    doc.setProjectionCode(s);
+                            }else{
+                                // throw away yet
+                                //Streams.asString(stream);
+                            }
+                        }
+                    }
+                }        
+
+                //Files ret = new Files(files, (long)files.size());
+
+                ArrayList<Author> a2 = new ArrayList(authors.size());
+                for(Author a: authors){
+                    a2.add(entityManager.find(Author.class, a.getId()));
+                }
+                ArrayList<Word> w2 = new ArrayList(authors.size());
+                for(Word a: words){
+                    Word w = entityManager.find(Word.class, a.getWord());
+                    if(w==null){
+                        //w = a;
+                        w = entityManager.merge(a);
+                    }
+                    w2.add(w);
+                }
+                Query q = entityManager.createQuery(
+                    "SELECT f FROM File f WHERE f.path = :path");
+                ArrayList<File>files = new ArrayList<File>(directories.size());
+                for(String a: directories){
+                    q.setParameter("path", a);
+                    File f;
+                    List<File>fs = q.getResultList();
+                    if(!fs.isEmpty()){
+                        f = fs.get(0);
+                    }else{
+                        f = new File();
+                        f.setPath(a);
+                        f.setDocument(doc);
+                        f.setFileName("");
+                        f.setMimeType("directory");
+                    }
+                    files.add(f);
+                }
+                
+                ArrayList<GeoObject> go2 = new ArrayList(geoObjects.size());
+                q = entityManager.createQuery(
+                        "SELECT object(o) "
+                        + "FROM GeoObject AS o "
+                        + "WHERE o.idInTable = :idInTable "
+                        + "AND o.tableName = :tableName");
+
+                for(GeoObject a: geoObjects){
+                    q.setParameter("idInTable", a.getIdInTable());
+                    q.setParameter("tableName", a.getTableName());
+                    List<GeoObject> goes = q.getResultList();
+                    if(!goes.isEmpty()){
+                        a = goes.get(0);
+                    }else{
+                        a = entityManager.merge(a);
+                    }
+                    go2.add(a);
+                }
+
+                entityManager.flush();
+
+                doc.setAuthors(a2);
+                doc.setGeoObjects(go2);
+                doc.setFiles(files);
+                doc.setPlacementDate(new Date());
+                doc.setWords(w2);
+                
+                Author placer = (Author) entityManager.
+                        createNamedQuery("Author.findByLogin").
+                        setParameter("login", req.getUserPrincipal().getName()).
+                        getResultList().get(0);
+                doc.setPlacer(placer);
+
+                entityManager.merge(doc);
+                entityManager.flush();
+
+                //for(File f: files){
+                //    f.setDocument(doc);
+                //}
+
+                //entityManager.flush();
+
+
+
+                Documents ret = new Documents(Arrays.asList(new Document[]{doc}), 1l);
+                /*ModelMap map = new ModelMap(ret);
+                map.addAttribute("success", true);
+                //View view = new JsonView();
+                ModelAndView mv = new ModelAndView(view, map);
+                return mv;*/
+
+                AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
+                mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
+                mapper.getSerializationConfig().setAnnotationIntrospector(introspector);   
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                Util.DoubleOutput udo = new Util.DoubleOutput(baos, resp.getOutputStream());
+                
+                JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(udo, JsonEncoding.UTF8);
+                ObjectNode json = mapper.valueToTree(ret);
+                json.put("success", true);
+                mapper.writeTree(generator, json);
+                generator.flush();
+
+                doc.setCondensed(baos.toString("UTF-8"));
+                entityManager.flush();
+            
+            }else{
 
                 Document doc = new Document(); 
 
@@ -98,6 +350,7 @@ public class CreateDocumentController{// implements ServletContextAware{
 
                 ArrayList<File> files = new ArrayList<File>(3);
                 ArrayList<Author>authors = new ArrayList<Author>(3);
+                ArrayList<String>directories = new ArrayList<String>(3);
                 ArrayList<GeoObject>geoObjects = new ArrayList<GeoObject>(3);
                 ArrayList<Word>words = new ArrayList<Word>(3);
 
@@ -185,6 +438,8 @@ public class CreateDocumentController{// implements ServletContextAware{
                                 doc.setSite(mapper.readValue(stream, Site.class));
                             }else if("author".equals(name)){
                                 authors.add(mapper.readValue(stream, Author.class));
+                            }else if("directory".equals(name)){
+                                directories.add(Streams.asString(stream, "UTF-8"));
                             }else if("geoObjects".equals(name)){
                                 GeoObject[] gos = mapper.readValue(stream, GeoObject[].class);
                                 geoObjects.addAll(Arrays.asList(gos));
@@ -298,8 +553,28 @@ public class CreateDocumentController{// implements ServletContextAware{
                     }
                     w2.add(w);
                 }
-                ArrayList<GeoObject> go2 = new ArrayList(geoObjects.size());
+
+                //ArrayList<File> dirs = new ArrayList(directories.size());
                 Query q = entityManager.createQuery(
+                    "SELECT f FROM File f WHERE f.path = :path");
+                for(String a: directories){
+                    q.setParameter("path", a);
+                    File f;
+                    List<File>fs = q.getResultList();
+                    if(!fs.isEmpty()){
+                        f = fs.get(0);
+                    }else{
+                        f = new File();
+                        f.setPath(a);
+                        f.setFileName("");
+                        f.setMimeType("directory");
+                    }
+                    files.add(f);
+                }
+                
+                
+                ArrayList<GeoObject> go2 = new ArrayList(geoObjects.size());
+                q = entityManager.createQuery(
                         "SELECT object(o) "
                         + "FROM GeoObject AS o "
                         + "WHERE o.idInTable = :idInTable "
@@ -372,14 +647,14 @@ public class CreateDocumentController{// implements ServletContextAware{
                 doc.setCondensed(baos.toString("UTF-8"));
                 entityManager.flush();
 
-            }else{
+            }/*else{
                 JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
                 ObjectNode json = mapper.createObjectNode();
                 json.put("failure", true);
                 json.put("msg", "No file");
                 mapper.writeTree(generator, json);
                 generator.flush();
-            }
+            }*/
         }catch(Exception e){
             JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
             ObjectNode json = mapper.createObjectNode();

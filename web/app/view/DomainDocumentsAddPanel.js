@@ -3,20 +3,29 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
 
     bodyPadding: 0,
     setTemplateDomain: function( record ){
-      this.temlateDomain = record.raw;
-      this.lblDomain.setText(' '+record.raw.name+'  ');
+      this.templateDomain = record.raw;
+      var s = '';
+      for( var node = record; node && node.raw; node = node.parentNode){
+          s = node.raw.fullName + (s.length > 0 ?  " :: " : '') +s; 
+      }
+          
+      this.lblDomain.setText(' '+s+'  ');
       this.tfAdd.setValue('');
       this.doLayout();
     },
     getTemplateDomain: function(){ 
-        return this.temlateDomain; 
+        return this.templateDomain; 
     },
     setTemplateDocument: function( record ){
-      this.temlateObj = record.raw;
-      this.tfAdd.setValue(this.temlateObj.fullTitle);
+      this.templateRec = record;  
+      this.templateObj = record.raw;
+      this.tfAdd.setValue(this.templateObj.fullTitle);
+    },
+    getTemplateRecord: function(){
+      return this.templateRec;
     },
     getTemplateDocument: function(){
-      return this.temlateObj;
+      return this.templateObj;
     },
     initComponent: function() {
         var me = this;
@@ -30,14 +39,14 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
         me.tfAdd = Ext.create('Ext.form.TextField',{
                 //fieldLabel:' ',
                 //labelAlign:'right',
-                region:'center'
+                region:'center',
+                readOnly: true
             });
         this.btnAddOpen = Ext.create('Ext.Button',
             {
-                xtype:'button', iconCls:'ab_add', cls:'album-btn', width:23, height:24, 
-                
+                xtype:'button', icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',//iconCls:'ab_add', cls:'album-btn', width:23, height:24, 
                 handler:function(){
-                   var df = Ext.create('PetroRes.view.DocumentForm', {domain:me.temlateDomain, fullTitle:me.tfAdd.getValue()});
+                   var df = Ext.create('PetroRes.view.DocumentForm', {domain:me.templateDomain, fullTitle:me.tfAdd.getValue()});
                    df.addListener(  'documentadded', 
                                     function(p1, p2){
                                         me.fireEvent('documentadded', {form:df})},
@@ -57,9 +66,17 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
                         }); 
                 }
             });
+        this.btnEdit = Ext.create('Ext.Button', 
+            { xtype:'button', icon:'lib/ext41/examples/shared/icons/fam/cog_edit.png',
+                handler:function(){
+                     if( me.getTemplateRecord() && me.docsGreed){
+                         me.docsGreed.editForm(me.getTemplateRecord());
+                     }
+                }
+            });
         this.btnDelete = Ext.create('Ext.Button',
             {
-                xtype:'button', iconCls:'ab_delete', cls:'album-btn', width:23, height:24,
+                xtype:'button', icon: 'lib/ext41/examples/restful/images/delete.png',//iconCls:'ab_delete', cls:'album-btn', width:23, height:24,
                 handler:function(){
                     if( me.getTemplateDocument()){
                         Ext.Msg.confirm('Delete document', 'Delete "'+ me.getTemplateDocument().fullTitle +'" ?', 
@@ -94,7 +111,7 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
                             width:60, height:24,
                             align:'top'
                           },
-                          items:[this.btnAddOpen, this.btnDelete]});
+                          items:[this.btnAddOpen, this.btnEdit, this.btnDelete]});
 
         Ext.applyIf(me, {
             listeners:{

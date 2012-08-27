@@ -28,13 +28,13 @@ Ext.define('PetroRes.view.DomainDocumentsGridPanel', {
                     handler: function(event, target, owner, tool){
                     // do search
                 }
-            },*/{ type:'help',
+            },{ type:'help',
                     tooltip: 'Help',
                     // hidden:true,
                     handler: function(event, toolEl, panel){
                     // refresh logic
                     }                                         
-            }],
+            }*/],
             columns: [
                 {
                     xtype: 'gridcolumn',
@@ -126,29 +126,32 @@ Ext.define('PetroRes.view.DomainDocumentsGridPanel', {
             ],
             listeners:{
                 itemdblclick: function(ths, rec){
-                    var editForm = Ext.create(
-                            'PetroRes.view.DocumentFormEdit'
-                        ),
-                        wnd = Ext.getCmp('MainWindow');
-                            
-                    wnd.openPetroWindow('editDoc', {
-                        closable: true,
-                        width:wnd.getWidth()*0.9,
-                        title: 'Edit Document',
-                        maximizable: true,
-                        maximized: true,
-                        layout: 'fit',
-                        items: [
-                            editForm
-                        ]                                    
-                    });
-                    editForm.loadRecord(rec);
+                    ths.editForm(rec);
                 }
             }
         });
         
         me.callParent(arguments);
         
+    }, 
+    editForm: function(rec){
+        var editForm = Ext.create(
+                'PetroRes.view.DocumentFormEdit'
+            ),
+            wnd = Ext.getCmp('MainWindow');
+
+        wnd.openPetroWindow('editDoc', {
+            closable: true,
+            width:wnd.getWidth()*0.9,
+            title: 'Edit Document',
+            maximizable: true,
+            maximized: true,
+            layout: 'fit',
+            items: [
+                editForm
+            ]                                    
+        });
+        editForm.loadRecord(rec);
     }
 });
 

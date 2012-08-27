@@ -62,78 +62,6 @@ Ext.define('PetroRes.view.MainWindow', {
                 items: [
                 {
                     xtype: 'menuitem',
-                    text: 'Documents Catalog',
-                    handler: function(){
-                        var store = Ext.data.StoreManager.lookup('DocsViewDomainsJsonTreeStore');
-                        if(!store)
-                            Ext.create( 'PetroRes.store.DomainsJsonTreeStore', 
-                                        {storeId:'DocsViewDomainsJsonTreeStore'});
-
-                        var wnd = Ext.getCmp('MainWindow'),
-                            pnlTree = Ext.create('PetroRes.view.DomainsTreePanel',
-                                                 {editable:false, store:'DocsViewDomainsJsonTreeStore'
-                                                  //,collapsible: true, collapseMode: "header"
-                                                 }),
-                            pnlDocumentsGreed = Ext.create('PetroRes.view.DomainDocumentsGridPanel',{ region:'center', domainsTree: pnlTree }),
-                            pnlAddDocument = Ext.create('PetroRes.view.DomainDocumentsAddPanel',{ region:'north', height:27});
-                            
-                            pnlAddDocument.addListener('documentadded',
-                                                        function(p1, p2){
-                                                            var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore'),
-                                                                raw = this.getTemplateDomain();
-                                                            ddStore.loadDocuments(raw.id, raw.level, raw.name, raw.fullName);
-                                                        },
-                                                        pnlAddDocument);
-                            pnlAddDocument.addListener('documentdeleted',
-                                                        function(p1, p2){
-                                                            var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore'),
-                                                                raw = this.getTemplateDomain();
-                                                            ddStore.loadDocuments(raw.id, raw.level, raw.name, raw.fullName);
-                                                        },
-                                                        pnlAddDocument);
-                            Ext.apply(pnlTree,{
-                                region: 'center'
-                            });
-                            pnlTree.addListener('select', 
-                                                function( selRowModel, record, index, eOpts ){
-                                                    //Ext.selection.RowModel this, Ext.data.Model record, Number index, Object eOpts
-                                                    pnlAddDocument.setTemplateDomain(record);
-                                                    //tf.labelEl.update(record.raw.name+': ');
-                                                    var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore');
-                                                    ddStore.loadDocuments(record.raw.id, record.raw.level, record.raw.name, record.raw.fullName);
-                                                });
-                             pnlDocumentsGreed.addListener('select',
-                                                                    //( Ext.selection.RowModel this, Ext.data.Model record, Number index, Object eOpts){
-                                                            function( selRowModel, record, index, eOpts){
-                                                                pnlAddDocument.setTemplateDocument(record);
-                                                            });
-                        wnd.openPetroWindow('domaindocuments', {
-                            closable: true,
-                            width:wnd.getWidth()*0.9,
-                            title: 'Documents Catalog',
-                            maximizable: true,
-                            maximized: false,
-                            layout: 'border',//'fit',
-                            items: [
-                                {xtype:'panel', layout:'border', region:'west', width: wnd.getWidth()*0.3, split: true,
-                                  items:[
-                                        Ext.create('PetroRes.view.DocumentSimpleSearchPanel',{region:'north', height:27}),
-                                        pnlTree
-                                    ]},
-                                {xtype:'panel', layout:'border', region:'center',
-                                    items:[
-                                        pnlAddDocument,
-                                        pnlDocumentsGreed
-                                    ]}
-                                //pnlTools,
-                                //pnlTree,
-                                //pnlDocumentsGreed
-                            ]
-                        });
-                    }
-                } 
-                ,{
-                    xtype: 'menuitem',
                     text: 'Register',
                     handler: function(){
                         var wnd = Ext.getCmp('MainWindow');
@@ -203,6 +131,76 @@ Ext.define('PetroRes.view.MainWindow', {
                             ]
                         });
                         
+                    }
+                },
+                {
+                    xtype: 'menuitem',
+                    text: 'Documents Catalog',
+                    handler: function(){
+                        var store = Ext.data.StoreManager.lookup('DocsViewDomainsJsonTreeStore');
+                        if(!store)
+                            Ext.create( 'PetroRes.store.DomainsJsonTreeStore', 
+                                        {storeId:'DocsViewDomainsJsonTreeStore'});
+
+                        var wnd = Ext.getCmp('MainWindow'),
+                            pnlTree = Ext.create('PetroRes.view.DomainsTreePanel',
+                                                 {editable:false, store:'DocsViewDomainsJsonTreeStore'}),
+                            pnlDocumentsGreed = Ext.create('PetroRes.view.DomainDocumentsGridPanel',{ region:'center', domainsTree: pnlTree }),
+                            pnlAddDocument = Ext.create('PetroRes.view.DomainDocumentsAddPanel',{ region:'north', height:27});
+                            
+                            pnlAddDocument.addListener('documentadded',
+                                                        function(p1, p2){
+                                                            var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore'),
+                                                                raw = this.getTemplateDomain();
+                                                            ddStore.loadDocuments(raw.id, raw.level, raw.name, raw.fullName);
+                                                        },
+                                                        pnlAddDocument);
+                            pnlAddDocument.addListener('documentdeleted',
+                                                        function(p1, p2){
+                                                            var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore'),
+                                                                raw = this.getTemplateDomain();
+                                                            ddStore.loadDocuments(raw.id, raw.level, raw.name, raw.fullName);
+                                                        },
+                                                        pnlAddDocument);
+                            Ext.apply(pnlTree,{
+                                region: 'center'
+                            });
+                            pnlTree.addListener('select', 
+                                                function( selRowModel, record, index, eOpts ){
+                                                    //Ext.selection.RowModel this, Ext.data.Model record, Number index, Object eOpts
+                                                    pnlAddDocument.setTemplateDomain(record);
+                                                    //tf.labelEl.update(record.raw.name+': ');
+                                                    var ddStore = Ext.data.StoreManager.lookup('DomainDocumentsJsonStore');
+                                                    ddStore.loadDocuments(record.raw.id, record.raw.level, record.raw.name, record.raw.fullName);
+                                                });
+                             pnlDocumentsGreed.addListener('select',
+                                                                    //( Ext.selection.RowModel this, Ext.data.Model record, Number index, Object eOpts){
+                                                            function( selRowModel, record, index, eOpts){
+                                                                pnlAddDocument.setTemplateDocument(record);
+                                                            });
+                        wnd.openPetroWindow('domaindocuments', {
+                            closable: true,
+                            width:wnd.getWidth()*0.9,
+                            title: 'Documents Catalog',
+                            maximizable: true,
+                            maximized: false,
+                            layout: 'border',//'fit',
+                            items: [
+                                {xtype:'panel', layout:'border', region:'west', width: wnd.getWidth()*0.3, split: true,
+                                  items:[
+                                        Ext.create('PetroRes.view.DocumentSimpleSearchPanel',{region:'north', height:27}),
+                                        pnlTree
+                                    ]},
+                                {xtype:'panel', layout:'border', region:'center',
+                                    items:[
+                                        pnlAddDocument,
+                                        pnlDocumentsGreed
+                                    ]}
+                                //pnlTools,
+                                //pnlTree,
+                                //pnlDocumentsGreed
+                            ]
+                        });
                     }
                 }
                 ]

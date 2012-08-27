@@ -28,13 +28,13 @@ Ext.define('PetroRes.view.DomainDocumentsGridPanel', {
                     handler: function(event, target, owner, tool){
                     // do search
                 }
-            },{ type:'help',
+            },*/{ type:'help',
                     tooltip: 'Help',
                     // hidden:true,
                     handler: function(event, toolEl, panel){
                     // refresh logic
                     }                                         
-            }*/],
+            }],
             columns: [
                 {
                     xtype: 'gridcolumn',

@@ -254,12 +254,14 @@ Ext.define('PetroRes.view.MainWindow', {
 
                         var opacitySlider = Ext.create('GeoExt.slider.LayerOpacity',{
                             aggressive: true,
-                            vertical: true,
+                            vertical: false,
                             inverse: true,
-                            height: 100,
-                            x: 12,
-                            y: 60,
-                            hidden: true
+                            width: 'auto',
+                            fieldLabel: 'Opacity'
+                            //x: 12,
+                            //y: 60,
+                            //hidden: true
+                            , disabled: true
                         });
                         
                         var mapPanel = 
@@ -280,9 +282,9 @@ Ext.define('PetroRes.view.MainWindow', {
                                     ,layers: layers,
                                     region: "center"
                                     ,selectControl: selectControl
-                                    ,items: [
-                                        opacitySlider
-                                    ]
+                                    //,items: [
+                                    //    opacitySlider
+                                    //]
                                 });
                                 
                         mapPanel.map.addControl(selectControl)
@@ -331,6 +333,37 @@ Ext.define('PetroRes.view.MainWindow', {
                             }
                         });
                         
+                        var getZippedShapeButton = Ext.create('Ext.button.Button', 
+                        {
+                            text: 'Get Zipped Shape',
+                            handler: function(me){
+                                var getFeatureUrl = me.layerToGet.schema.replace
+                                ('DescribeFeatureType', 'GetFeature') +
+                                    '&outputFormat=shape-zip';
+                                //http://playground:9000/geoserver/wfs?
+                                //service=WFS&request=GetFeature&version=1.1.0&typeName=
+                                //PetroResurs:Structures_PRS
+                                //&outputFormat=shape-zip
+                                console.log([me.layerToGet, getFeatureUrl]);
+                                window.open(getFeatureUrl, '_blank');
+                            }
+                        });
+                        
+                        var layerOutlookPanel = Ext.create('Ext.panel.Panel',
+                        {
+                            layout: 'anchor',
+                            defaults: {
+                                anchor: '100%'
+                            },
+                            collapsible: true,
+                            collapsed: true,
+                            dock: 'bottom',
+                            items: [
+                                getZippedShapeButton,
+                                opacitySlider
+                            ]
+                        });
+
                         var tree = Ext.create('GeoExt.tree.Panel', {
                             viewConfig: {
                                 plugins: {
@@ -351,10 +384,16 @@ Ext.define('PetroRes.view.MainWindow', {
                             listeners: {
                                 itemclick: function(){
                                     //console.log(arguments[1].data.layer);
-                                    opacitySlider.show();
+                                    layerOutlookPanel.expand();
+                                    getZippedShapeButton.layerToGet = arguments[1].data.layer;
+                                    getZippedShapeButton.enable();
                                     opacitySlider.setLayer(arguments[1].data.layer);
+                                    opacitySlider.enable();
                                 }
                             }
+                            , dockedItems: [
+                                layerOutlookPanel
+                            ]
                         });
                         
                         var legendPanel = Ext.create('GeoExt.panel.Legend', {

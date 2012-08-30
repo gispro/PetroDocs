@@ -89,8 +89,9 @@
                             var wnd = Ext.getCmp('MainWindow');
                             for(var featNum in features){
                                 var feature = features[featNum];
-                                if(feature.state==='Insert' && layer.schemaLoaded){
+                                if(layer.schemaLoaded){
                                     var form = Ext.create('Ext.form.Panel', {
+                                        autoScroll: true,
                                         items: layer.schemaLoaded.featureTypes[0].fields,
                                         buttons: [
                                             {
@@ -116,11 +117,13 @@
                                                     if(feature.fid == undefined) {
                                                         layer.destroyFeatures([feature]);
                                                     } else {
-                                                        feature.state = OpenLayers.State.DELETE;
-                                                        layer.events.triggerEvent("afterfeaturemodified",
-                                                        {feature: feature});
-                                                        feature.renderIntent = "select";
-                                                        layer.drawFeature(feature);
+                                                        if(feature.state===OpenLayers.State.INSERT){
+                                                            feature.state = OpenLayers.State.DELETE;
+                                                            layer.events.triggerEvent("afterfeaturemodified",
+                                                            {feature: feature});
+                                                            feature.renderIntent = "select";
+                                                            layer.drawFeature(feature);
+                                                        }
                                                         //layer.saveStrategy.save([feature]);
                                                     }
                                                 }
@@ -128,6 +131,12 @@
                                             
                                         ]
                                     });
+                                    
+                                    if(feature.state!=='Insert'){
+                                        feature.state = OpenLayers.State.UPDATE;
+                                        form.getForm().setValues(feature.attributes);
+                                    }
+                                    
                                     wnd.openPetroWindow('attrWnd', {
                                         closable: true,
                                         title: 'Specify Attributes',
@@ -542,6 +551,9 @@
                     , eventListeners: {
                         beforefeaturesadded: function(obj){
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
+                        },
+                        featureselected: function(obj){
+                            petroresConfig.showFeatureEditor(obj.object, [obj.feature])
                         },
                         loadend: function(eventsObj){
                             petroresConfig.loadWfsSchema(eventsObj.object);

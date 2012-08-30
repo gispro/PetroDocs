@@ -251,6 +251,10 @@ Ext.define('PetroRes.view.MainWindow', {
                                     box: true,
                                     displayInLayerSwitcher: false
                                 });
+                                
+                        //var getFeatureControl = new OpenLayers.Control.GetFeature({
+                            
+                        //});
 
                         var opacitySlider = Ext.create('GeoExt.slider.LayerOpacity',{
                             aggressive: true,
@@ -344,7 +348,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                 //service=WFS&request=GetFeature&version=1.1.0&typeName=
                                 //PetroResurs:Structures_PRS
                                 //&outputFormat=shape-zip
-                                console.log([me.layerToGet, getFeatureUrl]);
+                                //console.log([me.layerToGet, getFeatureUrl]);
                                 window.open(getFeatureUrl, '_blank');
                             }
                         });
@@ -384,11 +388,54 @@ Ext.define('PetroRes.view.MainWindow', {
                             listeners: {
                                 itemclick: function(){
                                     //console.log(arguments[1].data.layer);
-                                    layerOutlookPanel.expand();
-                                    getZippedShapeButton.layerToGet = arguments[1].data.layer;
-                                    getZippedShapeButton.enable();
-                                    opacitySlider.setLayer(arguments[1].data.layer);
-                                    opacitySlider.enable();
+                                    var layer = arguments[1].data.layer;
+                                    mapPanel.petroLayerToEdit = undefined;
+                                    for(var ooo in editableLayers){
+                                        if(editableLayers[ooo].val == layer){
+                                            layerOutlookPanel.setTitle(layer.name);
+                                            layerOutlookPanel.expand();
+                                            getZippedShapeButton.layerToGet = layer;
+                                            getZippedShapeButton.enable();
+                                            opacitySlider.setLayer(layer);
+                                            opacitySlider.enable();
+                                            
+                                            mapPanel.petroLayerToEdit = layer;
+                                            /*if(mapPanel.petroEditMode){
+                                                for(var lll in editableLayers){
+                                                    if(editableLayers[lll].val.editingPanel)
+                                                        if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
+                                                            editableLayers[lll].val.editingPanel.activate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'block';
+                                                        }else{
+                                                            editableLayers[lll].val.editingPanel.deactivate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                        }
+                                                }
+                                            }*/
+                                            break;
+                                        }
+                                    }
+                                    
+                                            if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
+                                                for(var lll in editableLayers){
+                                                    if(editableLayers[lll].val.editingPanel)
+                                                        if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
+                                                            editableLayers[lll].val.editingPanel.activate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'block';
+                                                        }else{
+                                                            editableLayers[lll].val.editingPanel.deactivate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                        }
+                                                }
+                                            }else{
+                                                for(lll in editableLayers){
+                                                    if(editableLayers[lll].val.editingPanel){
+                                                            editableLayers[lll].val.editingPanel.deactivate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                    }
+                                                }
+                                            }
+                                    
                                 }
                             }
                             , dockedItems: [
@@ -454,7 +501,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         toggleGroup: 'modeGr',
                                         pressed: true,
                                         handler: function(){
-                                            var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
+                                            /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
                                             selCombo.clearValue();
                                             selCombo.store.data.each(function(item){
                                                 if(item.data.val.editingPanel){
@@ -462,7 +509,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     item.data.val.editingPanel.div.style.display = 'none';
                                                 }
                                             });
-                                            selCombo.disable();
+                                            selCombo.disable();*/
                                             selectControl.deactivate();
                                         }
                                     },
@@ -470,8 +517,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         xtype: 'button',
                                         text: 'Edit',
                                         toggleGroup: 'modeGr',
-                                        handler: function(){
-                                            var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
+                                        toggleHandler: function(th, state){
+                                            /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
                                             selCombo.clearValue();
                                             selCombo.enable();
                                             selCombo.store.data.each(function(item){
@@ -480,7 +527,28 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     item.data.val.editingPanel.div.style.display = 'none';
                                                 }
                                             });
-                                            selectControl.deactivate();
+                                            selectControl.deactivate();*/
+                                            
+                                            mapPanel.petroEditMode = state;
+                                            if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
+                                                for(var lll in editableLayers){
+                                                    if(editableLayers[lll].val.editingPanel)
+                                                        if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
+                                                            editableLayers[lll].val.editingPanel.activate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'block';
+                                                        }else{
+                                                            editableLayers[lll].val.editingPanel.deactivate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                        }
+                                                }
+                                            }else{
+                                                for(lll in editableLayers){
+                                                    if(editableLayers[lll].val.editingPanel){
+                                                            editableLayers[lll].val.editingPanel.deactivate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                    }
+                                                }
+                                            }
                                         }
                                     }:undefined,
                                     {
@@ -488,7 +556,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         text: 'Select',
                                         toggleGroup: 'modeGr',
                                         handler: function (){
-                                            var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
+                                            /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
                                             selCombo.clearValue();
                                             selCombo.disable();
                                             selCombo.store.data.each(function(item){
@@ -496,7 +564,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     item.data.val.editingPanel.deactivate();
                                                     item.data.val.editingPanel.div.style.display = 'none';
                                                 }
-                                            });
+                                            });*/
                                             selectControl.activate();
                                         }
                                         
@@ -587,7 +655,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }                                        
                                     },
                                     '-', 
-                                    {
+                                    /*{
                                         xtype: 'combo',
                                         id: 'GESelectEditableLayerCombo',
                                         fieldLabel: 'Edit Layer',
@@ -614,7 +682,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 } 
                                             }
                                         }
-                                    }, 
+                                    }, */
                                         'Measure: '
                                     , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
                                         toggleGroup: 'modeGr',

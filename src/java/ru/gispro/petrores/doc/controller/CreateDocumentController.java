@@ -662,6 +662,7 @@ public class CreateDocumentController{// implements ServletContextAware{
             json.put("msg", e.toString());
             mapper.writeTree(generator, json);
             generator.flush();
+            e.printStackTrace();
         }
     }
     

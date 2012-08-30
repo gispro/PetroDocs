@@ -25,10 +25,14 @@
 }
 
 
-.ab_TextFieldLabel{
+.ab_EmptyTextFieldLabel{
     font-weight: bold;
-    padding-left: 3px;
-    padding-right: 7px;
+    padding-left: 0px;
+    padding-right: 0px;
     padding-top: 5px;
 }
 
+.ab_FullTextFieldLabel{
+    padding-left: 3px;
+    padding-right: 7px;
+}

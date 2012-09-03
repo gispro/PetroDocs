@@ -103,7 +103,36 @@ Ext.define('PetroRes.view.MainWindow', {
                                                             function( selRowModel, record, index, eOpts){
                                                                 pnlAddDocument.setTemplateDocument(record);
                                                             });
-                        wnd.openPetroWindow('domaindocuments', {
+                                                            
+                                var btnFind = Ext.create('Ext.Button', 
+                                {   icon:'lib/ext41/examples/ux/grid/images/find.png',
+                                    region: 'west',
+                                    height:24,
+                                    listeners: {
+                                        afterRender: function(c, options){
+                                        c.findTooltip = Ext.create('Ext.tip.ToolTip', 
+                                          {   target: c.getEl(),
+                                              anchor: 'top',
+                                              autoHide: false,
+                                              closable: true,
+                                              width:200,
+                                              height:52,
+                                              layout:'fit',
+                                              items:[
+                                                  Ext.create('PetroRes.view.DocumentSimpleSearchPanel')
+                                              ]  });
+                                          },
+                                          click:function(c){
+                                              if(c.findTooltip.isVisible())
+                                                c.findTooltip.hide();
+                                              else
+                                                c.findTooltip.show();  
+                                          }
+                                        }} );
+//                                        me.on({hide:  function(){ if( c.findTooltip.isVisible()) c.findTooltip.hide()},
+//                                               move:  function(){ if( c.findTooltip.isVisible()) c.findTooltip.hide()},
+//                                               resize:function(){ if( c.findTooltip.isVisible()) c.findTooltip.hide()}});
+                        var w = wnd.openPetroWindow('domaindocuments', {
                             closable: true,
                             width:wnd.getWidth()*0.9,
                             title: 'Documents Catalog',
@@ -113,6 +142,7 @@ Ext.define('PetroRes.view.MainWindow', {
                             items: [
                                 {xtype:'panel', layout:'border', region:'north', height:27,
                                   items:[
+                                        btnFind,
                                         pnlAddDocument
                                         //Ext.create('PetroRes.view.DocumentSimpleSearchPanel',{region:'north', height:27}),
                                     ]},

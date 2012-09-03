@@ -1,3 +1,6 @@
+Ext.require(['Ext.tip.*', 'Ext.util.Format' ]);
+
+
 Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
     extend: 'Ext.panel.Panel',
 
@@ -8,8 +11,11 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
       for( var node = record; node && node.raw; node = node.parentNode){
           s = node.raw.fullName + (s.length > 0 ?  " :: " : '') +s; 
       }
-          
-      this.lblDomain.setText(' '+s+'  ');
+      s = Ext.util.Format.trim(s);
+      if(s.length > 0 && 
+         !this.lblDomain.hasCls('ab_FullTextFieldLabel'))
+        this.lblDomain.addCls('ab_FullTextFieldLabel');
+      this.lblDomain.setText(s);
       this.tfAdd.setValue('');
       this.doLayout();
     },
@@ -33,8 +39,8 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
         me.lblDomain = Ext.create('Ext.form.Label',{
                 region:'west',
                 //resizable:true,
-                text:'', height:24,
-                cls:'ab_TextFieldLabel'
+                text:'', height:24, minWidh:0,
+                cls:'ab_EmptyTextFieldLabel'
             });
         me.tfAdd = Ext.create('Ext.form.TextField',{
                 //fieldLabel:' ',
@@ -130,6 +136,7 @@ Ext.define('PetroRes.view.DomainDocumentsAddPanel', {
         });
 
         me.callParent(arguments);
+     
     }
 });
 

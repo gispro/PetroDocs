@@ -569,6 +569,15 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }
                                         
                                     },
+                                    {
+                                        xtype: 'button',
+                                        text: 'Info',
+                                        toggleGroup: 'modeGr',
+                                        handler: function (){
+                                            selectControl.activate();
+                                        }
+                                        
+                                    },
                                     '-', 
                                     {
                                         xtype: 'button',

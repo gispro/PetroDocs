@@ -72,8 +72,8 @@ Ext.define('PetroRes.view.MainWindow', {
                         var wnd = Ext.getCmp('MainWindow'),
                             pnlTree = Ext.create('PetroRes.view.DomainsTreePanel',
                                                  {editable:false, store:'DocsViewDomainsJsonTreeStore'}),
-                            pnlDocumentsGreed = Ext.create('PetroRes.view.DomainDocumentsGridPanel',{ region:'center', domainsTree: pnlTree }),
-                            pnlAddDocument = Ext.create('PetroRes.view.DomainDocumentsAddPanel',{ region:'center', docsGreed:pnlDocumentsGreed});
+                            pnlDocumentsGreed = Ext.create('PetroRes.view.DomainDocumentsGridPanel',{region:'center', domainsTree: pnlTree}),
+                            pnlAddDocument = Ext.create('PetroRes.view.DomainDocumentsAddPanel',{region:'center', docsGreed:pnlDocumentsGreed});
                             
                             pnlAddDocument.addListener('documentadded',
                                                         function(p1, p2){
@@ -89,7 +89,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                             ddStore.loadDocuments(raw.id, raw.level, raw.name, raw.fullName);
                                                         },
                                                         pnlAddDocument);
-                            Ext.apply(pnlTree,{region: 'west', collapsible: true, split: true, width: wnd.getWidth()*0.3 });
+                            Ext.apply(pnlTree,{region: 'west', collapsible: true, split: true, width: wnd.getWidth()*0.3});
                             pnlTree.addListener('select', 
                                                 function( selRowModel, record, index, eOpts ){
                                                     //Ext.selection.RowModel this, Ext.data.Model record, Number index, Object eOpts
@@ -105,13 +105,13 @@ Ext.define('PetroRes.view.MainWindow', {
                                                             });
                                                             
                                 var btnFind = Ext.create('Ext.Button', 
-                                {   icon:'lib/ext41/examples/ux/grid/images/find.png',
+                                {icon:'lib/ext41/examples/ux/grid/images/find.png',
                                     region: 'west',
                                     height:24,
                                     listeners: {
                                         afterRender: function(c, options){
                                         c.findTooltip = Ext.create('Ext.tip.ToolTip', 
-                                          {   target: c.getEl(),
+                                          {target: c.getEl(),
                                               anchor: 'top',
                                               autoHide: false,
                                               closable: true,
@@ -120,7 +120,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                               layout:'fit',
                                               items:[
                                                   Ext.create('PetroRes.view.DocumentSimpleSearchPanel')
-                                              ]  });
+                                              ]});
                                           },
                                           click:function(c){
                                               if(c.findTooltip.isVisible())
@@ -281,11 +281,141 @@ Ext.define('PetroRes.view.MainWindow', {
                                     box: true,
                                     displayInLayerSwitcher: false
                                 });
-                                
-                        //var getFeatureControl = new OpenLayers.Control.GetFeature({
-                            
-                        //});
 
+                        var selectControlHover = new OpenLayers.Control.SelectFeature(vectorLayers, {
+                                    clickout: true, toggle: false,
+                                    multiple: false, hover: false,
+                                    displayInLayerSwitcher: false
+                                    , onUnselect: function(){
+                                        //mapPanel.map.removePopup(selectControlHover.baloon);
+                                        selectControlHover.baloon.close();
+                                    }
+                                    , onSelect: function(selected){
+                                        if(selectControlHover.baloon){
+                                            //mapPanel.map.removePopup(selectControlHover.baloon);
+                                            selectControlHover.baloon.close();
+                                        }
+                                        
+                                        //selectControlHover.baloon = new OpenLayers.Popup("chicken",
+                                        //    new OpenLayers.LonLat(selected.geometry.bounds.right, 
+                                        //        selected.geometry.bounds.bottom),
+                                        //    new OpenLayers.Size(300,200),
+                                        //    '',
+                                        //    false);
+                                        //selectControlHover.baloon.closeOnMove = true;
+                                        //mapPanel.map.addPopup(selectControlHover.baloon);
+                                        var pix = mapPanel.map.getPixelFromLonLat(
+                                            new OpenLayers.LonLat(selected.geometry.bounds.right, 
+                                            selected.geometry.bounds.bottom));
+                                        console.log(selected);
+                                        selectControlHover.baloon = Ext.create('Ext.window.Window', {
+                                        //Ext.create('Ext.panel.Panel', {
+                                            //renderTo: selectControlHover.baloon.contentDiv,
+                                            title: 'Features',
+                                            layout: 'fit',
+                                            height: 200,
+                                            width: 200,
+                                            x: pix.x,
+                                            y: pix.y,
+                                            defaults:{
+                                                anchor: '100%'
+                                            },
+                                            items: [{
+                                                autoScroll: true,
+                                                xtype: 'propertygrid',
+                                                source: selected.data
+                                            }],
+                                            fbar: [{
+                                                type: 'button',
+                                                text: 'Documents',
+                                                handler: function(){
+                                                    Ext.Ajax.request({
+                                                        headers: {
+                                                            Accept: 'application/json'
+                                                        },
+                                                        url: 'rest/documents/find',
+                                                        jsonData: {geoObjects: function(){
+                                                            var obj = [];
+                                                            var feat  = selected.fid
+                                                            {
+                                                                var oneFeatArr = feat.split('.');
+                                                                obj.push({
+                                                                    idInTable: oneFeatArr[1],
+                                                                    tableName: oneFeatArr[0]
+                                                                });
+                                                            }
+                                                            return obj;// Ext.encode(obj);
+                                                        }.call()}
+                                                        ,
+                                                        success: function(resp, opts){
+                                                            var ret = Ext.decode(resp.responseText);
+                                                            //petroresConfig.makeAllIdsNumbers(ret);
+                                                            //console.log(["вот, получилось", ret])
+
+                                                            var wnd = Ext.getCmp('MainWindow');
+
+                                                            var stor = Ext.create('Ext.data.Store', {
+                                                                model: Ext.getStore('DocumentsJsonStore').getProxy().getModel(),
+                                                                data: ret,
+                                                                proxy: {
+                                                                    type: 'memory',
+                                                                    reader: {
+                                                                        type: 'json',
+                                                                        root: 'documents'
+                                                                    }
+                                                                }
+                                                            });
+                                                            var grid = Ext.create(
+                                                                'PetroRes.view.DocumentsGridPanel', 
+                                                                {
+                                                                    store: stor,
+                                                                    listeners:{
+                                                                        itemdblclick: function(ths, rec){
+
+                                                                            var editForm = Ext.create(
+                                                                                    'PetroRes.view.DocumentFormEdit'
+                                                                                );
+                                                                            wnd.openPetroWindow('editDoc', {
+                                                                                closable: true,
+                                                                                width:wnd.getWidth()*0.9,
+                                                                                title: 'Edit Document',
+                                                                                maximizable: true,
+                                                                                maximized: true,
+                                                                                layout: 'fit',
+                                                                                items: [
+                                                                                    editForm
+                                                                                ]                                    
+                                                                            });
+                                                                            editForm.loadRecord(rec);
+                                                                        }
+                                                                    }
+                                                                }
+                                                            );
+                                                            if(wnd.openPetroWindows.searchres){
+                                                                wnd.openPetroWindows.searchres.close();
+                                                            }
+                                                            wnd.openPetroWindow('searchres', {
+                                                                closable: true,
+                                                                width:wnd.getWidth()*0.9,
+                                                                title: 'Found Documents',
+                                                                maximizable: true,
+                                                                maximized: false,
+                                                                layout: 'fit',
+                                                                items: [
+                                                                    grid
+                                                                ]                                    
+                                                            });
+
+                                                        }
+                                                    });                                                    
+                                                }
+                                            }]
+                                        });
+                                        selectControlHover.baloon.show();
+                                    }
+                                    
+                                });
+                                
                         var opacitySlider = Ext.create('GeoExt.slider.LayerOpacity',{
                             aggressive: true,
                             vertical: false,
@@ -321,7 +451,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                     //]
                                 });
                                 
-                        mapPanel.map.addControl(selectControl)
+                        mapPanel.map.addControl(selectControl);
+                        mapPanel.map.addControl(selectControlHover);
                         
                         var store = Ext.create('Ext.data.TreeStore', {
                             model: 'GeoExt.data.LayerTreeModel',
@@ -541,6 +672,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                             });
                                             selCombo.disable();*/
                                             selectControl.deactivate();
+                                            selectControlHover.deactivate();
+                                            
                                         }
                                     },
                                     petroresConfig.userIsEditor || petroresConfig.userIsAdmin ?{
@@ -596,6 +729,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 }
                                             });*/
                                             selectControl.activate();
+                                            selectControlHover.deactivate();
                                         }
                                         
                                     },
@@ -604,7 +738,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         text: 'Info',
                                         toggleGroup: 'modeGr',
                                         handler: function (){
-                                            selectControl.activate();
+                                            selectControl.deactivate();
+                                            selectControlHover.activate();
                                         }
                                         
                                     },
@@ -854,12 +989,12 @@ Ext.define('PetroRes.view.MainWindow', {
                         },
                         {
                             xtype: 'menuitem',
-                            text: 'Stages',
+                            text: 'Project Stages',
                             handler: function(){
                                 var wnd = Ext.getCmp('MainWindow');
                                 wnd.openPetroWindow('stages', {
                                     closable: true,
-                                    title: 'Stages',
+                                    title: 'Project Stages',
                                     maximizable: true,
                                     maximized: false,
                                     layout: 'fit',

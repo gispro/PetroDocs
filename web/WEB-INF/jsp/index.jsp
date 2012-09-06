@@ -53,7 +53,61 @@
             petroresConfig.domainRootId = ${initParam.domainRootId};
             //petroresConfig.saveStrategy = new OpenLayers.Strategy.Save();
             //petroresConfig.saveStrategy.events.register("success", '', function(){alert('Success')});
-            //petroresConfig.saveStrategy.events.register("failure", '', function(){alert('Failure')});   
+            //petroresConfig.saveStrategy.events.register("failure", '', function(){alert('Failure')});  
+            
+            
+            /*
+             * Creates from a structure like
+             * 
+             * {
+             *  petroType: OpenLayers.Layer.Vector,
+             *  params: [
+             *      'Seismic',
+             *      {
+             *          a: 'b'
+             *      }
+             *  ]
+             * }
+             *
+             *
+             */
+            
+            petroresConfig.create = function(config){
+                if(Ext.isObject(config) || Ext.isArray(config)){
+                    //var ret = config;// Ext.isArray(config)?[]:{};
+                    for(var attr in config){
+                        if(attr!='petroType'){
+                            var curAttr = config[attr];
+                            curAttr = petroresConfig.create(curAttr);
+                            config[attr] = curAttr;
+                        }else{
+                            config.petroType = curAttr;
+                        }
+                    }
+
+                    if(config.petroType){
+                        //var clazz = window;
+                        //var classPath = config.petroType.split('.');
+                        //for(var curClass in classPath){
+                        //    clazz = clazz[classPath[curClass]];
+                        //}
+                        function newConstr(){
+                            //return clazz.apply(this, config.params);
+                            return config.petroType.apply(this, config.params);
+                        }
+                        newConstr.prototype = config.petroType.prototype;
+                        return new newConstr();
+                        
+                    }else{
+                        return config;
+                    }
+                }else{
+                    return config;
+                }
+            }
+            
+            
+            
             //set up the modification tools
             petroresConfig.DeleteFeature = OpenLayers.Class(OpenLayers.Control, {
                 initialize: function(layer, options) {
@@ -85,17 +139,111 @@
             petroresConfig.proj4326 = new OpenLayers.Projection('EPSG:4326');
             petroresConfig.proj32639 = new OpenLayers.Projection('EPSG:32639');
             petroresConfig.projGoog = new OpenLayers.Projection('EPSG:900913');
-            petroresConfig.showFeatureEditor = function(layer, features){
+            petroresConfig.showFeatureViewer = function(layer, features){
+                            var wnd = Ext.getCmp('MainWindow');
+                            for(var featNum in features){
+                                if(layer.schemaLoaded){
+                                    var form = Ext.create('Ext.panel.Panel', {
+                                        autoScroll: true,
+                                        items: [
+                                            {
+                                                xtype: 'fieldset',
+                                                layout: 'anchor',
+                                                defaults: {
+                                                    anchor: '100%'
+                                                },
+                                                title: 'Features',
+                                                items: layer.schemaLoaded.featureTypes[0].fields
+                                            }
+                                        ],
+                                        buttons: [
+                                            {
+                                                text: 'Close',
+                                                handler: function(){
+                                                    wnd.openPetroWindows.attrWndView.close();
+                                                }
+                                            }                                            
+                                            
+                                        ]
+                                    });
+
+                                    wnd.openPetroWindow('attrWndView', {
+                                        closable: true,
+                                        title: 'Specify Attributes',
+                                        maximizable: false,
+                                        maximized: false,
+                                        width: 350,
+                                        //autoScroll: true,
+                                        /*layout: 'anchor',
+                                        defaults: {
+                                            anchor: '100%'
+                                        },*/
+                                        layout: 'fit',
+                                        items: [
+                                            form
+                                        ]
+                                    });
+                                }
+                            }
+            }
+            
+            petroresConfig.showFeatureEditor = function(layer, features, readOnly){
                             var wnd = Ext.getCmp('MainWindow');
                             for(var featNum in features){
                                 var feature = features[featNum];
                                 if(layer.schemaLoaded){
+                                    
+                                    var vertices = feature.geometry.getVertices();
+                                    var editVericesFields = [];
+                                    for(var vertI in vertices){
+                                        editVericesFields.push({
+                                            xtype: 'fieldset',
+                                            title: 'Point ' + vertI,
+                                            layout: 'anchor',
+                                            defaults: {
+                                                anchor: '100%'
+                                            },
+                                            items: [
+                                                {
+                                                    xtype: 'numberfield',
+                                                    fieldLabel: 'X',
+                                                    value: vertices[vertI].x
+                                                }, 
+                                                {
+                                                    xtype: 'numberfield',
+                                                    fieldLabel: 'Y',
+                                                    value: vertices[vertI].y
+                                                }
+                                            ]
+                                        });
+                                    }
+                                    
+                                    
                                     var form = Ext.create('Ext.form.Panel', {
                                         autoScroll: true,
-                                        items: layer.schemaLoaded.featureTypes[0].fields,
+                                        items: [
+                                            {
+                                                xtype: 'fieldset',
+                                                title: 'Coordinates',
+                                                layout: 'anchor',
+                                                defaults: {
+                                                    anchor: '100%'
+                                                },
+                                                items: editVericesFields
+                                            },
+                                            {
+                                                xtype: 'fieldset',
+                                                layout: 'anchor',
+                                                defaults: {
+                                                    anchor: '100%'
+                                                },
+                                                title: 'Features',
+                                                items: layer.schemaLoaded.featureTypes[0].fields
+                                            }
+                                        ],
                                         buttons: [
                                             {
-                                                text: 'OK',
+                                                text: 'Save',
                                                 handler: function(){
                                                     if(form.getForm().isValid()){
                                                         feature.attributes = form.getForm().getFieldValues(true);
@@ -109,7 +257,14 @@
                                                         layer.saveStrategy.save([feature]);
                                                     }
                                                 }
-                                            },                                            
+                                            },  
+                                            !readOnly?
+                                            {
+                                                text: 'Edit',
+                                                handler: function(){
+                                                    form.enable();
+                                                }
+                                            }:undefined,                                            
                                             {
                                                 text: 'Cancel',
                                                 handler: function(){
@@ -137,11 +292,22 @@
                                         form.getForm().setValues(feature.attributes);
                                     }
                                     
+                                    if(readOnly){
+                                        form.query('.field').forEach(function(c){c.setDisabled(false);});
+                                        //form.disable();
+                                    }
+                                    
                                     wnd.openPetroWindow('attrWnd', {
                                         closable: true,
                                         title: 'Specify Attributes',
                                         maximizable: false,
                                         maximized: false,
+                                        width: 350,
+                                        //autoScroll: true,
+                                        /*layout: 'anchor',
+                                        defaults: {
+                                            anchor: '100%'
+                                        },*/
                                         layout: 'fit',
                                         items: [
                                             form
@@ -150,7 +316,7 @@
                                 }
                             }
             };
-
+            
             petroresConfig.createEditingPanel = function(layer){
                 for(var i in layer.strategies){
                     // is it a save strategy? what is the correct way to access it? damnit openlayers
@@ -278,6 +444,12 @@
                     }
                 });                
             };
+
+            /*petroresConfig.layersCreatorNew = function(){ 
+                var ret = petroresConfig.create(petroresConfig.layersConfig);
+                console.log(ret);
+                return ret;
+            }*/
 
             petroresConfig.layersCreator = function(){ 
                 return [
@@ -444,9 +616,11 @@
                     ,version: "1.1.0"
                     , eventListeners: {
                         beforefeaturesadded: function(obj){
+                            //console.log(obj);
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
                         },
                         loadend: function(eventsObj){
+                            console.log(eventsObj);
                             petroresConfig.loadWfsSchema(eventsObj.object);
                             petroresConfig.createEditingPanel(eventsObj.object)
                         }
@@ -525,7 +699,12 @@
                     ,version: "1.1.0"
                     , eventListeners: {
                         beforefeaturesadded: function(obj){
+                            console.log(obj);
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
+                        },
+                        beforefeaturemodified: function(obj){
+                            console.log(obj);
+                            petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
                         },
                         loadend: function(eventsObj){
                             petroresConfig.loadWfsSchema(eventsObj.object);
@@ -550,14 +729,16 @@
                     ,version: "1.1.0"
                     , eventListeners: {
                         beforefeaturesadded: function(obj){
-                            petroresConfig.showFeatureEditor(obj.object, obj.features)
+                            console.log(obj);
+                            petroresConfig.showFeatureEditor(obj.object, obj.features);
                         },
-                        featureselected: function(obj){
-                            petroresConfig.showFeatureEditor(obj.object, [obj.feature])
+                        beforefeaturemodified: function(obj){
+                            console.log(obj);
+                            petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
                         },
                         loadend: function(eventsObj){
                             petroresConfig.loadWfsSchema(eventsObj.object);
-                            petroresConfig.createEditingPanel(eventsObj.object)
+                            petroresConfig.createEditingPanel(eventsObj.object);
                         }
                     }
                 })
@@ -599,6 +780,7 @@
         <script type="text/javascript" src="lib/boxselect/Boxselect.js"></script>
         <!--<script type="text/javascript" src="/print/pdf/info.json?var=printCapabilities"></script>-->
         <script type="text/javascript" src="config/helpInfo.js"></script>
+        <script type="text/javascript" src="config/layers.js"></script>
         <link rel="stylesheet" type="text/css" href="lib/boxselect/boxselect.css"/>
         <!--<script type="text/javascript" src="lib/geoext2/src/GeoExt/GeoExt.js"></script>-->
         <script type="text/javascript">
@@ -678,11 +860,15 @@ url("lib/openlayers212/theme/default/img/draw_line_on.png");
 }
 .olControlDrawFeaturePointItemInactive {
 background-image:
-url("lib/openlayers212/theme/default/img/draw_point_off.png");
+url("lib/openlayers212/theme/default/img/editing_tool_bar.png");
+background-repeat: no-repeat;
+background-position: -78px 0px;
 }
 .olControlDrawFeaturePointItemActive {
 background-image:
-url("lib/openlayers212/theme/default/img/draw_point_on.png");                                  
+url("lib/openlayers212/theme/default/img/editing_tool_bar.png");
+background-repeat: no-repeat;
+background-position: -78px -23px;                                                            
 }
 .olControlModifyFeatureItemActive {
 background-image:
@@ -707,6 +893,14 @@ background-image:
 url(lib/openlayers212/theme/default/img/remove_point_off.png);
 background-repeat: no-repeat;
 background-position: 0px 1px;
+}
+.olControlEditFeaturePencilItemInactive {
+background-image:
+url("lib/openlayers212/theme/default/img/draw_point_off.png");
+}
+.olControlEditFeaturePencilItemActive {
+background-image:
+url("lib/openlayers212/theme/default/img/draw_point_on.png");                                  
 }
 </style>        
         

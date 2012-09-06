@@ -713,7 +713,7 @@ Ext.define('PetroRes.view.DocumentSearchForm', {
                                             {
                                                 xtype: 'combo',
                                                 multiSelect: true,
-                                                fieldLabel: 'Generic',
+                                                fieldLabel: 'General Types',
                                                 name: 'superType',
                                                 store: 'SuperTypesJsonStore',
                                                 displayField: 'name',

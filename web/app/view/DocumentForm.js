@@ -921,7 +921,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                 items: [
                                     {
                                         xtype: 'combo',
-                                        fieldLabel: 'Generic',
+                                        fieldLabel: 'General Types',
                                         name: 'superType',
                                         store: 'SuperTypesJsonStore',
                                         displayField: 'name',

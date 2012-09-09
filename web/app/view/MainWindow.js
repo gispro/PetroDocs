@@ -307,7 +307,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         var pix = mapPanel.map.getPixelFromLonLat(
                                             new OpenLayers.LonLat(selected.geometry.bounds.right, 
                                             selected.geometry.bounds.bottom));
-                                        console.log(selected);
+                                        //console.log(selected);
                                         selectControlHover.baloon = Ext.create('Ext.window.Window', {
                                         //Ext.create('Ext.panel.Panel', {
                                             //renderTo: selectControlHover.baloon.contentDiv,

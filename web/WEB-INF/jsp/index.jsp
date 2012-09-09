@@ -188,131 +188,129 @@
             }
             
             petroresConfig.showFeatureEditor = function(layer, features, readOnly){
+                //console.log('feature editer showed', features[0].state);
                             var wnd = Ext.getCmp('MainWindow');
-                            for(var featNum in features){
-                                var feature = features[featNum];
-                                if(layer.schemaLoaded){
-                                    
-                                    var vertices = feature.geometry.getVertices();
-                                    var editVericesFields = [];
-                                    for(var vertI in vertices){
-                                        editVericesFields.push({
-                                            xtype: 'fieldset',
-                                            title: 'Point ' + vertI,
-                                            layout: 'anchor',
-                                            defaults: {
-                                                anchor: '100%'
-                                            },
+                            if(layer.schemaLoaded){
+                                for(var featNum in features){
+                                    var feature = features[featNum];
+                                    if(feature.state){
+
+                                        var vertices = feature.geometry.getVertices();
+                                        var editVericesFields = [];
+                                        for(var vertI in vertices){
+                                            editVericesFields.push({
+                                                xtype: 'fieldset',
+                                                title: 'Point ' + vertI,
+                                                layout: 'anchor',
+                                                defaults: {
+                                                    anchor: '100%'
+                                                },
+                                                items: [
+                                                    {
+                                                        xtype: 'numberfield',
+                                                        fieldLabel: 'X',
+                                                        name: 'petroPointX' + vertI,
+                                                        value: vertices[vertI].x
+                                                    }, 
+                                                    {
+                                                        xtype: 'numberfield',
+                                                        name: 'petroPointY' + vertI,
+                                                        fieldLabel: 'Y',
+                                                        value: vertices[vertI].y
+                                                    }
+                                                ]
+                                            });
+                                        }
+
+
+                                        var form = Ext.create('Ext.form.Panel', {
+                                            autoScroll: true,
                                             items: [
                                                 {
-                                                    xtype: 'numberfield',
-                                                    fieldLabel: 'X',
-                                                    value: vertices[vertI].x
-                                                }, 
+                                                    xtype: 'fieldset',
+                                                    title: 'Coordinates',
+                                                    layout: 'anchor',
+                                                    defaults: {
+                                                        anchor: '100%'
+                                                    },
+                                                    items: editVericesFields
+                                                },
                                                 {
-                                                    xtype: 'numberfield',
-                                                    fieldLabel: 'Y',
-                                                    value: vertices[vertI].y
+                                                    xtype: 'fieldset',
+                                                    layout: 'anchor',
+                                                    defaults: {
+                                                        anchor: '100%'
+                                                    },
+                                                    title: 'Features',
+                                                    items: layer.schemaLoaded.featureTypes[0].fields
                                                 }
+                                            ],
+                                            buttons: [
+                                                {
+                                                    text: 'Save',
+                                                    handler: function(){
+                                                        if(form.getForm().isValid()){
+                                                            feature.attributes = form.getForm().getFieldValues(true);
+                                                            wnd.openPetroWindows.attrWnd.close();
+                                                            // what the hack?
+                                                            // one
+                                                            feature.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
+                                                            // two
+                                                            feature.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
+                                                            // profit
+                                                            layer.saveStrategy.save([feature]);
+                                                        }
+                                                    }
+                                                },  
+                                                {
+                                                    text: 'Cancel',
+                                                    handler: function(){
+                                                        wnd.openPetroWindows.attrWnd.close();
+                                                        if(feature.fid == undefined) {
+                                                            layer.destroyFeatures([feature]);
+                                                        } else {
+                                                            if(feature.state===OpenLayers.State.INSERT){
+                                                                feature.state = OpenLayers.State.DELETE;
+                                                                layer.events.triggerEvent("afterfeaturemodified",
+                                                                {feature: feature});
+                                                                feature.renderIntent = "select";
+                                                                layer.drawFeature(feature);
+                                                            }
+                                                            //layer.saveStrategy.save([feature]);
+                                                        }
+                                                    }
+                                                }                                            
+
+                                            ]
+                                        });
+
+                                        if(feature.state!=='Insert'){
+                                            //feature.state = OpenLayers.State.UPDATE;
+                                            form.getForm().setValues(feature.attributes);
+                                        }
+
+                                        if(readOnly){
+                                            form.query('.field').forEach(function(c){c.setDisabled(false);});
+                                            //form.disable();
+                                        }
+
+                                        wnd.openPetroWindow('attrWnd', {
+                                            closable: true,
+                                            title: 'Specify Attributes',
+                                            maximizable: false,
+                                            maximized: false,
+                                            width: 350,
+                                            //autoScroll: true,
+                                            /*layout: 'anchor',
+                                            defaults: {
+                                                anchor: '100%'
+                                            },*/
+                                            layout: 'fit',
+                                            items: [
+                                                form
                                             ]
                                         });
                                     }
-                                    
-                                    
-                                    var form = Ext.create('Ext.form.Panel', {
-                                        autoScroll: true,
-                                        items: [
-                                            {
-                                                xtype: 'fieldset',
-                                                title: 'Coordinates',
-                                                layout: 'anchor',
-                                                defaults: {
-                                                    anchor: '100%'
-                                                },
-                                                items: editVericesFields
-                                            },
-                                            {
-                                                xtype: 'fieldset',
-                                                layout: 'anchor',
-                                                defaults: {
-                                                    anchor: '100%'
-                                                },
-                                                title: 'Features',
-                                                items: layer.schemaLoaded.featureTypes[0].fields
-                                            }
-                                        ],
-                                        buttons: [
-                                            {
-                                                text: 'Save',
-                                                handler: function(){
-                                                    if(form.getForm().isValid()){
-                                                        feature.attributes = form.getForm().getFieldValues(true);
-                                                        wnd.openPetroWindows.attrWnd.close();
-                                                        // what the hack?
-                                                        // one
-                                                        feature.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
-                                                        // two
-                                                        feature.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
-                                                        // profit
-                                                        layer.saveStrategy.save([feature]);
-                                                    }
-                                                }
-                                            },  
-                                            !readOnly?
-                                            {
-                                                text: 'Edit',
-                                                handler: function(){
-                                                    form.enable();
-                                                }
-                                            }:undefined,                                            
-                                            {
-                                                text: 'Cancel',
-                                                handler: function(){
-                                                    wnd.openPetroWindows.attrWnd.close();
-                                                    if(feature.fid == undefined) {
-                                                        layer.destroyFeatures([feature]);
-                                                    } else {
-                                                        if(feature.state===OpenLayers.State.INSERT){
-                                                            feature.state = OpenLayers.State.DELETE;
-                                                            layer.events.triggerEvent("afterfeaturemodified",
-                                                            {feature: feature});
-                                                            feature.renderIntent = "select";
-                                                            layer.drawFeature(feature);
-                                                        }
-                                                        //layer.saveStrategy.save([feature]);
-                                                    }
-                                                }
-                                            }                                            
-                                            
-                                        ]
-                                    });
-                                    
-                                    if(feature.state!=='Insert'){
-                                        feature.state = OpenLayers.State.UPDATE;
-                                        form.getForm().setValues(feature.attributes);
-                                    }
-                                    
-                                    if(readOnly){
-                                        form.query('.field').forEach(function(c){c.setDisabled(false);});
-                                        //form.disable();
-                                    }
-                                    
-                                    wnd.openPetroWindow('attrWnd', {
-                                        closable: true,
-                                        title: 'Specify Attributes',
-                                        maximizable: false,
-                                        maximized: false,
-                                        width: 350,
-                                        //autoScroll: true,
-                                        /*layout: 'anchor',
-                                        defaults: {
-                                            anchor: '100%'
-                                        },*/
-                                        layout: 'fit',
-                                        items: [
-                                            form
-                                        ]
-                                    });
                                 }
                             }
             };
@@ -537,6 +535,11 @@
                         beforefeaturesadded: function(obj){
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
                         },
+                        beforefeaturemodified: function(obj){
+                            //console.log(obj);
+                            obj.feature.state = OpenLayers.State.UPDATE;
+                            petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
+                        },
                         loadend: function(eventsObj){
                             petroresConfig.loadWfsSchema(eventsObj.object);
                             petroresConfig.createEditingPanel(eventsObj.object)
@@ -564,6 +567,11 @@
                         beforefeaturesadded: function(obj){
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
                         },
+                        beforefeaturemodified: function(obj){
+                            //console.log(obj);
+                            obj.feature.state = OpenLayers.State.UPDATE;
+                            petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
+                        },
                         loadend: function(eventsObj){
                             petroresConfig.loadWfsSchema(eventsObj.object);
                             petroresConfig.createEditingPanel(eventsObj.object)
@@ -590,6 +598,11 @@
                     , eventListeners: {
                         beforefeaturesadded: function(obj){
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
+                        },
+                        beforefeaturemodified: function(obj){
+                            //console.log(obj);
+                            obj.feature.state = OpenLayers.State.UPDATE;
+                            petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
                         },
                         loadend: function(eventsObj){
                             petroresConfig.loadWfsSchema(eventsObj.object);
@@ -619,8 +632,13 @@
                             //console.log(obj);
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
                         },
+                        beforefeaturemodified: function(obj){
+                            //console.log(obj);
+                            obj.feature.state = OpenLayers.State.UPDATE;
+                            petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
+                        },
                         loadend: function(eventsObj){
-                            console.log(eventsObj);
+                            //console.log(eventsObj);
                             petroresConfig.loadWfsSchema(eventsObj.object);
                             petroresConfig.createEditingPanel(eventsObj.object)
                         }
@@ -662,6 +680,11 @@
                         beforefeaturesadded: function(obj){
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
                         },
+                        beforefeaturemodified: function(obj){
+                            //console.log(obj);
+                            obj.feature.state = OpenLayers.State.UPDATE;
+                            petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
+                        },
                         loadend: function(eventsObj){
                             petroresConfig.loadWfsSchema(eventsObj.object);
                             petroresConfig.createEditingPanel(eventsObj.object)
@@ -699,11 +722,12 @@
                     ,version: "1.1.0"
                     , eventListeners: {
                         beforefeaturesadded: function(obj){
-                            console.log(obj);
+                            //console.log(obj);
                             petroresConfig.showFeatureEditor(obj.object, obj.features)
                         },
                         beforefeaturemodified: function(obj){
-                            console.log(obj);
+                            //console.log(obj);
+                            obj.feature.state = OpenLayers.State.UPDATE;
                             petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
                         },
                         loadend: function(eventsObj){
@@ -729,11 +753,12 @@
                     ,version: "1.1.0"
                     , eventListeners: {
                         beforefeaturesadded: function(obj){
-                            console.log(obj);
+                            //console.log(obj);
                             petroresConfig.showFeatureEditor(obj.object, obj.features);
                         },
                         beforefeaturemodified: function(obj){
-                            console.log(obj);
+                            //console.log(obj);
+                            obj.feature.state = OpenLayers.State.UPDATE;
                             petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
                         },
                         loadend: function(eventsObj){

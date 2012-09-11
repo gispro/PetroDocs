@@ -26,6 +26,10 @@
         <!--<param-value>/geoserver/wfs</param-value>-->
     </context-param>
     <context-param>
+        <param-name>mapsPath</param-name>
+        <param-value>WEB-INF/maps/</param-value>
+    </context-param>
+    <context-param>
         <param-name>roleReader</param-name>
         <param-value>MO-SUB_GIS-RX</param-value>
     </context-param>

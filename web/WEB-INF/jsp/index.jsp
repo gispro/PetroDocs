@@ -186,7 +186,71 @@
                                 }
                             }
             }
-            
+
+            petroresConfig.showFeatureSearcher = function(layer, selectControl){
+                var wnd = Ext.getCmp('MainWindow');
+                if(layer.schemaLoaded){
+                    var form = Ext.create('Ext.form.Panel', {
+                        autoScroll: true,
+                        items: [
+                            {
+                                xtype: 'fieldset',
+                                layout: 'anchor',
+                                defaults: {
+                                    anchor: '100%'
+                                },
+                                title: 'Features',
+                                items: layer.schemaLoaded.featureTypes[0].fields
+                            }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Search',
+                                handler: function(){
+                                    if(form.getForm().isValid()){
+                                        var attrs = form.getForm().getFieldValues(true);
+                                        for(var attr in attrs){
+                                            if(!attrs[attr] || attrs[attr]==''){
+                                                delete attrs[attr];
+                                            }
+                                        }
+                                        
+                                        bigLoop:
+                                        for(var featr in layer.features){
+                                            for(var attr in attrs){
+                                                if(!layer.features[featr].attributes[attr]){
+                                                    continue bigLoop;
+                                                }
+                                                if(layer.features[featr].attributes[attr].indexOf(attrs[attr])<0){
+                                                    continue bigLoop;
+                                                }
+                                            }
+                                            selectControl.select(layer.features[featr]);
+                                        }
+                                        
+                                        wnd.openPetroWindows.attrWnd.close();
+                                        
+                                    }
+                                }
+                            }                                            
+
+                        ]
+                    });
+                    wnd.openPetroWindow('attrWnd', {
+                        closable: true,
+                        title: 'Find By Attributes',
+                        maximizable: false,
+                        maximized: false,
+                        width: 350,
+                        layout: 'fit',
+                        items: [
+                            form
+                        ]
+                    });
+                }
+            }
+
+
             petroresConfig.showFeatureEditor = function(layer, features, readOnly){
                 //console.log('feature editer showed', features[0].state);
                             var wnd = Ext.getCmp('MainWindow');
@@ -228,37 +292,55 @@
                                             items: [
                                                 {
                                                     xtype: 'fieldset',
-                                                    title: 'Coordinates',
-                                                    layout: 'anchor',
-                                                    defaults: {
-                                                        anchor: '100%'
-                                                    },
-                                                    items: editVericesFields
-                                                },
-                                                {
-                                                    xtype: 'fieldset',
                                                     layout: 'anchor',
                                                     defaults: {
                                                         anchor: '100%'
                                                     },
                                                     title: 'Features',
                                                     items: layer.schemaLoaded.featureTypes[0].fields
+                                                },
+                                                {
+                                                    xtype: 'fieldset',
+                                                    title: 'Coordinates',
+                                                    layout: 'anchor',
+                                                    defaults: {
+                                                        anchor: '100%'
+                                                    },
+                                                    items: editVericesFields
                                                 }
                                             ],
                                             buttons: [
                                                 {
-                                                    text: 'Save',
+                                                    text: 'OK',
                                                     handler: function(){
                                                         if(form.getForm().isValid()){
-                                                            feature.attributes = form.getForm().getFieldValues(true);
+                                                            // distinguish coordinated from attributes
+                                                            var attrs = form.getForm().getFieldValues(true);
+                                                            for(var attr in attrs){
+                                                                if(attr.indexOf('petroPoint')===0){
+                                                                    vertI = attr.substr('petroPointX'.length);
+                                                                    if(attr.substr('petroPoint'.length, 1) === 'X'){
+                                                                        vertices[vertI].move(attrs[attr] - vertices[vertI].x, 0);
+                                                                    }else{
+                                                                        vertices[vertI].move(0, attrs[attr] - vertices[vertI].y);
+                                                                    }
+                                                                    //if(attr.substr('petroPoint'.length, 1) === 'X'){
+                                                                    //    vertices[vertI].x = attrs[attr];
+                                                                    //}else{
+                                                                    //    vertices[vertI].y = attrs[attr];
+                                                                    //}
+                                                                    delete attrs[attr];
+                                                                }
+                                                            }
+                                                            feature.attributes = attrs; // form.getForm().getFieldValues(true);
                                                             wnd.openPetroWindows.attrWnd.close();
                                                             // what the hack?
                                                             // one
-                                                            feature.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
+                                                            //feature.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
                                                             // two
-                                                            feature.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
+                                                            //feature.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
                                                             // profit
-                                                            layer.saveStrategy.save([feature]);
+                                                            //layer.saveStrategy.save([feature]);
                                                         }
                                                     }
                                                 },  
@@ -368,9 +450,20 @@
                 var save = new OpenLayers.Control.Button({
                     title: "Save Changes",
                     trigger: function() {
-                        if(edit.feature) {
-                            edit.selectControl.unselectAll();
+                        //if(edit.feature) {
+                        for(var ft in layer.saveStrategy.layer.features){
+                            var ftt = layer.saveStrategy.layer.features[ft];
+                            if(ftt.state){
+                                // what the hack?
+                                // one
+                                ftt.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
+                                // two
+                                ftt.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
+                                // profit
+                                edit.selectControl.unselectAll();
+                            }
                         }
+                        
                         layer.saveStrategy.save();
                     },
                     displayClass: "olControlSaveFeatures"
@@ -927,6 +1020,47 @@ url("lib/openlayers212/theme/default/img/draw_point_off.png");
 background-image:
 url("lib/openlayers212/theme/default/img/draw_point_on.png");                                  
 }
+
+
+.petroButtonMapPan {
+background-image:
+url("images/pan.png");                                  
+}
+.petroButtonMapEdit {
+background-image:
+url("images/edit.png");                                  
+}
+.petroButtonMapSelect {
+background-image:
+url("images/select.png");                                  
+}
+.petroButtonMapInfo {
+background-image:
+url("images/information.png");                                  
+}
+.petroButtonMapSaveConf {
+background-image:
+url("images/save.png");                                  
+}
+.petroButtonMapFindDocs {
+background-image:
+url("images/finddocs.png");                                  
+}
+.petroButtonMapDistance {
+background-image:
+url("images/distance.png");                                  
+}
+.petroButtonMapArea {
+background-image:
+url("images/area.png");                                  
+}
+.petroButtonMapPdf {
+background-image:
+url("images/pdf.png");                                  
+}
+
+
+
 </style>        
         
     </head>

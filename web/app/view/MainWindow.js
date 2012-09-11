@@ -658,8 +658,10 @@ Ext.define('PetroRes.view.MainWindow', {
                         var tbar = [
                                     {
                                         xtype: 'button',
-                                        text: 'Pan',
+                                        //text: 'Pan',
+                                        tooltip: 'Pan',
                                         toggleGroup: 'modeGr',
+                                        iconCls: 'petroButtonMapPan',
                                         pressed: true,
                                         handler: function(){
                                             /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
@@ -678,7 +680,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                     },
                                     petroresConfig.userIsEditor || petroresConfig.userIsAdmin ?{
                                         xtype: 'button',
-                                        text: 'Edit',
+                                        tooltip: 'Edit',
+                                        iconCls: 'petroButtonMapEdit',
                                         toggleGroup: 'modeGr',
                                         toggleHandler: function(th, state){
                                             /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
@@ -716,7 +719,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                     }:undefined,
                                     {
                                         xtype: 'button',
-                                        text: 'Select',
+                                        tooltip: 'Select',
+                                        iconCls: 'petroButtonMapSelect',
                                         toggleGroup: 'modeGr',
                                         handler: function (){
                                             /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
@@ -735,7 +739,19 @@ Ext.define('PetroRes.view.MainWindow', {
                                     },
                                     {
                                         xtype: 'button',
-                                        text: 'Info',
+                                        text: 'Search',
+                                        toggleGroup: 'modeGr',
+                                        handler: function (){
+                                            selectControl.activate();
+                                            selectControlHover.deactivate();
+                                            petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
+                                        }
+                                        
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        tooltip: 'Info',
+                                        iconCls: 'petroButtonMapInfo',
                                         toggleGroup: 'modeGr',
                                         handler: function (){
                                             selectControl.deactivate();
@@ -744,9 +760,26 @@ Ext.define('PetroRes.view.MainWindow', {
                                         
                                     },
                                     '-', 
+                                    /*{
+                                        xtype: 'button',
+                                        tooltip: 'Save Configuration',
+                                        iconCls: 'petroButtonMapSaveConf',
+                                        handler: function (){
+                                            var format = new OpenLayers.Format.WMC();
+                                            var text = format.write(mapPanel.map);
+                                            Ext.Ajax.request({
+                                                url: 'form/maps/main.xml',
+                                                method: 'PUT',
+                                                xmlData: text
+                                            });
+                                        }
+                                        
+                                    },
+                                    '-', */
                                     {
                                         xtype: 'button',
-                                        text: 'Find',
+                                        tooltip: 'Find',
+                                        iconCls: 'petroButtonMapFindDocs',
                                         handler: function(){
                                             Ext.Ajax.request({
                                                 headers: {
@@ -860,7 +893,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         'Measure: '
                                     , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
                                         toggleGroup: 'modeGr',
-                                        text: 'Distance',
+                                        iconCls: 'petroButtonMapDistance',
+                                        tooltip: 'Distance',
                                         activateOnEnable: true,
                                         deactivateOnDisable: true,
                                         control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
@@ -875,7 +909,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                     }))
                                     , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
                                         toggleGroup: 'modeGr',
-                                        text: 'Area',
+                                        tooltip: 'Area',
+                                        iconCls: 'petroButtonMapArea',
                                         activateOnEnable: true,
                                         deactivateOnDisable: true,
                                         control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
@@ -890,7 +925,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         map: mapPanel.map
                                     }))                                    
                                     , Ext.create('Ext.button.Button', {
-                                        text: 'PDF',
+                                        tooltip: 'PDF',
+                                        iconCls: 'petroButtonMapPdf',
                                         disabled: true,
                                         id: 'pdfButton',
                                         handler: function() {

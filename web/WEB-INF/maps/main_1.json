@@ -1,0 +1,124 @@
+{
+    overlays: [
+        {
+            'label': 'Wells',
+            'featureType': 'Wells',
+            'typeName': 'PetroResurs:Wells',
+            'vectorType': 'point',
+            'opacity': .5,
+            'defaultLabelField': 'NAME'
+        },
+        {
+            'label': 'Licenses',
+            'featureType': 'Licenses',
+            'typeName': 'PetroResurs:Licenses',
+            'vectorType': 'poly',
+            'opacity': 1,
+            'defaultLabelField': 'NAME',
+            'styleMap': {
+                'default': {
+                    'fillColor': '#9555d4',
+                    'fillOpacity': 0,
+                    'strokeColor': '#9555d4',
+                    'strokeWidth': 0.4
+                },
+                'select': {
+                    'fillColor': '#9555d4',
+                    'fillOpacity': 0.4,
+                    'strokeColor': '#9555d4',
+                    'strokeWidth': 1.5
+                }
+            }
+        },
+        {
+            'label': 'Structures',
+            'featureType': 'Structures',
+            'typeName': 'PetroResurs:Structures',
+            'vectorType': 'poly',
+            'opacity': 1,
+            'defaultLabelField': 'NAME',
+            'styleMap': {
+                "default": {
+                    'fillColor': "#ddf7d0",
+                    'fillOpacity': 0.5,
+                    'strokeColor': "#b3b3b3",
+                    'strokeWidth': 0.4
+                },
+                "select": {
+                    'fillColor': "#ddf7d0",
+                    'fillOpacity': 0.8,
+                    'strokeColor': "#385827",
+                    'strokeOpacity': 0.7,
+                    'strokeWidth': 1.5
+                }
+            }
+        },
+        {
+            'label': 'Seismic 2D',
+            'featureType': 'Seismic_2D_PRS',
+            'typeName': 'PetroResurs:Seismic_2D_PRS',
+            'vectorType': 'line',
+            'opacity': 1,
+            'defaultLabelField': 'NAME'
+        },
+        {
+            'label': 'Seismic 3D',
+            'featureType': 'Seismic_3D_PRS',
+            'typeName': 'PetroResurs:Seismic_3D_PRS',
+            'vectorType': 'poly',
+            'opacity': 1,
+            'defaultLabelField': 'NAME'
+        }, {
+            'label': 'Ecological Limitations',
+            'featureType': 'Ecological_limitations',
+            'typeName': 'PetroResurs:Ecological_limitations',
+            'vectorType': 'poly',
+            'opacity': 1,
+            'defaultLabelField': 'NAME',
+            'visibility': false
+        }, {
+            'label': 'Regional Geology',
+            'featureType': 'Regional_Geology',
+            'typeName': 'PetroResurs:Regional_Geology',
+            'vectorType': 'poly',
+            'opacity': 1,
+            'defaultLabelField': 'NAME',
+            'visibility': false
+        }
+    ],
+    baseLayers: [
+        {
+            'label': 'OSM',
+            'url': 'http://uno:10000/service',
+            'params': {
+                'layers': 'osm_orig'
+            },
+            'options': {
+                'transitionEffect': 'resize',
+                'projection': 'EPSG:900913'
+            }
+        },
+        {
+            'label': 'Satellite',
+            'url': 'http://uno:10000/service',
+            'params': {
+                'layers': 'bing_imagery'
+            },
+            'options': {
+                'transitionEffect': 'resize',
+                'projection': 'EPSG:900913'
+            }
+        },
+        {
+            'label': 'Map Box',
+            'url': 'http://uno:10000/service',
+            'params': {
+                'layers': 'osm_mapbox'
+            },
+            'options': {
+                'transitionEffect': 'resize',
+                'projection': 'EPSG:900913'
+            }
+        }
+    ]
+}

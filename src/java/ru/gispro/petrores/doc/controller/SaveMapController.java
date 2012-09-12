@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author fkravchenko
  */
 @Controller
-@RequestMapping(value = "/maps/{name}")
+@RequestMapping(value = "/maps/{name:.*}")
 public class SaveMapController {
     
     @RequestMapping(method = RequestMethod.GET)

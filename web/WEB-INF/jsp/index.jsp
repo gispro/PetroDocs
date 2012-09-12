@@ -55,6 +55,7 @@
             //petroresConfig.saveStrategy.events.register("success", '', function(){alert('Success')});
             //petroresConfig.saveStrategy.events.register("failure", '', function(){alert('Failure')});  
             
+            petroresConfig.defaultMap = '${initParam.defaultMap}';
             
             /*
              * Creates from a structure like
@@ -536,13 +537,104 @@
                 });                
             };
 
-            /*petroresConfig.layersCreatorNew = function(){ 
-                var ret = petroresConfig.create(petroresConfig.layersConfig);
-                console.log(ret);
-                return ret;
-            }*/
+            petroresConfig.layersSaver = function(map){ 
+                var conf = {
+                    overlays: [],
+                    baseLayers: []
+                }
+                var layer;
+                for(var l in map.layers){
+                    layer = map.layers[l];
+                    if(layer.isBaseLayer){
+                        conf.baseLayers.unshift({
+                            label: layer.name,
+                            url: layer.url,
+                            visibility: layer.visibility,
+                            params: {
+                                layers: layer.params.LAYERS
+                            },
+                            options: {
+                                transitionEffect: layer.options.transitionEffect,
+                                projection: layer.options.projection.projCode
+                            }
+                        });
+                    }else{
+                        var styleMap = Ext.JSON.encode(layer.styleMap.styles);
+                        styleMap = Ext.JSON.decode(styleMap);
+                        for(var stName in styleMap){
+                            styleMap[stName] = styleMap[stName].defaultStyle;
+                        }
+                        
+                        conf.overlays.unshift({
+                            label: layer.name,
+                            featureType: layer.protocol.featureType,
+                            typeName: layer.schema.substr(layer.schema.lastIndexOf('=')+1),
+                            vectorType: layer.psLayerType,
+                            opacity: layer.opacity,
+                            visibility: layer.visibility,
+                            defaultLabelField: layer.defaultLabelField,
+                            styleMap: styleMap
+                        });
+                    }
+                }
+                
+                //console.log(conf);
+                return conf;
+            };
+
 
             petroresConfig.layersCreator = function(){ 
+                var ret = [];
+                var layer;
+                for(var l in petroresConfig.layersConfig.baseLayers){
+                    layer = petroresConfig.layersConfig.baseLayers[l];
+                    ret.unshift(new OpenLayers.Layer.WMS(
+                        layer.label, 
+                        layer.url, 
+                        layer.params, 
+                        layer.options));
+                }
+                for(l in petroresConfig.layersConfig.overlays){
+                    layer = petroresConfig.layersConfig.overlays[l];
+                    layer = new OpenLayers.Layer.Vector(layer.label, {
+                        psLayerType: layer.vectorType,
+                        isBaseLayer: false,
+                        visibility: layer.visibility,
+                        defaultLabelField: layer.defaultLabelField,
+                        defaultIdField: 'OBJECTID',
+                        strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                        protocol: new OpenLayers.Protocol.WFS({
+                            url: petroresConfig.vectorWfs,
+                            featureType: layer.featureType,
+                            featureNS: "http://petroresurs.com/geoportal",
+                            geometryName: "GEOM"
+                        }),
+                        styleMap: layer.styleMap?new OpenLayers.StyleMap(layer.styleMap):undefined
+                        ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=" + layer.typeName
+                        ,projection: new OpenLayers.Projection("EPSG:32639")
+                        ,version: "1.1.0"
+                        , eventListeners: {
+                            beforefeaturesadded: function(obj){
+                                petroresConfig.showFeatureEditor(obj.object, obj.features)
+                            },
+                            beforefeaturemodified: function(obj){
+                                //console.log(obj);
+                                obj.feature.state = OpenLayers.State.UPDATE;
+                                petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
+                            },
+                            loadend: function(eventsObj){
+                                petroresConfig.loadWfsSchema(eventsObj.object);
+                                petroresConfig.createEditingPanel(eventsObj.object)
+                            }
+                        }
+                    });
+                    layer.setOpacity(petroresConfig.layersConfig.overlays[l].opacity);
+                    ret.unshift(layer);
+                }
+                return ret;
+            }
+
+            petroresConfig.layersCreatorOLD = function(){ 
                 return [
                     /*new OpenLayers.Layer.OSM("OpenStreetMap"),   
                     new OpenLayers.Layer.XYZ(
@@ -909,6 +1001,16 @@
                 });
             }, 1000 * 60 * 10);
 
+            // loads map config
+            Ext.Ajax.request({
+                url: 'form/maps/' + petroresConfig.defaultMap,
+                success: function(res){
+                    petroresConfig.layersConfig = Ext.JSON.decode(res.responseText);
+                }
+            });
+
+
+            
 
             //var mapfish = {
             //    SERVER_BASE_URL: 'http://oceanviewer.ru/print/pdf/'

@@ -419,7 +419,7 @@ Ext.define('PetroRes.view.MainWindow', {
                         var opacitySlider = Ext.create('GeoExt.slider.LayerOpacity',{
                             aggressive: true,
                             vertical: false,
-                            inverse: true,
+                            inverse: false,
                             width: 'auto',
                             fieldLabel: 'Opacity'
                             //x: 12,
@@ -550,6 +550,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                 itemclick: function(){
                                     //console.log(arguments[1].data.layer);
                                     var layer = arguments[1].data.layer;
+                                    tree.psSelectedLayer = layer;
                                     mapPanel.petroLayerToEdit = undefined;
                                     for(var ooo in editableLayers){
                                         if(editableLayers[ooo].val == layer){
@@ -764,22 +765,112 @@ Ext.define('PetroRes.view.MainWindow', {
                                         
                                     },
                                     '-', 
-                                    /*{
+                                    {
                                         xtype: 'button',
                                         tooltip: 'Save Configuration',
                                         iconCls: 'petroButtonMapSaveConf',
                                         handler: function (){
-                                            var format = new OpenLayers.Format.WMC();
-                                            var text = format.write(mapPanel.map);
+                                            
+                                            var conf =petroresConfig.layersSaver(mapPanel.map);
+                                            conf = Ext.JSON.encode(conf);
+                                            //console.log(conf);
                                             Ext.Ajax.request({
-                                                url: 'form/maps/main.xml',
+                                                url: 'form/maps/' + petroresConfig.defaultMap,
                                                 method: 'PUT',
-                                                xmlData: text
+                                                jsonData: conf,
+                                                success: function(){
+                                                    Ext.Msg.alert('Status', 'Map configuration saved successfully');
+                                                },
+                                                failure: function(){
+                                                    Ext.Msg.alert('Status', 'Could not save map configuration');
+                                                }
                                             });
                                         }
                                         
                                     },
-                                    '-', */
+                                    {
+                                        xtype: 'button',
+                                        text: 'Add Layer',
+                                        handler: function (){
+                                            var wnd =  Ext.getCmp('MainWindow');
+                                            {
+                                                var form = Ext.create('Ext.form.Panel', {
+                                                    layout: 'anchor',
+                                                    defaults: {
+                                                        anchor: '100%'
+                                                    },
+                                                    //autoScroll: true,
+                                                    items: [
+                                                        {
+                                                            xtype: 'textfield',
+                                                            fieldLabel: 'Name',
+                                                            name: 'name'
+                                                        },
+                                                        {
+                                                            xtype: 'textfield',
+                                                            fieldLabel: 'URL',
+                                                            name: 'url'
+                                                        },
+                                                        {
+                                                            xtype: 'textfield',
+                                                            fieldLabel: 'Layer(s)',
+                                                            name: 'layers'
+                                                        }
+                                                    ],
+                                                    buttons: [
+                                                        {
+                                                            text: 'Add',
+                                                            handler: function(){
+                                                                var attrs = form.getForm().getFieldValues(true);
+                                                                mapPanel.map.addLayer(new OpenLayers.Layer.WMS(
+                                                                    attrs.name, 
+                                                                    attrs.url, 
+                                                                    {
+                                                                        layers: attrs.layers
+                                                                    }, {
+                                                                        transitionEffect: 'resize',
+                                                                        projection: 'EPSG:900913'
+                                                                    })
+                                                                );
+                                                                wnd.openPetroWindows.addLayerWnd.close();
+                                                        }
+                                                        }                                            
+                                                    ]
+                                                });
+                                                wnd.openPetroWindow('addLayerWnd', {
+                                                    closable: true,
+                                                    title: 'Add WMS Layer',
+                                                    maximizable: false,
+                                                    maximized: false,
+                                                    layout: 'fit',
+                                                    items: [
+                                                        form
+                                                    ]
+                                                });
+                                            }                                            
+                                        }
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        text: 'Remove Layer',
+                                        handler: function (){
+                                            if(tree.psSelectedLayer){
+                                                Ext.MessageBox.confirm('Confirm', 
+                                                'Are you sure to delete the layer from map?',
+                                                function(btn){
+                                                    if(btn==='yes'){
+                                                        mapPanel.map.removeLayer(tree.psSelectedLayer);
+                                                    }
+                                                });
+                                            }else{
+                                                Ext.MessageBox.show({
+                                                    msg: 'Select layer in tree',
+                                                    buttons: Ext.Msg.OK
+                                                });
+                                            }
+                                        }
+                                    },
+                                    '-', 
                                     {
                                         xtype: 'button',
                                         tooltip: 'Find',

@@ -30,6 +30,10 @@
         <param-value>WEB-INF/maps/</param-value>
     </context-param>
     <context-param>
+        <param-name>defaultMap</param-name>
+        <param-value>main.json</param-value>
+    </context-param>
+    <context-param>
         <param-name>roleReader</param-name>
         <param-value>MO-SUB_GIS-RX</param-value>
     </context-param>

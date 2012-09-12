@@ -658,7 +658,7 @@ Ext.define('PetroRes.view.MainWindow', {
                         var tbar = [
                                     {
                                         xtype: 'button',
-                                        //text: 'Pan',
+                                        text: 'Pan',
                                         tooltip: 'Pan',
                                         toggleGroup: 'modeGr',
                                         iconCls: 'petroButtonMapPan',
@@ -680,6 +680,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     },
                                     petroresConfig.userIsEditor || petroresConfig.userIsAdmin ?{
                                         xtype: 'button',
+                                        text: 'Edit',
                                         tooltip: 'Edit',
                                         iconCls: 'petroButtonMapEdit',
                                         toggleGroup: 'modeGr',
@@ -719,6 +720,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     }:undefined,
                                     {
                                         xtype: 'button',
+                                        text: 'Select',
                                         tooltip: 'Select',
                                         iconCls: 'petroButtonMapSelect',
                                         toggleGroup: 'modeGr',
@@ -740,6 +742,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     {
                                         xtype: 'button',
                                         text: 'Search',
+                                        tooltip: 'Search',
                                         toggleGroup: 'modeGr',
                                         handler: function (){
                                             selectControl.activate();
@@ -750,6 +753,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     },
                                     {
                                         xtype: 'button',
+                                        text: 'Info',
                                         tooltip: 'Info',
                                         iconCls: 'petroButtonMapInfo',
                                         toggleGroup: 'modeGr',
@@ -779,6 +783,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     {
                                         xtype: 'button',
                                         tooltip: 'Find',
+                                        text: 'Find',
                                         iconCls: 'petroButtonMapFindDocs',
                                         handler: function(){
                                             Ext.Ajax.request({
@@ -895,6 +900,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         toggleGroup: 'modeGr',
                                         iconCls: 'petroButtonMapDistance',
                                         tooltip: 'Distance',
+                                        text: 'Distance',
                                         activateOnEnable: true,
                                         deactivateOnDisable: true,
                                         control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
@@ -909,6 +915,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     }))
                                     , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
                                         toggleGroup: 'modeGr',
+                                        text: 'Area',
                                         tooltip: 'Area',
                                         iconCls: 'petroButtonMapArea',
                                         activateOnEnable: true,
@@ -926,6 +933,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     }))                                    
                                     , Ext.create('Ext.button.Button', {
                                         tooltip: 'PDF',
+                                        text: 'PDF',
                                         iconCls: 'petroButtonMapPdf',
                                         disabled: true,
                                         id: 'pdfButton',

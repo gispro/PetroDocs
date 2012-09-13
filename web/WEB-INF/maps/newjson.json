@@ -1,53 +1,17 @@
 {
-    "overlays":[{
-        "label":"Licenses",
-        "featureType":"Licenses",
-        "typeName":"PetroResurs:Licenses",
-        "vectorType":"poly",
-        "opacity":1,
-        "visibility":true,
-        "defaultLabelField":"NAME",
-        "styleMap":{
-            "default":{
-                "fillColor":"#9555d4",
-                "fillOpacity":0,
-                "strokeColor":"#9555d4",
-                "strokeWidth":0.4
-            },
-            "select":{
-                "fillColor":"#9555d4",
-                "fillOpacity":0.4,
-                "strokeColor":"#9555d4",
-                "strokeWidth":1.5
-            },
-            "temporary":{
-                "fillColor":"#66cccc",
-                "fillOpacity":0.2,
-                "hoverFillColor":"white",
-                "hoverFillOpacity":0.8,
-                "strokeColor":"#66cccc",
-                "strokeOpacity":1,
-                "strokeLinecap":"round",
-                "strokeWidth":2,
-                "strokeDashstyle":"solid",
-                "hoverStrokeColor":"red",
-                "hoverStrokeOpacity":1,
-                "hoverStrokeWidth":0.2,
-                "pointRadius":6,
-                "hoverPointRadius":1,
-                "hoverPointUnit":"%",
-                "pointerEvents":"visiblePainted",
-                "cursor":"inherit",
-                "fontColor":"#000000",
-                "labelAlign":"cm",
-                "labelOutlineColor":"white",
-                "labelOutlineWidth":3
-            },
-            "delete":{
-                "display":"none"
-            }
-        }
-    },{
+    "overlays":[
+        
+{
+            'label': 'Seismic 2D',
+            'featureType': 'Seismic_2D_PRS',
+            'typeName': 'PetroResurs:Seismic_2D_PRS',
+            'vectorType': 'line',
+            'opacity': 1,
+            'defaultLabelField': 'NAME'
+        },        
+        
+        {
+        
         "label":"Wells",
         "featureType":"Wells",
         "typeName":"PetroResurs:Wells",
@@ -130,6 +94,54 @@
             }
         }
     },{
+        "label":"Licenses",
+        "featureType":"Licenses",
+        "typeName":"PetroResurs:Licenses",
+        "vectorType":"poly",
+        "opacity":1,
+        "visibility":true,
+        "defaultLabelField":"NAME",
+        "styleMap":{
+            "default":{
+                "fillColor":"#9555d4",
+                "fillOpacity":0,
+                "strokeColor":"#9555d4",
+                "strokeWidth":0.4
+            },
+            "select":{
+                "fillColor":"#9555d4",
+                "fillOpacity":0.4,
+                "strokeColor":"#9555d4",
+                "strokeWidth":1.5
+            },
+            "temporary":{
+                "fillColor":"#66cccc",
+                "fillOpacity":0.2,
+                "hoverFillColor":"white",
+                "hoverFillOpacity":0.8,
+                "strokeColor":"#66cccc",
+                "strokeOpacity":1,
+                "strokeLinecap":"round",
+                "strokeWidth":2,
+                "strokeDashstyle":"solid",
+                "hoverStrokeColor":"red",
+                "hoverStrokeOpacity":1,
+                "hoverStrokeWidth":0.2,
+                "pointRadius":6,
+                "hoverPointRadius":1,
+                "hoverPointUnit":"%",
+                "pointerEvents":"visiblePainted",
+                "cursor":"inherit",
+                "fontColor":"#000000",
+                "labelAlign":"cm",
+                "labelOutlineColor":"white",
+                "labelOutlineWidth":3
+            },
+            "delete":{
+                "display":"none"
+            }
+        }
+    },{
         "label":"Structures",
         "featureType":"Structures",
         "typeName":"PetroResurs:Structures",
@@ -179,93 +191,11 @@
             }
         }
     },{
-        "label":"Seismic 2D",
-        "featureType":"Seismic_2D_PRS",
-        "typeName":"PetroResurs:Seismic_2D_PRS",
-        "vectorType":"line",
-        "opacity":0.34,
-        "visibility":true,
-        "defaultLabelField":"NAME",
-        "styleMap":{
-            "default":{
-                "fillColor":"#ee9900",
-                "fillOpacity":0.4,
-                "hoverFillColor":"white",
-                "hoverFillOpacity":0.8,
-                "strokeColor":"#ee9900",
-                "strokeOpacity":1,
-                "strokeWidth":1,
-                "strokeLinecap":"round",
-                "strokeDashstyle":"solid",
-                "hoverStrokeColor":"red",
-                "hoverStrokeOpacity":1,
-                "hoverStrokeWidth":0.2,
-                "pointRadius":6,
-                "hoverPointRadius":1,
-                "hoverPointUnit":"%",
-                "pointerEvents":"visiblePainted",
-                "cursor":"inherit",
-                "fontColor":"#000000",
-                "labelAlign":"cm",
-                "labelOutlineColor":"white",
-                "labelOutlineWidth":3
-            },
-            "select":{
-                "fillColor":"blue",
-                "fillOpacity":0.4,
-                "hoverFillColor":"white",
-                "hoverFillOpacity":0.8,
-                "strokeColor":"blue",
-                "strokeOpacity":1,
-                "strokeWidth":2,
-                "strokeLinecap":"round",
-                "strokeDashstyle":"solid",
-                "hoverStrokeColor":"red",
-                "hoverStrokeOpacity":1,
-                "hoverStrokeWidth":0.2,
-                "pointRadius":6,
-                "hoverPointRadius":1,
-                "hoverPointUnit":"%",
-                "pointerEvents":"visiblePainted",
-                "cursor":"pointer",
-                "fontColor":"#000000",
-                "labelAlign":"cm",
-                "labelOutlineColor":"white",
-                "labelOutlineWidth":3
-            },
-            "temporary":{
-                "fillColor":"#66cccc",
-                "fillOpacity":0.2,
-                "hoverFillColor":"white",
-                "hoverFillOpacity":0.8,
-                "strokeColor":"#66cccc",
-                "strokeOpacity":1,
-                "strokeLinecap":"round",
-                "strokeWidth":2,
-                "strokeDashstyle":"solid",
-                "hoverStrokeColor":"red",
-                "hoverStrokeOpacity":1,
-                "hoverStrokeWidth":0.2,
-                "pointRadius":6,
-                "hoverPointRadius":1,
-                "hoverPointUnit":"%",
-                "pointerEvents":"visiblePainted",
-                "cursor":"inherit",
-                "fontColor":"#000000",
-                "labelAlign":"cm",
-                "labelOutlineColor":"white",
-                "labelOutlineWidth":3
-            },
-            "delete":{
-                "display":"none"
-            }
-        }
-    },{
         "label":"Seismic 3D",
         "featureType":"Seismic_3D_PRS",
         "typeName":"PetroResurs:Seismic_3D_PRS",
         "vectorType":"poly",
-        "opacity":0.3,
+        "opacity":0.57,
         "visibility":true,
         "defaultLabelField":"NAME",
         "styleMap":{
@@ -521,7 +451,7 @@
     },{
         "label":"Satellite",
         "url":"http://uno:10000/service",
-        "visibility":true,
+        "visibility":false,
         "params":{
             "layers":"bing_imagery"
         },
@@ -532,7 +462,7 @@
     },{
         "label":"Map Box",
         "url":"http://uno:10000/service",
-        "visibility":false,
+        "visibility":true,
         "params":{
             "layers":"osm_mapbox"
         },

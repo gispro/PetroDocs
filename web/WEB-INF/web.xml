@@ -7,8 +7,8 @@
     <context-param>
         <param-name>documentsPath</param-name>
         <param-value>\\nas\Disk1\SHARE\fedd</param-value>
-        <!--<param-value>\\192.168.0.20\subsurface</param-value>-->
         <!--<param-value>/mnt/NAS/Disk1/SHARE/fedd</param-value>-->
+        <!--<param-value>\\192.168.0.20\subsurface</param-value>-->
     </context-param>
     <context-param>
         <param-name>domainRootId</param-name>
@@ -119,7 +119,6 @@
  
     
     <security-constraint>
-        
         <web-resource-collection>
             <web-resource-name>restricted methods</web-resource-name>
             <url-pattern>/*</url-pattern>
@@ -128,12 +127,19 @@
             <http-method>DELETE</http-method>
             <http-method>GET</http-method>
         </web-resource-collection>
-        
         <auth-constraint>
             <role-name>*</role-name>
         </auth-constraint>
-        
     </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>unrestricted methods</web-resource-name>
+            <url-pattern>/lib/*</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+    </security-constraint>
+
 
     <!--<security-constraint>
         

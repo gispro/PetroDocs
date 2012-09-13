@@ -764,8 +764,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }
                                         
                                     },
-                                    '-', 
-                                    {
+                                    petroresConfig.userIsAdmin ?'-':undefined, 
+                                    !petroresConfig.userIsAdmin ?undefined:{
                                         xtype: 'button',
                                         tooltip: 'Save Configuration',
                                         iconCls: 'petroButtonMapSaveConf',
@@ -788,7 +788,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }
                                         
                                     },
-                                    {
+                                    !petroresConfig.userIsAdmin ?undefined:{
                                         xtype: 'button',
                                         text: 'Add Layer',
                                         handler: function (){
@@ -850,7 +850,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                             }                                            
                                         }
                                     },
-                                    {
+                                    !petroresConfig.userIsAdmin ?undefined:{
                                         xtype: 'button',
                                         text: 'Remove Layer',
                                         handler: function (){

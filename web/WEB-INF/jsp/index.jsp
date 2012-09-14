@@ -399,6 +399,9 @@
             };
             
             petroresConfig.createEditingPanel = function(layer){
+                if(layer.editingPanel)
+                    return;
+                
                 for(var i in layer.strategies){
                     // is it a save strategy? what is the correct way to access it? damnit openlayers
                     if(layer.strategies[i].CLASS_NAME === 'OpenLayers.Strategy.Save'){

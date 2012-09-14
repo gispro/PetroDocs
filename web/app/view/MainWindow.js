@@ -280,12 +280,22 @@ Ext.define('PetroRes.view.MainWindow', {
                                     multipleKey: "shiftKey", // shift key adds to selection
                                     box: true,
                                     displayInLayerSwitcher: false
+                                    ,eventListeners: {
+                                        deactivate: function(){
+                                            selectControl.unselectAll();
+                                        }
+                                    }
                                 });
 
                         var selectControlHover = new OpenLayers.Control.SelectFeature(vectorLayers, {
                                     clickout: true, toggle: false,
                                     multiple: false, hover: false,
                                     displayInLayerSwitcher: false
+                                    ,eventListeners: {
+                                        deactivate: function(){
+                                            selectControlHover.unselectAll();
+                                        }
+                                    }
                                     , onUnselect: function(){
                                         //mapPanel.map.removePopup(selectControlHover.baloon);
                                         selectControlHover.baloon.close();
@@ -577,27 +587,33 @@ Ext.define('PetroRes.view.MainWindow', {
                                             break;
                                         }
                                     }
-                                    
-                                            if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
-                                                for(var lll in editableLayers){
-                                                    if(editableLayers[lll].val.editingPanel)
-                                                        if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
-                                                            editableLayers[lll].val.editingPanel.activate();
-                                                            editableLayers[lll].val.editingPanel.div.style.display = 'block';
-                                                        }else{
-                                                            editableLayers[lll].val.editingPanel.deactivate();
-                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
-                                                        }
+
+                                    if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
+                                        for(var lll in editableLayers){
+                                            if(editableLayers[lll].val.editingPanel)
+                                                if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
+                                                    editableLayers[lll].val.editingPanel.activate();
+                                                    editableLayers[lll].val.editingPanel.div.style.display = 'block';
+                                                }else{
+                                                    editableLayers[lll].val.editingPanel.deactivate();
+                                                    editableLayers[lll].val.editingPanel.div.style.display = 'none';
                                                 }
-                                            }else{
-                                                for(lll in editableLayers){
-                                                    if(editableLayers[lll].val.editingPanel){
-                                                            editableLayers[lll].val.editingPanel.deactivate();
-                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
-                                                    }
-                                                }
+                                        }
+                                    }else if(!mapPanel.petroEditMode ){
+                                        for(lll in editableLayers){
+                                            if(editableLayers[lll].val.editingPanel){
+                                                    editableLayers[lll].val.editingPanel.deactivate();
+                                                    editableLayers[lll].val.editingPanel.div.style.display = 'none';
                                             }
-                                    
+                                        }
+                                    }
+
+                                    if(mapPanel.petroSearchMode && mapPanel.petroLayerToEdit){
+                                        selectControl.activate();
+                                        selectControlHover.deactivate();
+                                        petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
+                                    }
+
                                 }
                             }
                             , dockedItems: [
@@ -664,19 +680,11 @@ Ext.define('PetroRes.view.MainWindow', {
                                         toggleGroup: 'modeGr',
                                         iconCls: 'petroButtonMapPan',
                                         pressed: true,
-                                        handler: function(){
-                                            /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
-                                            selCombo.clearValue();
-                                            selCombo.store.data.each(function(item){
-                                                if(item.data.val.editingPanel){
-                                                    item.data.val.editingPanel.deactivate();
-                                                    item.data.val.editingPanel.div.style.display = 'none';
-                                                }
-                                            });
-                                            selCombo.disable();*/
-                                            selectControl.deactivate();
-                                            selectControlHover.deactivate();
-                                            
+                                        toggleHandler: function(th, pressed){
+                                            if(pressed){
+                                                selectControl.deactivate();
+                                                selectControlHover.deactivate();
+                                            }
                                         }
                                     },
                                     petroresConfig.userIsEditor || petroresConfig.userIsAdmin ?{
@@ -686,17 +694,6 @@ Ext.define('PetroRes.view.MainWindow', {
                                         iconCls: 'petroButtonMapEdit',
                                         toggleGroup: 'modeGr',
                                         toggleHandler: function(th, state){
-                                            /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
-                                            selCombo.clearValue();
-                                            selCombo.enable();
-                                            selCombo.store.data.each(function(item){
-                                                if(item.data.val.editingPanel){
-                                                    item.data.val.editingPanel.deactivate();
-                                                    item.data.val.editingPanel.div.style.display = 'none';
-                                                }
-                                            });
-                                            selectControl.deactivate();*/
-                                            
                                             mapPanel.petroEditMode = state;
                                             if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
                                                 for(var lll in editableLayers){
@@ -709,7 +706,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                                             editableLayers[lll].val.editingPanel.div.style.display = 'none';
                                                         }
                                                 }
-                                            }else{
+                                            }
+                                            if(!mapPanel.petroEditMode){
                                                 for(lll in editableLayers){
                                                     if(editableLayers[lll].val.editingPanel){
                                                             editableLayers[lll].val.editingPanel.deactivate();
@@ -725,30 +723,29 @@ Ext.define('PetroRes.view.MainWindow', {
                                         tooltip: 'Select',
                                         iconCls: 'petroButtonMapSelect',
                                         toggleGroup: 'modeGr',
-                                        handler: function (){
-                                            /*var selCombo = Ext.getCmp('GESelectEditableLayerCombo');
-                                            selCombo.clearValue();
-                                            selCombo.disable();
-                                            selCombo.store.data.each(function(item){
-                                                if(item.data.val.editingPanel){
-                                                    item.data.val.editingPanel.deactivate();
-                                                    item.data.val.editingPanel.div.style.display = 'none';
-                                                }
-                                            });*/
-                                            selectControl.activate();
-                                            selectControlHover.deactivate();
+                                        toggleHandler: function (th, state){
+                                            if(state){
+                                                selectControl.activate();
+                                                selectControlHover.deactivate();
+                                            }else{
+                                                selectControl.deactivate();
+                                            }
                                         }
-                                        
                                     },
                                     {
                                         xtype: 'button',
                                         text: 'Search',
                                         tooltip: 'Search',
                                         toggleGroup: 'modeGr',
-                                        handler: function (){
-                                            selectControl.activate();
-                                            selectControlHover.deactivate();
-                                            petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
+                                        toggleHandler: function (th, pressed){
+                                            mapPanel.petroSearchMode = pressed;
+                                            if(pressed && mapPanel.petroLayerToEdit){
+                                                selectControl.activate();
+                                                selectControlHover.deactivate();
+                                                petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
+                                            }else if(!pressed){
+                                                selectControl.deactivate();
+                                            }
                                         }
                                         
                                     },
@@ -758,9 +755,13 @@ Ext.define('PetroRes.view.MainWindow', {
                                         tooltip: 'Info',
                                         iconCls: 'petroButtonMapInfo',
                                         toggleGroup: 'modeGr',
-                                        handler: function (){
-                                            selectControl.deactivate();
-                                            selectControlHover.activate();
+                                        toggleHandler: function (th, pressed){
+                                            if(pressed){
+                                                selectControl.deactivate();
+                                                selectControlHover.activate();
+                                            }else{
+                                                selectControlHover.deactivate();
+                                            }
                                         }
                                         
                                     },
@@ -958,35 +959,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }                                        
                                     },
                                     '-', 
-                                    /*{
-                                        xtype: 'combo',
-                                        id: 'GESelectEditableLayerCombo',
-                                        fieldLabel: 'Edit Layer',
-                                        store: Ext.create('Ext.data.Store', {
-                                            fields: ['name', 'val'],
-                                            data: editableLayers
-                                        }),
-                                        
-                                        disabled: true,
-                                        queryMode: 'local',
-                                        displayField: 'name',
-                                        valueField: 'val',
-                                        listeners:{
-                                            select: function(th, recs){
-                                                th.store.data.each(function(item){
-                                                    if(item.data.val.editingPanel){
-                                                        item.data.val.editingPanel.deactivate();
-                                                        item.data.val.editingPanel.div.style.display = 'none';
-                                                    }
-                                                })
-                                                if(recs[0].data.val.editingPanel){
-                                                    recs[0].data.val.editingPanel.activate();
-                                                        recs[0].data.val.editingPanel.div.style.display = 'block';
-                                                } 
-                                            }
-                                        }
-                                    }, */
-                                        'Measure: '
+                                    'Measure: '
                                     , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
                                         toggleGroup: 'modeGr',
                                         iconCls: 'petroButtonMapDistance',

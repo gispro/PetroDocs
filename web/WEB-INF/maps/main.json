@@ -89,7 +89,7 @@
     baseLayers: [
         {
             'label': 'OSM',
-            'url': 'http://uno:10000/service',
+            'url': 'http://oceanviewer.ru/mapproxy/service',
             'params': {
                 'layers': 'osm_orig'
             },
@@ -100,7 +100,7 @@
         },
         {
             'label': 'Satellite',
-            'url': 'http://uno:10000/service',
+            'url': 'http://oceanviewer.ru/mapproxy/service',
             'params': {
                 'layers': 'bing_imagery'
             },
@@ -111,7 +111,7 @@
         },
         {
             'label': 'Map Box',
-            'url': 'http://uno:10000/service',
+            'url': 'http://oceanviewer.ru/mapproxy/service',
             'params': {
                 'layers': 'osm_mapbox'
             },

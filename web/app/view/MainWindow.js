@@ -752,10 +752,168 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }
                                         
                                     },
+                                    '-', 
+                                    {
+                                        xtype: 'button',
+                                        tooltip: 'Find documents for selected objects',
+                                        text: 'Find Documents',
+                                        iconCls: 'petroButtonMapFindDocs',
+                                        handler: function(){
+                                            Ext.Ajax.request({
+                                                headers: {
+                                                    Accept: 'application/json'
+                                                },
+                                                url: 'rest/documents/find',
+                                                jsonData: {geoObjects: function(){
+                                                    var obj = [];
+                                                    for(var feat in wnd.openPetroWindows.geMapWindow.selectedFeatures){
+                                                        var oneFeatArr = feat.split('.');
+                                                        obj.push({
+                                                            idInTable: oneFeatArr[1],
+                                                            tableName: oneFeatArr[0]
+                                                        });
+                                                    }
+                                                    return obj;// Ext.encode(obj);
+                                                }.call()}
+                                                ,
+                                                success: function(resp, opts){
+                                                    var ret = Ext.decode(resp.responseText);
+                                                    //petroresConfig.makeAllIdsNumbers(ret);
+                                                    //console.log(["вот, получилось", ret])
+                                                    
+                                                    var wnd = Ext.getCmp('MainWindow');
+
+                                                    var stor = Ext.create('Ext.data.Store', {
+                                                        model: Ext.getStore('DocumentsJsonStore').getProxy().getModel(),
+                                                        data: ret,
+                                                        proxy: {
+                                                            type: 'memory',
+                                                            reader: {
+                                                                type: 'json',
+                                                                root: 'documents'
+                                                            }
+                                                        }
+                                                    });
+                                                    var grid = Ext.create(
+                                                        'PetroRes.view.DocumentsGridPanel', 
+                                                        {
+                                                            store: stor,
+                                                            listeners:{
+                                                                itemdblclick: function(ths, rec){
+
+                                                                    var editForm = Ext.create(
+                                                                            'PetroRes.view.DocumentFormEdit'
+                                                                        );
+                                                                    wnd.openPetroWindow('editDoc', {
+                                                                        closable: true,
+                                                                        width:wnd.getWidth()*0.9,
+                                                                        title: 'Edit Document',
+                                                                        maximizable: true,
+                                                                        maximized: true,
+                                                                        layout: 'fit',
+                                                                        items: [
+                                                                            editForm
+                                                                        ]                                    
+                                                                    });
+                                                                    editForm.loadRecord(rec);
+                                                                }
+                                                            }
+                                                        }
+                                                    );
+                                                    if(wnd.openPetroWindows.searchres){
+                                                        wnd.openPetroWindows.searchres.close();
+                                                    }
+                                                    wnd.openPetroWindow('searchres', {
+                                                        closable: true,
+                                                        width:wnd.getWidth()*0.9,
+                                                        title: 'Found Documents',
+                                                        maximizable: true,
+                                                        maximized: false,
+                                                        layout: 'fit',
+                                                        items: [
+                                                            grid
+                                                        ]                                    
+                                                    });
+
+                                                }
+                                            });
+                                        }                                        
+                                    },
+                                    '-', 
+                                    
+                                    
+                                    
+                                    //'Measure: '
+                                    ,{
+                                        xtype: 'button',
+                                        text: 'Measure',
+                                        menu: [
+                                            Ext.create('Ext.menu.CheckItem', Ext.create('GeoExt.Action', {
+                                                //group: 'modeGr1',
+                                                iconCls: 'petroButtonMapDistance',
+                                                tooltip: 'Distance',
+                                                text: 'Distance',
+                                                id: 'measureDistanceCheck',
+                                                activateOnEnable: true,
+                                                deactivateOnDisable: true,
+                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
+                                                    eventListeners: {
+                                                        activate: function(){
+                                                            Ext.getCmp('measureAreaCheck').setChecked(false);
+                                                        },
+                                                        measure: function(evt) {
+                                                            Ext.Msg.alert('Distance',
+                                                                'The distance is ' + evt.measure.toFixed(2) + ' '+ evt.units);
+                                                        }
+                                                    }                                        
+                                                }),
+                                                map: mapPanel.map
+                                            }))
+                                            , Ext.create('Ext.menu.CheckItem', Ext.create('GeoExt.Action', {
+                                                //group: 'modeGr1',
+                                                text: 'Area',
+                                                tooltip: 'Area',
+                                                iconCls: 'petroButtonMapArea',
+                                                activateOnEnable: true,
+                                                id: 'measureAreaCheck',
+                                                deactivateOnDisable: true,
+                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
+                                                    eventListeners: {
+                                                        activate: function(){
+                                                            Ext.getCmp('measureDistanceCheck').setChecked(false);
+                                                        },
+                                                        measure: function(evt) {
+                                                            Ext.Msg.alert('Area',
+                                                                'The area is ' + + evt.measure.toFixed(2) + ' '+ evt.units + '<sup>2</sup>');
+                                                            //alert("The area is " + evt.measure + evt.units);
+                                                        }
+                                                    }                                        
+                                                }),
+                                                map: mapPanel.map,
+                                                listeners:{
+                                                    enable: function(){
+                                                        Ext.getCmp('measureDistanceCheck').disable();
+                                                    }
+                                                }
+                                            }))                                    
+                                        ]
+                                    }
+                                    , Ext.create('Ext.button.Button', {
+                                        tooltip: 'Download map as PDF file',
+                                        text: 'PDF',
+                                        iconCls: 'petroButtonMapPdf',
+                                        disabled: true,
+                                        id: 'pdfButton',
+                                        handler: function() {
+                                            printPage.fit(mapPanel, true);
+                                            printProvider.print(mapPanel, printPage);
+                                        }
+                                    }),
                                     petroresConfig.userIsAdmin ?'-':undefined, 
                                     !petroresConfig.userIsAdmin ?undefined:{
                                         xtype: 'button',
-                                        tooltip: 'Save Configuration',
+                                        text: 'Save Map',
+                                        tooltip: 'Save map configuration',
                                         iconCls: 'petroButtonMapSaveConf',
                                         handler: function (){
                                             
@@ -858,151 +1016,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 });
                                             }
                                         }
-                                    },
-                                    '-', 
-                                    {
-                                        xtype: 'button',
-                                        tooltip: 'Find documents for selected objects',
-                                        text: 'Find Documents',
-                                        iconCls: 'petroButtonMapFindDocs',
-                                        handler: function(){
-                                            Ext.Ajax.request({
-                                                headers: {
-                                                    Accept: 'application/json'
-                                                },
-                                                url: 'rest/documents/find',
-                                                jsonData: {geoObjects: function(){
-                                                    var obj = [];
-                                                    for(var feat in wnd.openPetroWindows.geMapWindow.selectedFeatures){
-                                                        var oneFeatArr = feat.split('.');
-                                                        obj.push({
-                                                            idInTable: oneFeatArr[1],
-                                                            tableName: oneFeatArr[0]
-                                                        });
-                                                    }
-                                                    return obj;// Ext.encode(obj);
-                                                }.call()}
-                                                ,
-                                                success: function(resp, opts){
-                                                    var ret = Ext.decode(resp.responseText);
-                                                    //petroresConfig.makeAllIdsNumbers(ret);
-                                                    //console.log(["вот, получилось", ret])
-                                                    
-                                                    var wnd = Ext.getCmp('MainWindow');
-
-                                                    var stor = Ext.create('Ext.data.Store', {
-                                                        model: Ext.getStore('DocumentsJsonStore').getProxy().getModel(),
-                                                        data: ret,
-                                                        proxy: {
-                                                            type: 'memory',
-                                                            reader: {
-                                                                type: 'json',
-                                                                root: 'documents'
-                                                            }
-                                                        }
-                                                    });
-                                                    var grid = Ext.create(
-                                                        'PetroRes.view.DocumentsGridPanel', 
-                                                        {
-                                                            store: stor,
-                                                            listeners:{
-                                                                itemdblclick: function(ths, rec){
-
-                                                                    var editForm = Ext.create(
-                                                                            'PetroRes.view.DocumentFormEdit'
-                                                                        );
-                                                                    wnd.openPetroWindow('editDoc', {
-                                                                        closable: true,
-                                                                        width:wnd.getWidth()*0.9,
-                                                                        title: 'Edit Document',
-                                                                        maximizable: true,
-                                                                        maximized: true,
-                                                                        layout: 'fit',
-                                                                        items: [
-                                                                            editForm
-                                                                        ]                                    
-                                                                    });
-                                                                    editForm.loadRecord(rec);
-                                                                }
-                                                            }
-                                                        }
-                                                    );
-                                                    if(wnd.openPetroWindows.searchres){
-                                                        wnd.openPetroWindows.searchres.close();
-                                                    }
-                                                    wnd.openPetroWindow('searchres', {
-                                                        closable: true,
-                                                        width:wnd.getWidth()*0.9,
-                                                        title: 'Found Documents',
-                                                        maximizable: true,
-                                                        maximized: false,
-                                                        layout: 'fit',
-                                                        items: [
-                                                            grid
-                                                        ]                                    
-                                                    });
-
-                                                }
-                                            });
-                                        }                                        
-                                    },
-                                    '-', 
-                                    
-                                    
-                                    
-                                    //'Measure: '
-                                    ,{
-                                        xtype: 'button',
-                                        text: 'Measure',
-                                        menu: [
-                                            Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
-                                                toggleGroup: 'modeGr',
-                                                iconCls: 'petroButtonMapDistance',
-                                                tooltip: 'Distance',
-                                                text: 'Distance',
-                                                activateOnEnable: true,
-                                                deactivateOnDisable: true,
-                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
-                                                    eventListeners: {
-                                                        measure: function(evt) {
-                                                            Ext.Msg.alert('Distance',
-                                                                'The distance is ' + evt.measure.toFixed(2) + ' '+ evt.units);
-                                                        }
-                                                    }                                        
-                                                }),
-                                                map: mapPanel.map
-                                            }))
-                                            , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
-                                                toggleGroup: 'modeGr',
-                                                text: 'Area',
-                                                tooltip: 'Area',
-                                                iconCls: 'petroButtonMapArea',
-                                                activateOnEnable: true,
-                                                deactivateOnDisable: true,
-                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
-                                                    eventListeners: {
-                                                        measure: function(evt) {
-                                                            Ext.Msg.alert('Area',
-                                                                'The area is ' + + evt.measure.toFixed(2) + ' '+ evt.units + '<sup>2</sup>');
-                                                            //alert("The area is " + evt.measure + evt.units);
-                                                        }
-                                                    }                                        
-                                                }),
-                                                map: mapPanel.map
-                                            }))                                    
-                                        ]
                                     }
-                                    , Ext.create('Ext.button.Button', {
-                                        tooltip: 'PDF',
-                                        text: 'PDF',
-                                        iconCls: 'petroButtonMapPdf',
-                                        disabled: true,
-                                        id: 'pdfButton',
-                                        handler: function() {
-                                            printPage.fit(mapPanel, true);
-                                            printProvider.print(mapPanel, printPage);
-                                        }
-                                    })
                                 ];                        
                         var wnd = Ext.getCmp('MainWindow');
                         wnd.openPetroWindow('geMapWindow', {

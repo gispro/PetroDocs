@@ -27,7 +27,7 @@ Ext.define('PetroRes.view.MainWindow', {
     
     openPetroWindows: {},
     openPetroWindow: function(handler, windowCfg){
-        var me = this;// Ext.getCmp('MainWindow');
+        var me = Ext.getCmp('MainWindow');//this;// Ext.getCmp('MainWindow');
         var body = me.getLayout().getTarget();
         Ext.applyIf(windowCfg, {
             constrain: true,
@@ -43,7 +43,7 @@ Ext.define('PetroRes.view.MainWindow', {
         });
         var wnd = me.openPetroWindows[handler] ||                         
             (me.openPetroWindows[handler] = 
-            Ext.create('Ext.Window', windowCfg));
+            Ext.create('Ext.window.Window', windowCfg));
         wnd.show();
     },
     
@@ -297,34 +297,20 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }
                                     }
                                     , onUnselect: function(){
-                                        //mapPanel.map.removePopup(selectControlHover.baloon);
                                         selectControlHover.baloon.close();
                                     }
                                     , onSelect: function(selected){
                                         if(selectControlHover.baloon){
-                                            //mapPanel.map.removePopup(selectControlHover.baloon);
                                             selectControlHover.baloon.close();
                                         }
-                                        
-                                        //selectControlHover.baloon = new OpenLayers.Popup("chicken",
-                                        //    new OpenLayers.LonLat(selected.geometry.bounds.right, 
-                                        //        selected.geometry.bounds.bottom),
-                                        //    new OpenLayers.Size(300,200),
-                                        //    '',
-                                        //    false);
-                                        //selectControlHover.baloon.closeOnMove = true;
-                                        //mapPanel.map.addPopup(selectControlHover.baloon);
                                         var pix = mapPanel.map.getPixelFromLonLat(
                                             new OpenLayers.LonLat(selected.geometry.bounds.right, 
                                             selected.geometry.bounds.bottom));
-                                        //console.log(selected);
                                         selectControlHover.baloon = Ext.create('Ext.window.Window', {
-                                        //Ext.create('Ext.panel.Panel', {
-                                            //renderTo: selectControlHover.baloon.contentDiv,
-                                            title: 'Features',
+                                            title: 'Object Attributes',
                                             layout: 'fit',
-                                            height: 200,
-                                            width: 200,
+                                            height: 300,
+                                            width: 300,
                                             x: pix.x,
                                             y: pix.y,
                                             defaults:{
@@ -735,6 +721,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     {
                                         xtype: 'button',
                                         text: 'Search',
+                                        icon: 'images/search.png',
                                         tooltip: 'Search',
                                         toggleGroup: 'modeGr',
                                         toggleHandler: function (th, pressed){
@@ -792,68 +779,69 @@ Ext.define('PetroRes.view.MainWindow', {
                                     !petroresConfig.userIsAdmin ?undefined:{
                                         xtype: 'button',
                                         text: 'Add Layer',
+                                        icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
                                         handler: function (){
-                                            var wnd =  Ext.getCmp('MainWindow');
-                                            {
-                                                var form = Ext.create('Ext.form.Panel', {
-                                                    layout: 'anchor',
-                                                    defaults: {
-                                                        anchor: '100%'
+                                            var addLayWnd;
+                                            var form = Ext.create('Ext.form.Panel', {
+                                                layout: 'anchor',
+                                                defaults: {
+                                                    anchor: '100%'
+                                                },
+                                                autoScroll: true,
+                                                items: [
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'Name',
+                                                        name: 'name'
                                                     },
-                                                    //autoScroll: true,
-                                                    items: [
-                                                        {
-                                                            xtype: 'textfield',
-                                                            fieldLabel: 'Name',
-                                                            name: 'name'
-                                                        },
-                                                        {
-                                                            xtype: 'textfield',
-                                                            fieldLabel: 'URL',
-                                                            name: 'url'
-                                                        },
-                                                        {
-                                                            xtype: 'textfield',
-                                                            fieldLabel: 'Layer(s)',
-                                                            name: 'layers'
-                                                        }
-                                                    ],
-                                                    buttons: [
-                                                        {
-                                                            text: 'Add',
-                                                            handler: function(){
-                                                                var attrs = form.getForm().getFieldValues(true);
-                                                                mapPanel.map.addLayer(new OpenLayers.Layer.WMS(
-                                                                    attrs.name, 
-                                                                    attrs.url, 
-                                                                    {
-                                                                        layers: attrs.layers
-                                                                    }, {
-                                                                        transitionEffect: 'resize',
-                                                                        projection: 'EPSG:900913'
-                                                                    })
-                                                                );
-                                                                wnd.openPetroWindows.addLayerWnd.close();
-                                                        }
-                                                        }                                            
-                                                    ]
-                                                });
-                                                wnd.openPetroWindow('addLayerWnd', {
-                                                    closable: true,
-                                                    title: 'Add WMS Layer',
-                                                    maximizable: false,
-                                                    maximized: false,
-                                                    layout: 'fit',
-                                                    items: [
-                                                        form
-                                                    ]
-                                                });
-                                            }                                            
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'URL',
+                                                        name: 'url'
+                                                    },
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'Layer(s)',
+                                                        name: 'layers'
+                                                    }
+                                                ],
+                                                buttons: [
+                                                    {
+                                                        text: 'Add',
+                                                        handler: function(){
+                                                            var attrs = form.getForm().getFieldValues(true);
+                                                            mapPanel.map.addLayer(new OpenLayers.Layer.WMS(
+                                                                attrs.name, 
+                                                                attrs.url, 
+                                                                {
+                                                                    layers: attrs.layers
+                                                                }, {
+                                                                    transitionEffect: 'resize',
+                                                                    projection: 'EPSG:900913'
+                                                                })
+                                                            );
+                                                            wnd.openPetroWindows.addLayerWnd.close();
+                                                    }
+                                                    }                                            
+                                                ]
+                                            });
+                                            addLayWnd = Ext.create('Ext.window.Window', {
+                                                closable: true,
+                                                title: 'Add WMS Layer',
+                                                maximizable: false,
+                                                maximized: false,
+                                                layout: 'fit',
+                                                items: [
+                                                    form
+                                                ]
+                                            });
+                                            addLayWnd.show();
                                         }
                                     },
                                     !petroresConfig.userIsAdmin ?undefined:{
                                         xtype: 'button',
                                         text: 'Remove Layer',
+                                        icon: 'lib/ext41/examples/restful/images/delete.png',
                                         handler: function (){
                                             if(tree.psSelectedLayer){
                                                 Ext.MessageBox.confirm('Confirm', 
@@ -865,7 +853,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 });
                                             }else{
                                                 Ext.MessageBox.show({
-                                                    msg: 'Select layer in tree',
+                                                    msg: 'Select a layer in the layer tree',
                                                     buttons: Ext.Msg.OK
                                                 });
                                             }
@@ -874,8 +862,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                     '-', 
                                     {
                                         xtype: 'button',
-                                        tooltip: 'Find',
-                                        text: 'Find',
+                                        tooltip: 'Find documents for selected objects',
+                                        text: 'Find Documents',
                                         iconCls: 'petroButtonMapFindDocs',
                                         handler: function(){
                                             Ext.Ajax.request({
@@ -959,42 +947,51 @@ Ext.define('PetroRes.view.MainWindow', {
                                         }                                        
                                     },
                                     '-', 
-                                    'Measure: '
-                                    , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
-                                        toggleGroup: 'modeGr',
-                                        iconCls: 'petroButtonMapDistance',
-                                        tooltip: 'Distance',
-                                        text: 'Distance',
-                                        activateOnEnable: true,
-                                        deactivateOnDisable: true,
-                                        control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
-                                            eventListeners: {
-                                                measure: function(evt) {
-                                                    Ext.Msg.alert('Distance',
-                                                        'The distance is ' + evt.measure.toFixed(2) + ' '+ evt.units);
-                                                }
-                                            }                                        
-                                        }),
-                                        map: mapPanel.map
-                                    }))
-                                    , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
-                                        toggleGroup: 'modeGr',
-                                        text: 'Area',
-                                        tooltip: 'Area',
-                                        iconCls: 'petroButtonMapArea',
-                                        activateOnEnable: true,
-                                        deactivateOnDisable: true,
-                                        control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
-                                            eventListeners: {
-                                                measure: function(evt) {
-                                                    Ext.Msg.alert('Area',
-                                                        'The area is ' + + evt.measure.toFixed(2) + ' '+ evt.units + '<sup>2</sup>');
-                                                    //alert("The area is " + evt.measure + evt.units);
-                                                }
-                                            }                                        
-                                        }),
-                                        map: mapPanel.map
-                                    }))                                    
+                                    
+                                    
+                                    
+                                    //'Measure: '
+                                    ,{
+                                        xtype: 'button',
+                                        text: 'Measure',
+                                        menu: [
+                                            Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
+                                                toggleGroup: 'modeGr',
+                                                iconCls: 'petroButtonMapDistance',
+                                                tooltip: 'Distance',
+                                                text: 'Distance',
+                                                activateOnEnable: true,
+                                                deactivateOnDisable: true,
+                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
+                                                    eventListeners: {
+                                                        measure: function(evt) {
+                                                            Ext.Msg.alert('Distance',
+                                                                'The distance is ' + evt.measure.toFixed(2) + ' '+ evt.units);
+                                                        }
+                                                    }                                        
+                                                }),
+                                                map: mapPanel.map
+                                            }))
+                                            , Ext.create('Ext.button.Button', Ext.create('GeoExt.Action', {
+                                                toggleGroup: 'modeGr',
+                                                text: 'Area',
+                                                tooltip: 'Area',
+                                                iconCls: 'petroButtonMapArea',
+                                                activateOnEnable: true,
+                                                deactivateOnDisable: true,
+                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
+                                                    eventListeners: {
+                                                        measure: function(evt) {
+                                                            Ext.Msg.alert('Area',
+                                                                'The area is ' + + evt.measure.toFixed(2) + ' '+ evt.units + '<sup>2</sup>');
+                                                            //alert("The area is " + evt.measure + evt.units);
+                                                        }
+                                                    }                                        
+                                                }),
+                                                map: mapPanel.map
+                                            }))                                    
+                                        ]
+                                    }
                                     , Ext.create('Ext.button.Button', {
                                         tooltip: 'PDF',
                                         text: 'PDF',
@@ -1036,7 +1033,6 @@ Ext.define('PetroRes.view.MainWindow', {
             text: 'Options',
             menu: {
                 xtype: 'menu',
-                //width: 120,
                 items: [
                 {
                     text: 'Settings',

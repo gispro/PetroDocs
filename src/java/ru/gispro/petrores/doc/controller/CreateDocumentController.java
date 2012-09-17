@@ -50,6 +50,8 @@ import ru.gispro.petrores.doc.entities.File;
 import ru.gispro.petrores.doc.entities.Files;
 import ru.gispro.petrores.doc.util.Util;
 import ru.gispro.petrores.doc.view.JsonView;
+import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
 
 /**
  *
@@ -77,14 +79,22 @@ public class CreateDocumentController{// implements ServletContextAware{
     @Transactional
     public void create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         
+        MDC.put("user", req.getRemoteUser());
+        MDC.put("OP_CODE", "ADD_DOCUMENT");
+        MDC.put("OP_NAME", "Add document");
+        MDC.put("DOC_ID", "-");
+        MDC.put("OP_STATUS", "Success");
+        Logger lgr = Logger.getLogger("ru.gispro.petrores.doc.controller.CreateDocumentController");
+        
         ObjectMapper mapper = new ObjectMapper();
         resp.setHeader("Content-Type", "text/html; charset=UTF-8"); // "application/json");
-        
+        Documents ret = null;
+        Document doc = null;
         try{
         
             if(!ServletFileUpload.isMultipartContent(req)){
                 
-                Document doc = new Document(); 
+                doc = new Document(); 
 
                 ArrayList<Author>authors = new ArrayList<Author>(3);
                 ArrayList<String>directories = new ArrayList<String>(3);
@@ -312,7 +322,7 @@ public class CreateDocumentController{// implements ServletContextAware{
 
 
 
-                Documents ret = new Documents(Arrays.asList(new Document[]{doc}), 1l);
+                ret = new Documents(Arrays.asList(new Document[]{doc}), 1l);
                 /*ModelMap map = new ModelMap(ret);
                 map.addAttribute("success", true);
                 //View view = new JsonView();
@@ -337,7 +347,7 @@ public class CreateDocumentController{// implements ServletContextAware{
             
             }else{
 
-                Document doc = new Document(); 
+                doc = new Document(); 
 
                 // Create a new file upload handler
                 ServletFileUpload upload = new ServletFileUpload();
@@ -617,7 +627,7 @@ public class CreateDocumentController{// implements ServletContextAware{
 
 
 
-                Documents ret = new Documents(Arrays.asList(new Document[]{doc}), 1l);
+                ret = new Documents(Arrays.asList(new Document[]{doc}), 1l);
                 /*ModelMap map = new ModelMap(ret);
                 map.addAttribute("success", true);
                 //View view = new JsonView();
@@ -647,7 +657,13 @@ public class CreateDocumentController{// implements ServletContextAware{
                 doc.setCondensed(baos.toString("UTF-8"));
                 entityManager.flush();
 
-            }/*else{
+            }
+            if( doc != null){
+                MDC.put("DOC_ID", doc.getId());
+            }
+            lgr.info("document successfully added");
+            
+            /*else{
                 JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
                 ObjectNode json = mapper.createObjectNode();
                 json.put("failure", true);
@@ -656,6 +672,8 @@ public class CreateDocumentController{// implements ServletContextAware{
                 generator.flush();
             }*/
         }catch(Exception e){
+            MDC.put("OP_STATUS", "Error");
+            lgr.error("Add document error: " + e.toString(), e);
             JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
             ObjectNode json = mapper.createObjectNode();
             json.put("failure", true);

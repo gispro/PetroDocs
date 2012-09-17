@@ -1,6 +1,21 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page import="java.io.File"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="ru.gispro.petrores.doc.util.UserSessions"%>
+<%@page import="org.apache.log4j.Logger"%> 
+<%@page import="org.apache.log4j.MDC"%> 
+<%
+    if( UserSessions.registerUserSession(request.getRemoteUser(), session.getId())){
+        MDC.put("user", request.getRemoteUser());
+        MDC.put("OP_CODE", "LOGIN");
+        MDC.put("OP_NAME", "Login");
+        MDC.put("DOC_ID", "-");
+        MDC.put("OP_STATUS", "Success");
+        Logger lgr = Logger.getLogger("util.UserSessions");
+        lgr.info("Login is successful");
+    }
+%>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 

@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gispro.petrores.doc.entities.Projection;
 import ru.gispro.petrores.doc.entities.Projections;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -35,9 +36,20 @@ public class ProjectionRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Projections create(Projection entity) {
-        entity = entityManager.merge(entity);
-        entityManager.flush();
-        return new Projections(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.ProjectionRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Projection", entity.getCode(),
+                                true,  "RefBook item successfully created"); 
+            return new Projections(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.ProjectionRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Projection", null,
+                      false,  "RefBook item creation error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @PUT
@@ -45,16 +57,39 @@ public class ProjectionRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Projections edit(Projection entity) {
-        entity = entityManager.merge(entity);
-        return new Projections(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.ProjectionRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Projection", entity.getCode(),
+                                true,  "RefBook item successfully changed"); 
+            return new Projections(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.ProjectionRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Projection", entity.getCode(),
+                      false,  "Edit RefBook item error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @DELETE
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(Projection entity) {
-        entity = entityManager.getReference(Projection.class, entity.getCode());
-        entityManager.remove(entity);
+        String code = entity.getCode();
+        try {
+            entity = entityManager.getReference(Projection.class, entity.getCode());
+            entityManager.remove(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.ProjectionRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Projection", code,
+                                true,  "RefBook item successfully removed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.ProjectionRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Projection", code,
+                      false,  "RefBook item removing error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @GET

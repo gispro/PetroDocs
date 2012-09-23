@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gispro.petrores.doc.entities.WorkProcess;
 import ru.gispro.petrores.doc.entities.WorkProcesses;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -35,9 +36,20 @@ public class WorkProcessRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public WorkProcesses create(WorkProcess entity) {
-        entity = entityManager.merge(entity);
-        entityManager.flush();
-        return new WorkProcesses(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.WorkProcessRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Work Process", entity.getId(),
+                                true,  "RefBook item successfully created"); 
+            return new WorkProcesses(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.WorkProcessRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Work Process", null,
+                      false,  "RefBook item creation error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @PUT
@@ -45,16 +57,39 @@ public class WorkProcessRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public WorkProcesses edit(WorkProcess entity) {
-        entity = entityManager.merge(entity);
-        return new WorkProcesses(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.WorkProcessRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Work Process", entity.getId(),
+                                true,  "RefBook item successfully changed"); 
+            return new WorkProcesses(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.WorkProcessRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Work Process", entity.getId(),
+                      false,  "Edit RefBook item error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @DELETE
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(WorkProcess entity) {
-        entity = entityManager.getReference(WorkProcess.class, entity.getId());
-        entityManager.remove(entity);
+        Integer id = entity.getId();
+        try {
+            entity = entityManager.getReference(WorkProcess.class, entity.getId());
+            entityManager.remove(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.WorkProcessRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Work Process", id,
+                                true,  "RefBook item successfully removed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.WorkProcessRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Work Process", id,
+                      false,  "RefBook item removing error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @GET

@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gispro.petrores.doc.entities.Domain;
 import ru.gispro.petrores.doc.entities.Domains;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -35,17 +36,28 @@ public class DomainRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Domains create(Domain entity) {
-        if(entity.getSite().getId()==null)
-            entity.setSite(null);
-        if(entity.getWell().getId()==null)
-            entity.setWell(null);
-        if(entity.getTypeOfWork().getId()==null)
-            entity.setTypeOfWork(null);
-        if(entity.getWorkProcess().getId()==null)
-            entity.setWorkProcess(null);
-        entity = entityManager.merge(entity);
-        entityManager.flush();
-        return new Domains(Arrays.asList(entity), 1l);
+        try {
+            if(entity.getSite().getId()==null)
+                entity.setSite(null);
+            if(entity.getWell().getId()==null)
+                entity.setWell(null);
+            if(entity.getTypeOfWork().getId()==null)
+                entity.setTypeOfWork(null);
+            if(entity.getWorkProcess().getId()==null)
+                entity.setWorkProcess(null);
+            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.DomainRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Domain", entity.getId(),
+                                true,  "RefBook item successfully created"); 
+            return new Domains(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.DomainRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Domain", null,
+                      false,  "RefBook item creation error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @PUT
@@ -53,25 +65,48 @@ public class DomainRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Domains edit(Domain entity) {
-        if(entity.getSite().getId()==null)
-            entity.setSite(null);
-        if(entity.getWell().getId()==null)
-            entity.setWell(null);
-        if(entity.getTypeOfWork().getId()==null)
-            entity.setTypeOfWork(null);
-        if(entity.getWorkProcess().getId()==null)
-            entity.setWorkProcess(null);
-        entity = entityManager.merge(entity);
-        entityManager.flush();
-        return new Domains(Arrays.asList(entity), 1l);
+        try {
+            if(entity.getSite().getId()==null)
+                entity.setSite(null);
+            if(entity.getWell().getId()==null)
+                entity.setWell(null);
+            if(entity.getTypeOfWork().getId()==null)
+                entity.setTypeOfWork(null);
+            if(entity.getWorkProcess().getId()==null)
+                entity.setWorkProcess(null);
+            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.DomainRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Domain", entity.getId(),
+                                true,  "RefBook item successfully changed"); 
+            return new Domains(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.DomainRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Domain", entity.getId(),
+                      false,  "Edit RefBook item error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @DELETE
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(Domain entity) {
-        entity = entityManager.getReference(Domain.class, entity.getId());
-        entityManager.remove(entity);
+        Long id = entity.getId();
+        try {
+            entity = entityManager.getReference(Domain.class, entity.getId());
+            entityManager.remove(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.DomainRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Domain", id,
+                                true,  "RefBook item successfully removed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.DomainRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Domain", id,
+                      false,  "RefBook item removing error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @GET

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
+import ru.gispro.petrores.doc.util.UserSessions;
 
 /**
  *
@@ -50,13 +51,13 @@ public class SaveMapController {
     }
     @RequestMapping(method = RequestMethod.PUT)
     public void put(@PathVariable("name") String name, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        MDC.put("user", req.getRemoteUser());
+     /*   MDC.put("user", req.getRemoteUser());
         MDC.put("OP_CODE", "SAVE_PROFILE");
         MDC.put("OP_NAME", "Save profile");
         MDC.put("DOC_ID", "-");
         MDC.put("OP_STATUS", "Success");
         Logger lgr = Logger.getLogger("ru.gispro.petrores.doc.controller.SaveMapController");
-
+*/
         try {
             resp.setContentType("application/xml");
 
@@ -81,11 +82,14 @@ public class SaveMapController {
             bos.close();
             bis.close();
             fos.close();
-            lgr.info("Profile saved in " + name );
+            UserSessions.info("ru.gispro.petrores.doc.controller.SaveMapController", 
+                          req.getRemoteUser(), "SAVE_PROFILE", "Save profile", null,
+                          true,  "Profile saved in " + name); 
         }
         catch(Exception e){
-            MDC.put("OP_STATUS", "Error");
-            lgr.error("Save profile in "+name+" error: "+e.toString(), e );
+            UserSessions.error("ru.gispro.petrores.doc.controller.SaveMapController", 
+                          req.getRemoteUser(), "SAVE_PROFILE", "Save profile", null,
+                          true,  "Save profile in "+name+" error: "+e.toString(), e); 
             throw e;
         }
     }

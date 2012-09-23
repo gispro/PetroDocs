@@ -23,6 +23,7 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.gispro.petrores.doc.entities.*;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -63,19 +64,30 @@ public class DocumentRESTFacade{
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(Document entity) {
-        entity = entityManager.getReference(Document.class, entity.getId());
-        
-        // deleting files
-        Collection<File> files = entity.getFiles();
-        for(File f: files){
-            String path = f.getPath();
-            java.io.File file = new java.io.File(getRootPath() + path);
-            if(file.exists() && file.isFile())
-                file.delete();
+        Long id = entity.getId();
+        try {
+            entity = entityManager.getReference(Document.class, entity.getId());
+
+            // deleting files
+            Collection<File> files = entity.getFiles();
+            for(File f: files){
+                String path = f.getPath();
+                java.io.File file = new java.io.File(getRootPath() + path);
+                if(file.exists() && file.isFile())
+                    file.delete();
+            }
+
+            entityManager.remove(entity);
+             UserSessions.info("ru.gispro.petrores.doc.service.DocumentRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_DOCUMENT", "Remove document", id,
+                      true,  "Document successfully removed"); 
         }
-        
-        
-        entityManager.remove(entity);
+        catch( RuntimeException e){
+             UserSessions.error("ru.gispro.petrores.doc.service.DocumentRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_DOCUMENT", "Remove document", id,
+                      false,  "Document removing error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     private String getRootPath(){

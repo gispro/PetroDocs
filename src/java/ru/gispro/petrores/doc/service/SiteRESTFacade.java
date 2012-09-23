@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gispro.petrores.doc.entities.Site;
 import ru.gispro.petrores.doc.entities.Sites;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -35,16 +36,38 @@ public class SiteRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Sites create(Site entity) {
-        Site ret = entityManager.merge(entity);
-        entityManager.flush();
-        return new Sites(Arrays.asList(new Site[]{ret}), 1l);// Response.created(URI.create(entity.getId().toString())).build();
+        try {
+            Site ret = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.SiteRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Project", entity.getId(),
+                                true,  "RefBook item successfully created"); 
+            return new Sites(Arrays.asList(new Site[]{ret}), 1l);// Response.created(URI.create(entity.getId().toString())).build();
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.SiteRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Project", null,
+                      false,  "RefBook item creation error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void edit(Site entity) {
-        entityManager.merge(entity);
+        try {
+            entityManager.merge(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.SiteRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Project", entity.getId(),
+                                true,  "RefBook item successfully changed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.SiteRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Project", entity.getId(),
+                      false,  "Edit RefBook item error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @DELETE
@@ -52,8 +75,20 @@ public class SiteRESTFacade {
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(Site entity){// @PathParam("id") Long id) {
-        entity = entityManager.getReference(Site.class, entity.getId());
-        entityManager.remove(entity);
+        Long id = entity.getId();
+        try {
+            entity = entityManager.getReference(Site.class, entity.getId());
+            entityManager.remove(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.SiteRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Project", id,
+                                true,  "RefBook item successfully removed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.SiteRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Project", id,
+                      false,  "RefBook item removing error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @GET

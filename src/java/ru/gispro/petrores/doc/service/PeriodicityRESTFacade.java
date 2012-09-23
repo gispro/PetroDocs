@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gispro.petrores.doc.entities.Periodicity;
 import ru.gispro.petrores.doc.entities.Periodicities;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -35,9 +36,20 @@ public class PeriodicityRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Periodicities create(Periodicity entity) {
-        entity = entityManager.merge(entity);
-        entityManager.flush();
-        return new Periodicities(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.PeriodicityRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Update Cycle", entity.getId(),
+                                true,  "RefBook item successfully created"); 
+            return new Periodicities(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.PeriodicityRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Update Cycle", null,
+                      false,  "RefBook item creation error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @PUT
@@ -45,16 +57,40 @@ public class PeriodicityRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Periodicities edit(Periodicity entity) {
-        entity = entityManager.merge(entity);
-        return new Periodicities(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.PeriodicityRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Update Cycle", entity.getId(),
+                                true,  "RefBook item successfully changed"); 
+            return new Periodicities(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.PeriodicityRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Update Cycle", entity.getId(),
+                      false,  "Edit RefBook item error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @DELETE
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(Periodicity entity) {
-        entity = entityManager.getReference(Periodicity.class, entity.getId());
-        entityManager.remove(entity);
+        Integer id = entity.getId();
+        try {
+            entity = entityManager.getReference(Periodicity.class, entity.getId());
+            entityManager.remove(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.PeriodicityRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Update Cycle", id,
+                                true,  "RefBook item successfully removed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.PeriodicityRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Update Cycle", id,
+                      false,  "RefBook item removing error: " + e.toString(), e); 
+             throw e;
+        }
+        
     }
 
     @GET

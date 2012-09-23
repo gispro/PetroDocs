@@ -52,6 +52,7 @@ import ru.gispro.petrores.doc.util.Util;
 import ru.gispro.petrores.doc.view.JsonView;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
+import ru.gispro.petrores.doc.util.UserSessions;
 /**
  *
  * @author fkravchenko
@@ -78,13 +79,13 @@ public class EditDocumentController{// implements ServletContextAware{
     @Transactional
     public void create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         
-        MDC.put("user", req.getRemoteUser());
+/*        MDC.put("user", req.getRemoteUser());
         MDC.put("OP_CODE", "EDIT_DOCUMENT");
         MDC.put("OP_NAME", "Edit document");
         MDC.put("DOC_ID", "-");
         MDC.put("OP_STATUS", "Success");
         Logger lgr = Logger.getLogger("ru.gispro.petrores.doc.controller.EditDocumentController");
-        
+        */ 
         ObjectMapper mapper = new ObjectMapper();
         resp.setHeader("Content-Type", "text/html; charset=UTF-8"); // "application/json");
         Documents ret = null;
@@ -763,10 +764,6 @@ public class EditDocumentController{// implements ServletContextAware{
                 entityManager.flush();
 
             }
-            if( doc != null){
-                MDC.put("DOC_ID", doc.getId());
-                lgr.info("Document successfully changed");
-            }
             /*else{
                 JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
                 ObjectNode json = mapper.createObjectNode();
@@ -775,9 +772,13 @@ public class EditDocumentController{// implements ServletContextAware{
                 mapper.writeTree(generator, json);
                 generator.flush();
             }*/
+            UserSessions.info("ru.gispro.petrores.doc.controller.EditDocumentController", 
+                      req.getRemoteUser(), "EDIT_DOCUMENT", "Edit document", doc != null ? doc.getId(): null,
+                      true,  "Document successfully changed"); 
         }catch(Exception e){
-            MDC.put("OP_STATUS", "Error");
-            lgr.error("Edit document error: " + e.toString(), e);
+            UserSessions.error("ru.gispro.petrores.doc.controller.EditDocumentController", 
+                      req.getRemoteUser(), "EDIT_DOCUMENT", "Edit document", doc != null ? doc.getId(): null,
+                      false,  "Edit document error: " + e.toString(), e); 
 
             JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
             ObjectNode json = mapper.createObjectNode();

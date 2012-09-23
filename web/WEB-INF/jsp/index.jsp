@@ -1,3 +1,6 @@
+<%@page import="org.apache.log4j.Level"%>
+<%@page import="org.apache.log4j.Priority"%>
+<%@page import="java.util.Enumeration"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page import="java.io.File"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -5,14 +8,11 @@
 <%@page import="org.apache.log4j.Logger"%> 
 <%@page import="org.apache.log4j.MDC"%> 
 <%
-    if( UserSessions.registerUserSession(request.getRemoteUser(), session.getId())){
-        MDC.put("user", request.getRemoteUser());
-        MDC.put("OP_CODE", "LOGIN");
-        MDC.put("OP_NAME", "Login");
-        MDC.put("DOC_ID", "-");
-        MDC.put("OP_STATUS", "Success");
-        Logger lgr = Logger.getLogger("util.UserSessions");
-        lgr.info("Login is successful");
+String sLogin = request.getRemoteUser(), 
+       sSessionID = session.getId();
+    if( UserSessions.registerUserSession(sLogin, session.getId())){
+        UserSessions.info("util.UserSessions", request.getRemoteUser(), 
+                         "LOGIN", "Login", null, true, "Login is successful");
     }
 %>
 
@@ -29,6 +29,7 @@
         <script src="lib/openlayers212/OpenLayers.debug.js"></script>
         <script src="lib/proj4js-combined.js"></script>
         <script type="text/javascript">
+            var petrodoc_sid = '<%=sSessionID%>';
             OpenLayers.ProxyHost= "form/proxy?url=";
             Proj4js.defs["EPSG:32639"] = "+proj=utm +zone=39 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
             petroresConfig = {};

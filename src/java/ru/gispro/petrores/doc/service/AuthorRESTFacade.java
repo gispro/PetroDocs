@@ -13,15 +13,21 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.springframework.context.annotation.Scope;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.gispro.petrores.doc.entities.Author;
 import ru.gispro.petrores.doc.entities.Authors;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -43,57 +49,101 @@ public class AuthorRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Authors create(Author entity) {
-        if(entity.getOrganization().getId()==null)
-            entity.setOrganization(null);
-        entity = entityManager.merge(entity);
-        entityManager.flush();
-        return new Authors(Arrays.asList(entity), 1l);
+        try {
+            if(entity.getOrganization().getId()==null)
+                entity.setOrganization(null);
+            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Author", entity.getId(),
+                                true,  "RefBook item successfully created"); 
+            return new Authors(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Author", null,
+                      false,  "RefBook item creation error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @PUT
     @Consumes({"application/xml", "application/json"})
     @Produces({"application/xml", "application/json"})
     @Transactional
-    public Authors edit(Author entity) {
-        
-        if(entity.getLogin()!=null){
-            Authors foundByLogin = this.find(entity.getLogin());
-            List<Author>list = foundByLogin.getAuthors();
-            if(list.size()>0){
-                if(list.size()>1){
-                    System.out.println("Warning: duplicate login " + entity.getLogin());
-                }
-                for(Author author: list){
-                    if(author.getId()==entity.getId()){
-        entity = entityManager.merge(entity);
-                    }else{
-                        if(list.size()==1){
-                            // means that trying to duplicate the login
-                            throw new RuntimeException("Duplicate login " + entity.getLogin());
-                            
+    public Authors edit(Author entity){
+        String mess;
+        try {
+            if(entity.getLogin()!=null){
+                Authors foundByLogin = this.find(entity.getLogin());
+                List<Author>list = foundByLogin.getAuthors();
+                if(list.size()>0){
+                    if(list.size()>1){
+                        mess = "Warning: duplicate login " + entity.getLogin();
+                        System.out.println(mess);
+                        UserSessions.warn("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                                           UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Author", entity.getId(),
+                                           true,  mess); 
+                    }
+                    for(Author author: list){
+                        if(author.getId()==entity.getId()){
+                            entity = entityManager.merge(entity);
                         }else{
-                            System.out.println("Warning: cleaning duplicate login " + 
-                                    entity.getLogin() + 
-                                    " in Author id " + 
-                                    author.getId());
-                            author.setLogin(null);
+                            if(list.size()==1){
+                                // means that trying to duplicate the login
+                                mess = "Duplicate login " + entity.getLogin();
+                                RuntimeException exc1 = new RuntimeException(mess);
+                                UserSessions.error("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                                                    UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Author", entity.getId(),
+                                                    false,  mess, exc1); 
+                                throw exc1;
+                            }else{
+                                mess = "Warning: cleaning duplicate login " + entity.getLogin() + 
+                                        " in Author id " + author.getId();
+                                System.out.println(mess);
+                                UserSessions.warn("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                                                    UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Author", entity.getId(),
+                                                    true,  mess); 
+                                author.setLogin(null);
+                            }
                         }
                     }
                 }
+            }else{
+                entity = entityManager.merge(entity);
             }
-        }else{
-            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Author", entity.getId(),
+                                true,  "RefBook item successfully changed"); 
+            return new Authors(Arrays.asList(entity), 1l);
         }
-        entityManager.flush();
-        return new Authors(Arrays.asList(entity), 1l);
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Author", entity.getId(),
+                      false,  "Edit RefBook item error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @DELETE
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(Author entity) {
-        entity = entityManager.getReference(Author.class, entity.getId());
-        entityManager.remove(entity);
+        Long id = entity.getId();
+        try {
+            entity = entityManager.getReference(Author.class, entity.getId());
+            entityManager.remove(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Author", id,
+                                true,  "RefBook item successfully removed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.AuthorRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Author", id,
+                      false,  "RefBook item removing error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @GET

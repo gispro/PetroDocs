@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gispro.petrores.doc.entities.Well;
 import ru.gispro.petrores.doc.entities.Wells;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -36,9 +37,21 @@ public class WellRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Wells create(Well entity) {
-        entity = entityManager.merge(entity);
-        entityManager.flush();
-        return new Wells(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.WellRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Well", entity.getId(),
+                                true,  "RefBook item successfully created"); 
+            return new Wells(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.WellRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Well", null,
+                      false,  "RefBook item creation error: " + e.toString(), e); 
+            throw e;
+        }
+        
     }
 
     @PUT
@@ -46,16 +59,39 @@ public class WellRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public Wells edit(Well entity) {
-        entity = entityManager.merge(entity);
-        return new Wells(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.WellRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Well", entity.getId(),
+                                true,  "RefBook item successfully changed"); 
+            return new Wells(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.WellRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Well", entity.getId(),
+                      false,  "Edit RefBook item error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @DELETE
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(Well entity) {
-        entity = entityManager.getReference(Well.class, entity.getId());
-        entityManager.remove(entity);
+        Long id = entity.getId();
+        try {
+            entity = entityManager.getReference(Well.class, entity.getId());
+            entityManager.remove(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.WellRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Well", id,
+                                true,  "RefBook item successfully removed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.WellRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Well", id,
+                      false,  "RefBook item removing error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @GET

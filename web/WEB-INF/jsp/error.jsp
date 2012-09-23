@@ -4,18 +4,15 @@
     Author     : fkravchenko
 --%>
 
+<%@page import="org.apache.log4j.Level"%>
+<%@page import="ru.gispro.petrores.doc.util.UserSessions"%>
 <%@page import="org.apache.log4j.Logger"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="org.apache.log4j.Logger"%> 
 <%@page import="org.apache.log4j.MDC"%> 
 <%
-    Logger lgr = Logger.getLogger("util.UserSessions");
-    MDC.put("user", request.getParameter("j_username"));
-    MDC.put("OP_CODE", "LOGIN");
-    MDC.put("OP_NAME", "Login");
-    MDC.put("DOC_ID", "-");
-    MDC.put("OP_STATUS", "ERROR");
-    lgr.warn("Invalid login or password");
+    UserSessions.warn("util.UserSessions", request.getParameter("j_username"), 
+                     "LOGIN", "Login", null, false, "Invalid login or password");
+
 %>
 <!DOCTYPE html>
 <html>

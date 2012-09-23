@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gispro.petrores.doc.entities.GeoType;
 import ru.gispro.petrores.doc.entities.GeoTypes;
+import ru.gispro.petrores.doc.util.UserSessions;
 import ru.gispro.petrores.doc.util.Util;
 
 /**
@@ -35,9 +36,20 @@ public class GeoTypeRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public GeoTypes create(GeoType entity) {
-        entity = entityManager.merge(entity);
-        entityManager.flush();
-        return new GeoTypes(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            entityManager.flush();
+            UserSessions.info("ru.gispro.petrores.doc.service.GeoTypeRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Geo Data Type", entity.getId(),
+                                true,  "RefBook item successfully created"); 
+            return new GeoTypes(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.GeoTypeRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "CREATE_REFBOOK_ITEM", "Create Geo Data Type", null,
+                      false,  "RefBook item creation error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @PUT
@@ -45,16 +57,39 @@ public class GeoTypeRESTFacade {
     @Produces({"application/xml", "application/json"})
     @Transactional
     public GeoTypes edit(GeoType entity) {
-        entity = entityManager.merge(entity);
-        return new GeoTypes(Arrays.asList(entity), 1l);
+        try {
+            entity = entityManager.merge(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.GeoTypeRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Geo Data Type", entity.getId(),
+                                true,  "RefBook item successfully changed"); 
+            return new GeoTypes(Arrays.asList(entity), 1l);
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.GeoTypeRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "EDIT_REFBOOK_ITEM", "Edit Geo Data Type", entity.getId(),
+                      false,  "Edit RefBook item error: " + e.toString(), e); 
+            throw e;
+        }
     }
 
     @DELETE
     @Consumes({"application/xml", "application/json"})
     @Transactional
     public void remove(GeoType entity) {
-        entity = entityManager.getReference(GeoType.class, entity.getId());
-        entityManager.remove(entity);
+        Integer id = entity.getId();
+        try {
+            entity = entityManager.getReference(GeoType.class, entity.getId());
+            entityManager.remove(entity);
+            UserSessions.info("ru.gispro.petrores.doc.service.GeoTypeRESTFacade", 
+                                UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Geo Data Type", id,
+                                true,  "RefBook item successfully removed"); 
+        }
+        catch(RuntimeException e){
+            UserSessions.error("ru.gispro.petrores.doc.service.GeoTypeRESTFacade", 
+                      UserSessions.getFacadeCallRequestUser(), "REMOVE_REFBOOK_ITEM", "Remove Geo Data Type", id,
+                      false,  "RefBook item removing error: " + e.toString(), e); 
+             throw e;
+        }
     }
 
     @GET

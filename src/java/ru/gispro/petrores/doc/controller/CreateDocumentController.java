@@ -23,6 +23,7 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.log4j.Level;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
@@ -52,6 +53,7 @@ import ru.gispro.petrores.doc.util.Util;
 import ru.gispro.petrores.doc.view.JsonView;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
+import ru.gispro.petrores.doc.util.UserSessions;
 
 /**
  *
@@ -79,13 +81,13 @@ public class CreateDocumentController{// implements ServletContextAware{
     @Transactional
     public void create(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         
-        MDC.put("user", req.getRemoteUser());
+/*        MDC.put("user", req.getRemoteUser());
         MDC.put("OP_CODE", "ADD_DOCUMENT");
         MDC.put("OP_NAME", "Add document");
         MDC.put("DOC_ID", "-");
         MDC.put("OP_STATUS", "Success");
         Logger lgr = Logger.getLogger("ru.gispro.petrores.doc.controller.CreateDocumentController");
-        
+*/
         ObjectMapper mapper = new ObjectMapper();
         resp.setHeader("Content-Type", "text/html; charset=UTF-8"); // "application/json");
         Documents ret = null;
@@ -658,11 +660,6 @@ public class CreateDocumentController{// implements ServletContextAware{
                 entityManager.flush();
 
             }
-            if( doc != null){
-                MDC.put("DOC_ID", doc.getId());
-            }
-            lgr.info("document successfully added");
-            
             /*else{
                 JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
                 ObjectNode json = mapper.createObjectNode();
@@ -671,9 +668,14 @@ public class CreateDocumentController{// implements ServletContextAware{
                 mapper.writeTree(generator, json);
                 generator.flush();
             }*/
+            UserSessions.info("ru.gispro.petrores.doc.controller.CreateDocumentController", 
+                             req.getRemoteUser(), "ADD_DOCUMENT", "Add document", doc != null ? doc.getId(): null, 
+                             true, "Document successfully added", null);
         }catch(Exception e){
-            MDC.put("OP_STATUS", "Error");
-            lgr.error("Add document error: " + e.toString(), e);
+            UserSessions.error("ru.gispro.petrores.doc.controller.CreateDocumentController", 
+                 req.getRemoteUser(), "ADD_DOCUMENT", "Add document", doc != null ? doc.getId(): null, 
+                 false, "Add document error: " + e.toString(), e);
+
             JsonGenerator generator = mapper.getJsonFactory().createJsonGenerator(resp.getOutputStream(), JsonEncoding.UTF8);
             ObjectNode json = mapper.createObjectNode();
             json.put("failure", true);

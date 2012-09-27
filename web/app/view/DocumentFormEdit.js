@@ -8,7 +8,8 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
     initComponent: function() {
         var me = this;
 
-        var layers = petroresConfig.layersCreator();
+        var mcfg = petroresConfig.layersCreator();
+        var layers = mcfg.layers;
         var vectorLayers = [];
         var fun = function() {
             var str = '';
@@ -81,12 +82,13 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                     map: me.theMap,
                     region: 'center',
                     //extent: new OpenLayers.Bounds(45.00, 36.18, 55, 47.50)
-                    extent: new OpenLayers.Bounds(
-                        5082754.0816867,
-                        5417407.5350582,
-                        5806765.6135031,
-                        5857073.3216934
-                    )
+                    extent: mcfg.extent
+                    //extent: new OpenLayers.Bounds(
+                    //    5082754.0816867,
+                    //    5417407.5350582,
+                    //    5806765.6135031,
+                    //    5857073.3216934
+                    //)
                 });
         var layerStore = Ext.create('Ext.data.TreeStore', {
             model: 'GeoExt.data.LayerTreeModel',
@@ -1552,7 +1554,7 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                                 var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
                                 renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
 
-                                var layers = petroresConfig.layersCreator();
+                                var layers = petroresConfig.layersCreator().layers;
                                 var vectorLayers = [];
 
                                 var fun = function() {

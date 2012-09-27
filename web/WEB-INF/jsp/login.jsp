@@ -19,10 +19,12 @@
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Login',
+                            width: 250,
                             name: 'j_username'
                         },
                         {
                             xtype: 'textfield',
+                            width: 250,
                             fieldLabel: 'Password',
                             inputType: 'password',
                             name: 'j_password'

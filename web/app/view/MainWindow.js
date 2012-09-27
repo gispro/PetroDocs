@@ -243,7 +243,8 @@ Ext.define('PetroRes.view.MainWindow', {
                     xtype: 'menuitem',
                     text: 'Caspian Sea',
                     handler: function(){
-                        var layers = petroresConfig.layersCreator();
+                        var mcfg = petroresConfig.layersCreator();
+                        var layers = mcfg.layers;
 
                         var vectorLayers = [];  
                         var editableLayers = [];
@@ -431,12 +432,13 @@ Ext.define('PetroRes.view.MainWindow', {
                                     //extent: new OpenLayers.Bounds(45.00, 36.18, 55, 47.50)
                                     //, displayProjection: new OpenLayers.Projection("EPSG:4326")
                                     //,projection: new OpenLayers.Projection("EPSG:4326")
-                                    ,extent: new OpenLayers.Bounds(
-                                        5082754.0816867,
-                                        5417407.5350582,
-                                        5806765.6135031,
-                                        5857073.3216934
-                                    )
+                                    ,extent: mcfg.extent
+                                    //new OpenLayers.Bounds(
+                                    //    5082754.0816867,
+                                    //    5417407.5350582,
+                                    //    5806765.6135031,
+                                    //    5857073.3216934
+                                    //)
                                     , displayProjection: new OpenLayers.Projection("EPSG:900913")
                                     ,projection: new OpenLayers.Projection("EPSG:900913")
                                     ,layers: layers,

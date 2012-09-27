@@ -211,6 +211,11 @@ String sLogin = request.getRemoteUser(),
                         autoScroll: true,
                         items: [
                             {
+                                xtype: 'textfield',
+                                name: 'OneFieldSearch',
+                                fieldLabel: 'Any Field'
+                            },
+                            {
                                 xtype: 'fieldset',
                                 layout: 'anchor',
                                 defaults: {
@@ -229,20 +234,49 @@ String sLogin = request.getRemoteUser(),
                                         for(var attr in attrs){
                                             if(!attrs[attr] || attrs[attr]==''){
                                                 delete attrs[attr];
+                                            }else{
+                                                if(attrs[attr].toLowerCase){
+                                                    attrs[attr] = attrs[attr].toLowerCase();
+                                                }
                                             }
                                         }
                                         
+                                        var oneFieldSearch = attrs.OneFieldSearch;
+                                        delete attrs.OneFieldSearch;
+                                        
                                         bigLoop:
                                         for(var featr in layer.features){
-                                            for(var attr in attrs){
-                                                if(!layer.features[featr].attributes[attr]){
-                                                    continue bigLoop;
-                                                }
-                                                if(layer.features[featr].attributes[attr].indexOf(attrs[attr])<0){
-                                                    continue bigLoop;
+                                        
+                                            if(oneFieldSearch){
+                                                for(var attr in layer.features[featr].attributes){
+                                                    var comp = layer.features[featr].attributes[attr];
+                                                    if(comp.toLowerCase){
+                                                        comp = comp.toLowerCase();
+                                                    }
+                                                    if(comp.indexOf(oneFieldSearch)>=0){
+                                                        selectControl.select(layer.features[featr]);
+                                                        continue bigLoop;
+                                                    }
                                                 }
                                             }
-                                            selectControl.select(layer.features[featr]);
+                                            {
+                                                var reallyDo = false;
+                                                for(var attr in attrs){
+                                                    reallyDo = true;
+                                                    var comp = layer.features[featr].attributes[attr];
+                                                    if(!comp){
+                                                        continue bigLoop;
+                                                    }
+                                                    if(comp.toLowerCase){
+                                                        comp = comp.toLowerCase();
+                                                    }
+                                                    if(comp.indexOf(attrs[attr])<0){
+                                                        continue bigLoop;
+                                                    }
+                                                }
+                                                if(reallyDo)
+                                                    selectControl.select(layer.features[featr]);
+                                            }
                                         }
                                         
                                         wnd.openPetroWindows.attrWnd.close();
@@ -598,6 +632,7 @@ String sLogin = request.getRemoteUser(),
                 }
                 
                 //console.log(conf);
+                conf.extent = map.getExtent().toArray();
                 return conf;
             };
 
@@ -650,6 +685,20 @@ String sLogin = request.getRemoteUser(),
                     layer.setOpacity(petroresConfig.layersConfig.overlays[l].opacity);
                     ret.unshift(layer);
                 }
+                
+                ret = {
+                    layers: ret,
+                    extent: 
+                    petroresConfig.layersConfig.extent
+                    ?new OpenLayers.Bounds(petroresConfig.layersConfig.extent)
+                    :new OpenLayers.Bounds(                                        
+                        5082754.0816867,
+                        5417407.5350582,
+                        5806765.6135031,
+                        5857073.3216934
+                    )
+                }
+                
                 return ret;
             }
 

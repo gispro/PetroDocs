@@ -32,8 +32,8 @@
         },
         {
             'label': 'Structures',
-            'featureType': 'Structures',
-            'typeName': 'PetroResurs:Structures',
+            'featureType': 'Structures_PRS',
+            'typeName': 'PetroResurs:Structures_PRS',
             'vectorType': 'poly',
             'opacity': 1,
             'defaultLabelField': 'NAME',

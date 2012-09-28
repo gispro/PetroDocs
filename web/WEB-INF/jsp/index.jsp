@@ -640,13 +640,32 @@ String sLogin = request.getRemoteUser(),
             petroresConfig.layersCreator = function(){ 
                 var ret = [];
                 var layer;
+                // visible
                 for(var l in petroresConfig.layersConfig.baseLayers){
                     layer = petroresConfig.layersConfig.baseLayers[l];
-                    ret.unshift(new OpenLayers.Layer.WMS(
+                    var opts = layer.options;
+                    opts.visibility = layer.visibility;
+                    if(opts.visibility)
+                        continue;
+                    var created = new OpenLayers.Layer.WMS(
                         layer.label, 
                         layer.url, 
                         layer.params, 
-                        layer.options));
+                        opts);
+                    ret.unshift(created);
+                }
+                for(var l in petroresConfig.layersConfig.baseLayers){
+                    layer = petroresConfig.layersConfig.baseLayers[l];
+                    var opts = layer.options;
+                    opts.visibility = layer.visibility;
+                    if(!opts.visibility)
+                        continue;
+                    var created = new OpenLayers.Layer.WMS(
+                        layer.label, 
+                        layer.url, 
+                        layer.params, 
+                        opts);
+                    ret.unshift(created);
                 }
                 for(l in petroresConfig.layersConfig.overlays){
                     layer = petroresConfig.layersConfig.overlays[l];

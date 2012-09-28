@@ -279,8 +279,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                     multiple: false, hover: false,
                                     toggleKey: "ctrlKey", // ctrl key removes from selection
                                     multipleKey: "shiftKey", // shift key adds to selection
-                                    box: true,
-                                    displayInLayerSwitcher: false
+                                    box: true
+                                    //,displayInLayerSwitcher: false
                                     ,eventListeners: {
                                         deactivate: function(){
                                             selectControl.unselectAll();
@@ -290,8 +290,8 @@ Ext.define('PetroRes.view.MainWindow', {
 
                         var selectControlHover = new OpenLayers.Control.SelectFeature(vectorLayers, {
                                     clickout: true, toggle: false,
-                                    multiple: false, hover: false,
-                                    displayInLayerSwitcher: false
+                                    multiple: false, hover: false
+                                    //,displayInLayerSwitcher: false
                                     ,eventListeners: {
                                         deactivate: function(){
                                             selectControlHover.unselectAll();
@@ -462,7 +462,13 @@ Ext.define('PetroRes.view.MainWindow', {
                                         plugins: [{
                                             ptype: 'gx_overlaylayercontainer'
                                             //,store: mapPanel.layers
-                                            ,loader: {store: mapPanel.layers}
+                                            ,loader: {
+                                                store: mapPanel.layers
+                                                , filter: function(rec){
+                                                    //console.log(rec.getLayer());
+                                                    return !rec.getLayer().isBaseLayer && rec.getLayer().displayInLayerSwitcher == true;
+                                                }
+                                            }
                                         }],
                                         expanded: true
                                     },
@@ -470,7 +476,9 @@ Ext.define('PetroRes.view.MainWindow', {
                                         plugins: [{
                                             ptype: 'gx_baselayercontainer'
                                             //,store: mapPanel.layers
-                                            ,loader: {store: mapPanel.layers}
+                                            ,loader: {
+                                                store: mapPanel.layers
+                                            }
                                         }],
                                         expanded: true
                                     }                             
@@ -849,6 +857,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                     ,{
                                         xtype: 'button',
                                         text: 'Measure',
+                                        icon: 'images/distance.png',
                                         menu: [
                                             Ext.create('Ext.menu.CheckItem', Ext.create('GeoExt.Action', {
                                                 //group: 'modeGr1',
@@ -859,6 +868,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 activateOnEnable: true,
                                                 deactivateOnDisable: true,
                                                 control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
+                                                    displayInLayerSwitcher: false,
                                                     eventListeners: {
                                                         activate: function(){
                                                             Ext.getCmp('measureAreaCheck').setChecked(false);
@@ -880,6 +890,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 id: 'measureAreaCheck',
                                                 deactivateOnDisable: true,
                                                 control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
+                                                    displayInLayerSwitcher: false,
                                                     eventListeners: {
                                                         activate: function(){
                                                             Ext.getCmp('measureDistanceCheck').setChecked(false);
@@ -945,7 +956,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                             var form = Ext.create('Ext.form.Panel', {
                                                 layout: 'anchor',
                                                 defaults: {
-                                                    anchor: '100%'
+                                                    anchor: '100%',
+                                                    padding: 5
                                                 },
                                                 autoScroll: true,
                                                 items: [
@@ -990,6 +1002,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 title: 'Add WMS Layer',
                                                 maximizable: false,
                                                 maximized: false,
+                                                width: 500,
                                                 layout: 'fit',
                                                 items: [
                                                     form

@@ -9,6 +9,10 @@ Ext.define('PetroRes.view.DocumentsGridPanel', {
         var me = this;
         
         Ext.applyIf(me, {
+            viewConfig: {
+                emptyText: 'No records',
+                deferEmptyText: false
+            },            
             columns: [
                 {
                     xtype: 'gridcolumn',

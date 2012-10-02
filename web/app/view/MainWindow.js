@@ -451,6 +451,9 @@ Ext.define('PetroRes.view.MainWindow', {
                                 
                         mapPanel.map.addControl(selectControl);
                         mapPanel.map.addControl(selectControlHover);
+                        mapPanel.map.addControl(new OpenLayers.Control.MousePosition({
+                            displayProjection: petroresConfig.proj4326
+                        }));
                         
                         var store = Ext.create('Ext.data.TreeStore', {
                             model: 'GeoExt.data.LayerTreeModel',
@@ -648,8 +651,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                             
                                             "outputFormat":"jpg",
                                             "outputFilename":"map-print",
-                                            "mapTitle":"bububu OceanViewer",
-                                            "comment":"bubub OceanViewer"
+                                            "mapTitle":"PetroResurs",
+                                            "comment":"PetroResurs"
                                             
                                             //outputFormat:"jpg",
                                             //outputFilename:"map-print"
@@ -869,6 +872,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 deactivateOnDisable: true,
                                                 control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
                                                     displayInLayerSwitcher: false,
+                                                    geodesic: true,
                                                     eventListeners: {
                                                         activate: function(){
                                                             Ext.getCmp('measureAreaCheck').setChecked(false);
@@ -891,6 +895,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 deactivateOnDisable: true,
                                                 control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
                                                     displayInLayerSwitcher: false,
+                                                    geodesic: true,
                                                     eventListeners: {
                                                         activate: function(){
                                                             Ext.getCmp('measureDistanceCheck').setChecked(false);

@@ -313,6 +313,13 @@ String sLogin = request.getRemoteUser(),
                                         var vertices = feature.geometry.getVertices();
                                         var editVericesFields = [];
                                         for(var vertI in vertices){
+                                            
+                                            // from meters to degrees
+                                            var tmpVertex = 
+                                                new OpenLayers.LonLat(vertices[vertI].x, vertices[vertI].y);
+                                            //vertices[vertI].transform(petroresConfig.projGoog, petroresConfig.proj4326);
+                                            tmpVertex.transform(petroresConfig.projGoog, petroresConfig.proj4326);
+                                            
                                             editVericesFields.push({
                                                 xtype: 'fieldset',
                                                 title: 'Point ' + vertI,
@@ -325,13 +332,14 @@ String sLogin = request.getRemoteUser(),
                                                         xtype: 'numberfield',
                                                         fieldLabel: 'X',
                                                         name: 'petroPointX' + vertI,
-                                                        value: vertices[vertI].x
+                                                        //value: vertices[vertI].x
+                                                        value: tmpVertex.lon
                                                     }, 
                                                     {
                                                         xtype: 'numberfield',
                                                         name: 'petroPointY' + vertI,
                                                         fieldLabel: 'Y',
-                                                        value: vertices[vertI].y
+                                                        value: tmpVertex.lat
                                                     }
                                                 ]
                                             });
@@ -365,26 +373,38 @@ String sLogin = request.getRemoteUser(),
                                                     text: 'OK',
                                                     handler: function(){
                                                         if(form.getForm().isValid()){
-                                                            // distinguish coordinated from attributes
+                                                            // distinguish coordinates from attributes
                                                             var attrs = form.getForm().getFieldValues(true);
+                                                            var tmpVerticesX = [];
+                                                            var tmpVerticesY = [];
                                                             for(var attr in attrs){
                                                                 if(attr.indexOf('petroPoint')===0){
                                                                     vertI = attr.substr('petroPointX'.length);
                                                                     if(attr.substr('petroPoint'.length, 1) === 'X'){
-                                                                        vertices[vertI].move(attrs[attr] - vertices[vertI].x, 0);
+                                                                        tmpVerticesX[parseInt(vertI)] = attrs[attr];
+                                                                        //vertices[vertI].move(attrs[attr] - vertices[vertI].x, 0);
                                                                     }else{
-                                                                        vertices[vertI].move(0, attrs[attr] - vertices[vertI].y);
+                                                                        tmpVerticesY[parseInt(vertI)] = attrs[attr];
+                                                                        //vertices[vertI].move(0, attrs[attr] - vertices[vertI].y);
                                                                     }
-                                                                    //if(attr.substr('petroPoint'.length, 1) === 'X'){
-                                                                    //    vertices[vertI].x = attrs[attr];
-                                                                    //}else{
-                                                                    //    vertices[vertI].y = attrs[attr];
-                                                                    //}
                                                                     delete attrs[attr];
                                                                 }
                                                             }
                                                             feature.attributes = attrs; // form.getForm().getFieldValues(true);
                                                             wnd.openPetroWindows.attrWnd.close();
+                                                            
+                                                            // back to meters
+                                                            //feature.geometry.transform(petroresConfig.proj4326, petroresConfig.projGoog);
+                                                            for(vertI in tmpVerticesX){
+                                                                tmpVertex = 
+                                                                    new OpenLayers.LonLat(tmpVerticesX[vertI], tmpVerticesY[vertI]);
+                                                                tmpVertex.transform(petroresConfig.proj4326, petroresConfig.projGoog);
+                                                                vertices[vertI].move(tmpVertex.lon - vertices[vertI].x, 
+                                                                tmpVertex.lat - vertices[vertI].y);
+                                                                //vertices[vertI].move(tmpVertex);
+                                                                //vertices[vertI] = tmpVertex;
+                                                            }
+                                                            
                                                             // what the hack?
                                                             // one
                                                             //feature.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
@@ -505,6 +525,7 @@ String sLogin = request.getRemoteUser(),
                     title: "Save Changes",
                     trigger: function() {
                         //if(edit.feature) {
+                        var modified = [];
                         for(var ft in layer.saveStrategy.layer.features){
                             var ftt = layer.saveStrategy.layer.features[ft];
                             if(ftt.state){
@@ -515,10 +536,16 @@ String sLogin = request.getRemoteUser(),
                                 ftt.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
                                 // profit
                                 edit.selectControl.unselectAll();
+                                
+                                modified.push(ftt);
                             }
                         }
                         
                         layer.saveStrategy.save();
+                        for(ft in modified){
+                                layer.drawFeature(modified[ft]);
+                        }
+
                     },
                     displayClass: "olControlSaveFeatures"
                 });

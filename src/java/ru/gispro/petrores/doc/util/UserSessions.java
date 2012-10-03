@@ -115,6 +115,31 @@ public class UserSessions {
     *   Level.ERROR_INT:
     *   Level.DEBUG_INT:
     */
+    public static void log( String sCategory, String logerName,
+                            Object user, Object oOpCode, String sOpName, 
+                            Object docID, boolean bOK, String message, Throwable t){
+        int cat = "trace".equalsIgnoreCase(sCategory)
+                    ? Level.TRACE_INT
+                    : "warn".equalsIgnoreCase(sCategory)
+                        ? Level.WARN_INT
+                        : "info".equalsIgnoreCase(sCategory)
+                            ? Level.INFO_INT
+                            : "fatal".equalsIgnoreCase(sCategory)
+                                ? Level.FATAL_INT
+                                : "error".equalsIgnoreCase(sCategory)
+                                    ? Level.ERROR_INT
+                                    : "debug".equalsIgnoreCase(sCategory)
+                                        ? Level.DEBUG_INT
+                                        : Level.ALL_INT;
+        if( cat == Level.ALL_INT){
+                String m = "Log category "+sCategory+" not supported in \""+message+"\"";
+                RuntimeException e = new RuntimeException(m);
+                Logger.getLogger(logerName).error(  m, e);
+                throw e;
+        }
+        
+        log(cat, logerName, user, oOpCode, sOpName, docID, bOK, message, t);
+    }
     public static void log( int category, String logerName,
                             Object user, Object oOpCode, String sOpName, 
                             Object docID, boolean bOK, String message, Throwable t){

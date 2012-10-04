@@ -4,10 +4,7 @@
  */
 package ru.gispro.petrores.doc.controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -23,10 +20,10 @@ import ru.gispro.petrores.doc.util.UserSessions;
  * @author fkravchenko
  */
 @Controller
-@RequestMapping(value = "/maps/{name:.*}")
+@RequestMapping(value = "/maps")
 public class SaveMapController {
     
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/{name:.*}", method = RequestMethod.GET)
     public void get(@PathVariable("name") String name, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         resp.setContentType("application/xml");
         
@@ -49,7 +46,32 @@ public class SaveMapController {
         bis.close();
         fis.close();
     }
-    @RequestMapping(method = RequestMethod.PUT)
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public void getAll(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        resp.setContentType("text/plain");
+        
+        String startPath = req.getSession().getServletContext().getInitParameter("mapsPath");
+        if(!startPath.startsWith("/")){
+            startPath = req.getSession().getServletContext().getRealPath("/" + startPath);
+        }
+        
+        java.io.File realFolder = new java.io.File(startPath);
+        File[]files = realFolder.listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().toUpperCase().endsWith(".JSON");
+            }
+        });
+        
+        PrintWriter out = resp.getWriter();
+        for(File file : files){
+            out.println(file.getName());
+        }
+    }
+    
+    @RequestMapping(value = "/{name:.*}", method = RequestMethod.PUT)
     public void put(@PathVariable("name") String name, HttpServletRequest req, HttpServletResponse resp) throws Exception {
      /*   MDC.put("user", req.getRemoteUser());
         MDC.put("OP_CODE", "SAVE_PROFILE");

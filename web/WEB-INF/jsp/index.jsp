@@ -246,7 +246,6 @@ String sLogin = request.getRemoteUser(),
                                         
                                         bigLoop:
                                         for(var featr in layer.features){
-                                        
                                             if(oneFieldSearch){
                                                 for(var attr in layer.features[featr].attributes){
                                                     var comp = layer.features[featr].attributes[attr];
@@ -1123,6 +1122,28 @@ String sLogin = request.getRemoteUser(),
                 }
             });
 
+            // loads maps list
+            petroresConfig.mapConfigs = {};
+            Ext.Ajax.request({
+                url: 'form/maps',
+                success: function(res){
+                    var mcs = res.responseText.split(/\r?\n/);
+                    for(var mc in mcs){
+                        var mpcfg = mcs[mc];
+                        if(mpcfg.length>0){
+                            Ext.Ajax.request({
+                                url: 'form/maps/' + mpcfg,
+                                success: function(res1){
+                                    var u = res1.request.options.url;
+                                    mpcfg = u.substring(u.lastIndexOf('/')+1, u.lastIndexOf('.'));
+                                    petroresConfig.mapConfigs[mpcfg]
+                                        = Ext.JSON.decode(res1.responseText);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
 
             
 

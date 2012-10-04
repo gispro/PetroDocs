@@ -27,11 +27,7 @@ import ru.gispro.petrores.doc.util.UserSessions;
 @Controller
 @RequestMapping(value = "/log/{category}/{cls}/{mess}")
 public class LogController {
-    @PersistenceContext(unitName = "petro21PU")
-    
-    
     @RequestMapping(method = RequestMethod.GET)
-    @Transactional
     public void get(@PathVariable("category") String category, @PathVariable("cls") String cls, @PathVariable("mess") String mess, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String m = "Log Successfull";
         try {

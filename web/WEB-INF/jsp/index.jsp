@@ -714,7 +714,24 @@ String sLogin = request.getRemoteUser(),
                         ,version: "1.1.0"
                         , eventListeners: {
                             beforefeaturesadded: function(obj){
-                                petroresConfig.showFeatureEditor(obj.object, obj.features)
+                                petroresConfig.showFeatureEditor(obj.object, obj.features);
+                                if(obj.object.schemaLoaded){
+                                    for(var featNum in obj.features){
+                                        var feature = obj.features[featNum];
+                                        if( feature.state == 'Insert'){
+                                            Ext.Ajax.request({
+                                                url: '/form/log/info/ru.gispro.petrores.doc.geoobject',
+                                                params: {
+                                                    opCode:'GO_INSERT',
+                                                    opName:'GeoObjectInsert',
+                                                    //docID:'docIDTest',
+                                                    ok:'ok',
+                                                    mess:'Geo Object Insert into ...'
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
                             },
                             beforefeaturemodified: function(obj){
                                 //console.log(obj);

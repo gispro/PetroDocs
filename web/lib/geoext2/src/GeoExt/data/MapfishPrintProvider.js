@@ -357,6 +357,19 @@ Ext.define('GeoExt.data.MapfishPrintProvider', {
             ]
         });
 
+        this.formats = Ext.create('Ext.data.JsonStore', {
+            proxy: {
+                type: "memory",
+                reader: {
+                    type: "json",
+                    root: "outputFormats"
+                }
+            },
+            fields: [
+                 "name"
+            ]
+        });
+
         this.layouts = Ext.create('Ext.data.JsonStore', {
             proxy: {
                 type: "memory",
@@ -586,6 +599,7 @@ Ext.define('GeoExt.data.MapfishPrintProvider', {
 
        this.scales.loadRawData(this.capabilities);
        this.dpis.loadRawData(this.capabilities);
+       this.formats.loadRawData(this.capabilities);
        this.layouts.loadRawData(this.capabilities);
 
        this.setLayout(this.layouts.getAt(0));

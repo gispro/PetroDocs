@@ -653,7 +653,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                         ,customParams: {
                                             
                                             "outputFormat":"jpg",
-                                            "outputFilename":"map-print",
+                                            "outputFilename":"map-print111",
                                             "mapTitle":"PetroResurs",
                                             "comment":"PetroResurs"
                                             
@@ -995,8 +995,93 @@ Ext.define('PetroRes.view.MainWindow', {
                                         disabled: true,
                                         id: 'pdfButton',
                                         handler: function() {
-                                            printPage.fit(mapPanel, true);
-                                            printProvider.print(mapPanel, printPage);
+                                            var printWnd;
+                                            var form = Ext.create('Ext.form.Panel', {
+                                                layout: 'anchor',
+                                                defaults: {
+                                                    anchor: '100%',
+                                                    padding: 5
+                                                },
+                                                autoScroll: true,
+                                                items: [{
+                                                    xtype: "textfield",
+                                                    name: "mapTitle", // printPage.customParams.mapTitle
+                                                    fieldLabel: "Map Title",
+                                                    plugins: Ext.create('GeoExt.plugins.PrintPageField', {
+                                                        printPage: printPage
+                                                    })
+                                                }, {
+                                                    xtype: "textfield",
+                                                    name: "comment", // printPage.customParams.mapTitle
+                                                    fieldLabel: "Map Title",
+                                                    plugins: Ext.create('GeoExt.plugins.PrintPageField', {
+                                                        printPage: printPage
+                                                    })
+                                                }, {
+                                                    xtype: "combo",
+                                                    displayField: "name",
+                                                    store: printProvider.layouts, // printPage.scale
+                                                    name: "layout",
+                                                    fieldLabel: "Layout",
+                                                    typeAhead: true,
+                                                    queryMode: "local",
+                                                    forceSelection: true,
+                                                    triggerAction: "all",
+                                                    selectOnFocus: true,
+                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
+                                                        printProvider: printProvider
+                                                    })
+                                                }, {
+                                                    xtype: "combo",
+                                                    displayField: "name",
+                                                    store: printProvider.dpis, // printPage.scale
+                                                    name: "dpi",
+                                                    fieldLabel: "DPI",
+                                                    typeAhead: true,
+                                                    queryMode: "local",
+                                                    forceSelection: true,
+                                                    triggerAction: "all",
+                                                    selectOnFocus: true,
+                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
+                                                        printProvider: printProvider
+                                                    })
+                                                }, {
+                                                    xtype: "combo",
+                                                    displayField: "name",
+                                                    store: printProvider.formats, // printPage.scale
+                                                    name: "outputFormat",
+                                                    fieldLabel: "Format",
+                                                    typeAhead: true,
+                                                    queryMode: "local",
+                                                    forceSelection: true,
+                                                    triggerAction: "all",
+                                                    selectOnFocus: true,
+                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
+                                                        printProvider: printProvider
+                                                    })
+                                                }],
+                                                buttons: [
+                                                    {
+                                                        text: 'Make Print Page',
+                                                        handler: function(){
+                                                            printPage.fit(mapPanel, true);
+                                                            printProvider.print(mapPanel, printPage);
+                                                        }
+                                                    }                                            
+                                                ]
+                                            });
+                                            printWnd = Ext.create('Ext.window.Window', {
+                                                closable: true,
+                                                title: 'Print Configuration',
+                                                maximizable: false,
+                                                maximized: false,
+                                                width: 500,
+                                                layout: 'fit',
+                                                items: [
+                                                    form
+                                                ]
+                                            });
+                                            printWnd.show();
                                         }
                                     }),
                                     petroresConfig.userIsAdmin ?'-':undefined, 

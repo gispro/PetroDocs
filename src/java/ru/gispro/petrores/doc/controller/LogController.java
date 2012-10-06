@@ -20,7 +20,7 @@ import ru.gispro.petrores.doc.util.UserSessions;
 @Controller
 @RequestMapping(value = "/log/{category}/{cls}")
 public class LogController {
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.POST)
     public void get(@PathVariable("category") String category, @PathVariable("cls") String cls, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String m = "Log Successfull";
         String mess = req.getParameter("mess"),

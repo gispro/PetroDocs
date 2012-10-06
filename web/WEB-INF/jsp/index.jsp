@@ -11,7 +11,7 @@
 String sLogin = request.getRemoteUser(), 
        sSessionID = session.getId();
     if( UserSessions.registerUserSession(sLogin, session.getId())){
-        UserSessions.info("util.UserSessions", request.getRemoteUser(), 
+        UserSessions.info("ru.gispro.petrores.doc.util.UserSessions", request.getRemoteUser(), 
                          "LOGIN", "Login", null, true, "Login is successful");
     }
 %>
@@ -67,7 +67,7 @@ String sLogin = request.getRemoteUser(),
             //petroresConfig.vectorWfs = 'http://playground:9000/geoserver/wfs';
             //petroresConfig.vectorWfs = 'http://oceanviewer.ru/geoserver/wfs';
             petroresConfig.domainRootId = ${initParam.domainRootId};
-            //petroresConfig.saveStrategy = new OpenLayers.Strategy.Save();
+            //petroresConfig.saveStrategy = petroresConfig.makeSaveStrategy();
             //petroresConfig.saveStrategy.events.register("success", '', function(){alert('Success')});
             //petroresConfig.saveStrategy.events.register("failure", '', function(){alert('Failure')});  
             
@@ -701,7 +701,7 @@ String sLogin = request.getRemoteUser(),
                         visibility: layer.visibility,
                         defaultLabelField: layer.defaultLabelField,
                         defaultIdField: 'OBJECTID',
-                        strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                        strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                         protocol: new OpenLayers.Protocol.WFS({
                             url: petroresConfig.vectorWfs,
                             featureType: layer.featureType,
@@ -715,23 +715,6 @@ String sLogin = request.getRemoteUser(),
                         , eventListeners: {
                             beforefeaturesadded: function(obj){
                                 petroresConfig.showFeatureEditor(obj.object, obj.features);
-                                if(obj.object.schemaLoaded){
-                                    for(var featNum in obj.features){
-                                        var feature = obj.features[featNum];
-                                        if( feature.state == 'Insert'){
-                                            Ext.Ajax.request({
-                                                url: '/form/log/info/ru.gispro.petrores.doc.geoobject',
-                                                params: {
-                                                    opCode:'GO_INSERT',
-                                                    opName:'GeoObjectInsert',
-                                                    //docID:'docIDTest',
-                                                    ok:'ok',
-                                                    mess:'Geo Object Insert into ...'
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
                             },
                             beforefeaturemodified: function(obj){
                                 //console.log(obj);
@@ -835,7 +818,7 @@ String sLogin = request.getRemoteUser(),
                     isBaseLayer: false,
                     visibility: false,
                     defaultLabelField: 'Name',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
                         featureType: "Regional_Geology",
@@ -867,7 +850,7 @@ String sLogin = request.getRemoteUser(),
                     isBaseLayer: false,
                     visibility: false,
                     defaultLabelField: 'Name',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
                         featureType: "Ecological_limitations",
@@ -899,7 +882,7 @@ String sLogin = request.getRemoteUser(),
                     isBaseLayer: false,
                     defaultLabelField: 'Name',
                     defaultIdField: 'OBJECTID',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
                         featureType: "Seismic_3D_PRS",
@@ -931,7 +914,7 @@ String sLogin = request.getRemoteUser(),
                     isBaseLayer: false,
                     defaultLabelField: 'Name',
                     defaultIdField: 'OBJECTID',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
                         featureType: "Seismic_2D_PRS",
@@ -965,7 +948,7 @@ String sLogin = request.getRemoteUser(),
                     isBaseLayer: false,
                     defaultLabelField: 'Name',
                     defaultIdField: 'OBJECTID',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
                         featureType: "Structures_PRS",
@@ -1011,7 +994,7 @@ String sLogin = request.getRemoteUser(),
                     isBaseLayer: false,
                     defaultLabelField: 'Name',
                     defaultIdField: 'OBJECTID',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
                         featureType: "Licenses",
@@ -1055,7 +1038,7 @@ String sLogin = request.getRemoteUser(),
                     psLayerType: 'point',
                     isBaseLayer: false,
                     defaultLabelField: 'Name',
-                    strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                    strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                     protocol: new OpenLayers.Protocol.WFS({
                         url: petroresConfig.vectorWfs,
                         featureType: "Wells",
@@ -1110,7 +1093,48 @@ String sLogin = request.getRemoteUser(),
                 }
             }*/
         }
-        
+        petroresConfig.makeSaveStrategy = function(){
+            var st = new OpenLayers.Strategy.Save();
+            st.events.register('success', {type:'save success', strategy:st}, 
+                                function(env, p2, p3, p4){
+                                    var layer = env.object.layer,
+                                        resp = env.response,
+                                        features = resp.reqFeatures ? resp.reqFeatures : {};
+                                    
+                                    for(var fname in features){
+                                        var f = features[fname];
+                                        var opCode, opName, mess;
+                                        if( f.state){
+                                            if(f.state == 'Insert'){
+                                                opCode = 'INSERT_GEO_OBJ';
+                                                opName = 'Insert GEO object';
+                                                mess ='Insert into layer '+'\"'+layer.name+'\"'+' GEO object \"'+f.attributes.Name/*[layer.defaultLabelField]*/+'\"';
+                                            } else if( f.state =='Update'){
+                                                opCode = 'UPDATE_GEO_OBJ';
+                                                opName = 'Update GEO object';
+                                                mess ='Update from layer '+'\"'+layer.name+'\"'+' GEO object \"'+f.attributes.Name/*[layer.defaultLabelField]*/+'\"';
+                                            } else if( f.state =='Delete'){
+                                                opCode = 'DELETE_GEO_OBJ';
+                                                opName = 'Delete GEO object';
+                                                mess ='Delete from layer '+'\"'+layer.name+'\"'+' GEO object \"'+f.attributes.Name/*[layer.defaultLabelField]*/+'\"';
+                                            }
+                                        }
+                                    }
+                                    Ext.Ajax.request({
+                                                url: 'form/log/info/ru.gispro.petrores.doc.geoobject',
+                                                params: {
+                                                    opCode: opCode,
+                                                    opName: opName,
+                                                    //docID:'docIDTest',
+                                                    ok:'ok',
+                                                    mess:mess
+                                                }
+                                            });
+                                }    
+            );
+                
+            return st;
+        }
         
         //console.log('');
         

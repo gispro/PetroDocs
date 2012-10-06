@@ -105,9 +105,7 @@ petroresConfig.layersConfig = [
                 strategies: [
                     {
                         petroType: OpenLayers.Strategy.BBOX
-                    }, {
-                        petroType: OpenLayers.Strategy.Save
-                    }
+                    }, petroresConfig.makeSaveStrategy()
                 ],
                 protocol: {
                     petroType: OpenLayers.Protocol.WFS,
@@ -155,9 +153,7 @@ petroresConfig.layersConfig = [
                 strategies: [
                     {
                         petroType: OpenLayers.Strategy.BBOX
-                    }, {
-                        petroType: OpenLayers.Strategy.Save
-                    }
+                    }, petroresConfig.makeSaveStrategy()
                 ],
                 protocol: {
                     petroType: OpenLayers.Protocol.WFS,
@@ -204,9 +200,7 @@ petroresConfig.layersConfig = [
                 strategies: [
                     {
                         petroType: OpenLayers.Strategy.BBOX
-                    }, {
-                        petroType: OpenLayers.Strategy.Save
-                    }
+                    }, petroresConfig.makeSaveStrategy()
                 ],
                 protocol: {
                     petroType: OpenLayers.Protocol.WFS,
@@ -253,9 +247,7 @@ petroresConfig.layersConfig = [
                 strategies: [
                     {
                         petroType: OpenLayers.Strategy.BBOX
-                    }, {
-                        petroType: OpenLayers.Strategy.Save
-                    }
+                    }, petroresConfig.makeSaveStrategy()
                 ],
                 protocol: {
                     petroType: OpenLayers.Protocol.WFS,
@@ -302,9 +294,7 @@ petroresConfig.layersConfig = [
                 strategies: [
                     {
                         petroType: OpenLayers.Strategy.BBOX
-                    }, {
-                        petroType: OpenLayers.Strategy.Save
-                    }
+                    }, petroresConfig.makeSaveStrategy()
                 ],
                 protocol: {
                     petroType: OpenLayers.Protocol.WFS,
@@ -374,9 +364,7 @@ petroresConfig.layersConfig = [
                 strategies: [
                     {
                         petroType: OpenLayers.Strategy.BBOX
-                    }, {
-                        petroType: OpenLayers.Strategy.Save
-                    }
+                    }, petroresConfig.makeSaveStrategy()
                 ],
                 protocol: {
                     petroType: OpenLayers.Protocol.WFS,
@@ -445,9 +433,7 @@ petroresConfig.layersConfig = [
                 strategies: [
                     {
                         petroType: OpenLayers.Strategy.BBOX
-                    }, {
-                        petroType: OpenLayers.Strategy.Save
-                    }
+                    }, petroresConfig.makeSaveStrategy()
                 ],
                 protocol: {
                     petroType: OpenLayers.Protocol.WFS,

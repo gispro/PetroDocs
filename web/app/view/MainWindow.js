@@ -1230,7 +1230,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                                         visibility: true,
                                                                         defaultLabelField: 'NAME',
                                                                         defaultIdField: 'OBJECTID',
-                                                                        strategies: [new OpenLayers.Strategy.BBOX(), new OpenLayers.Strategy.Save()],
+                                                                        strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
                                                                         protocol: new OpenLayers.Protocol.WFS({
                                                                             url: petroresConfig.vectorWfs,
                                                                             featureType: attrs.layer,

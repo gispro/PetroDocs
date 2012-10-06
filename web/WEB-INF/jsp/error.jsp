@@ -10,7 +10,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="org.apache.log4j.MDC"%> 
 <%
-    UserSessions.warn("util.UserSessions", request.getParameter("j_username"), 
+    UserSessions.warn("ru.gispro.petrores.doc.util.UserSessions", request.getParameter("j_username"), 
                      "LOGIN", "Login", null, false, "Invalid login or password");
 
 %>

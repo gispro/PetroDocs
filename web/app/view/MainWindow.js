@@ -240,1161 +240,8 @@ Ext.define('PetroRes.view.MainWindow', {
             text: 'Map',
             menu: {
                 xtype: 'menu',
-                items: [
-                {
-                    xtype: 'menuitem',
-                    id: 'MainMapMenuItem',
-                    text: 'Caspian Sea',
-                    handler: function(){
-                        var mcfg = petroresConfig.layersCreator();
-                        var layers = mcfg.layers;
-
-                        var vectorLayers = [];  
-                        var editableLayers = [];
-                        for(var l in layers){
-                            if(layers[l].CLASS_NAME == 'OpenLayers.Layer.Vector'){
-                                vectorLayers.push(layers[l]);
-                                //if(layers[l].editingPanel)
-                                {
-                                    editableLayers.push({
-                                        name: layers[l].name,
-                                        val: layers[l]
-                                    })
-                                }
-
-                                layers[l].events.on({
-                                    featureselected: function(sel) {
-                                        wnd.openPetroWindows.geMapWindow.selectedFeatures[sel.feature.fid] = sel.feature;
-                                        //console.log(wnd.openPetroWindows.mapWindow.selectedFeatures);
-                                    },
-                                    featureunselected: function(sel) {
-                                        delete wnd.openPetroWindows.geMapWindow.selectedFeatures[sel.feature.fid];
-                                        //console.log(wnd.openPetroWindows.mapWindow.selectedFeatures);
-                                    }
-                                });
-
-
-                            };
-                        }                        
-
-                        var selectControl = new OpenLayers.Control.SelectFeature(vectorLayers, {
-                                    clickout: false, toggle: true,
-                                    multiple: false, hover: false,
-                                    toggleKey: "ctrlKey", // ctrl key removes from selection
-                                    multipleKey: "shiftKey", // shift key adds to selection
-                                    box: true
-                                    //,displayInLayerSwitcher: false
-                                    ,eventListeners: {
-                                        deactivate: function(){
-                                            selectControl.unselectAll();
-                                        }
-                                    }
-                                });
-
-                        var selectControlHover = new OpenLayers.Control.SelectFeature(vectorLayers, {
-                                    clickout: true, toggle: false,
-                                    multiple: false, hover: false
-                                    //,displayInLayerSwitcher: false
-                                    ,eventListeners: {
-                                        deactivate: function(){
-                                            selectControlHover.unselectAll();
-                                        }
-                                    }
-                                    , onUnselect: function(){
-                                        selectControlHover.baloon.close();
-                                    }
-                                    , onSelect: function(selected){
-                                        if(selectControlHover.baloon){
-                                            selectControlHover.baloon.close();
-                                        }
-                                        var pix = mapPanel.map.getPixelFromLonLat(
-                                            new OpenLayers.LonLat(selected.geometry.bounds.right, 
-                                            selected.geometry.bounds.bottom));
-                                        selectControlHover.baloon = Ext.create('Ext.window.Window', {
-                                            title: 'Object Attributes',
-                                            layout: 'fit',
-                                            height: 300,
-                                            width: 300,
-                                            x: pix.x,
-                                            y: pix.y,
-                                            defaults:{
-                                                anchor: '100%'
-                                            },
-                                            items: [{
-                                                autoScroll: true,
-                                                xtype: 'propertygrid',
-                                                source: selected.data
-                                            }],
-                                            fbar: [{
-                                                type: 'button',
-                                                text: 'Documents',
-                                                handler: function(){
-                                                    Ext.Ajax.request({
-                                                        headers: {
-                                                            Accept: 'application/json'
-                                                        },
-                                                        url: 'rest/documents/find',
-                                                        jsonData: {geoObjects: function(){
-                                                            var obj = [];
-                                                            var feat  = selected.fid
-                                                            {
-                                                                var oneFeatArr = feat.split('.');
-                                                                obj.push({
-                                                                    idInTable: oneFeatArr[1],
-                                                                    tableName: oneFeatArr[0]
-                                                                });
-                                                            }
-                                                            return obj;// Ext.encode(obj);
-                                                        }.call()}
-                                                        ,
-                                                        success: function(resp, opts){
-                                                            var ret = Ext.decode(resp.responseText);
-                                                            //petroresConfig.makeAllIdsNumbers(ret);
-                                                            //console.log(["вот, получилось", ret])
-
-                                                            var wnd = Ext.getCmp('MainWindow');
-
-                                                            var stor = Ext.create('Ext.data.Store', {
-                                                                model: Ext.getStore('DocumentsJsonStore').getProxy().getModel(),
-                                                                data: ret,
-                                                                proxy: {
-                                                                    type: 'memory',
-                                                                    reader: {
-                                                                        type: 'json',
-                                                                        root: 'documents'
-                                                                    }
-                                                                }
-                                                            });
-                                                            var grid = Ext.create(
-                                                                'PetroRes.view.DocumentsGridPanel', 
-                                                                {
-                                                                    store: stor,
-                                                                    listeners:{
-                                                                        itemdblclick: function(ths, rec){
-
-                                                                            var editForm = Ext.create(
-                                                                                    'PetroRes.view.DocumentFormEdit'
-                                                                                );
-                                                                            wnd.openPetroWindow('editDoc', {
-                                                                                closable: true,
-                                                                                width:wnd.getWidth()*0.9,
-                                                                                title: 'Edit Document',
-                                                                                maximizable: true,
-                                                                                maximized: true,
-                                                                                layout: 'fit',
-                                                                                items: [
-                                                                                    editForm
-                                                                                ]                                    
-                                                                            });
-                                                                            editForm.loadRecord(rec);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            );
-                                                            if(wnd.openPetroWindows.searchres){
-                                                                wnd.openPetroWindows.searchres.close();
-                                                            }
-                                                            wnd.openPetroWindow('searchres', {
-                                                                closable: true,
-                                                                width:wnd.getWidth()*0.9,
-                                                                title: 'Found Documents',
-                                                                maximizable: true,
-                                                                maximized: false,
-                                                                layout: 'fit',
-                                                                items: [
-                                                                    grid
-                                                                ]                                    
-                                                            });
-
-                                                        }
-                                                    });                                                    
-                                                }
-                                            }]
-                                        });
-                                        selectControlHover.baloon.show();
-                                    }
-                                    
-                                });
-                                
-                        var opacitySlider = Ext.create('GeoExt.slider.LayerOpacity',{
-                            aggressive: true,
-                            vertical: false,
-                            inverse: false,
-                            width: 'auto',
-                            fieldLabel: 'Opacity'
-                            //x: 12,
-                            //y: 60,
-                            //hidden: true
-                            , disabled: true
-                        });
-                        
-                        var mapPanel = 
-                                Ext.create('GeoExt.panel.Map', {
-                                    id: 'bigGextMapPanel',
-                                    map: {allOverlays: false}
-                                    //extent: new OpenLayers.Bounds(45.00, 36.18, 55, 47.50)
-                                    //, displayProjection: new OpenLayers.Projection("EPSG:4326")
-                                    //,projection: new OpenLayers.Projection("EPSG:4326")
-                                    ,extent: mcfg.extent
-                                    //new OpenLayers.Bounds(
-                                    //    5082754.0816867,
-                                    //    5417407.5350582,
-                                    //    5806765.6135031,
-                                    //    5857073.3216934
-                                    //)
-                                    , displayProjection: new OpenLayers.Projection("EPSG:900913")
-                                    ,projection: new OpenLayers.Projection("EPSG:900913")
-                                    ,layers: layers,
-                                    region: "center"
-                                    ,selectControl: selectControl
-                                    //,items: [
-                                    //    opacitySlider
-                                    //]
-                                });
-                                
-                        mapPanel.map.addControl(selectControl);
-                        mapPanel.map.addControl(selectControlHover);
-                        mapPanel.map.addControl(new OpenLayers.Control.MousePosition({
-                            displayProjection: petroresConfig.proj4326
-                        }));
-                        
-                        var store = Ext.create('Ext.data.TreeStore', {
-                            model: 'GeoExt.data.LayerTreeModel',
-                            storeId: 'BigMapLayers',
-                            root: {
-                                expanded: true,
-                                children: [
-                                    {
-                                        plugins: [{
-                                            ptype: 'gx_overlaylayercontainer'
-                                            //,store: mapPanel.layers
-                                            ,loader: {
-                                                store: mapPanel.layers
-                                                , filter: function(rec){
-                                                    //console.log(rec.getLayer());
-                                                    return !rec.getLayer().isBaseLayer && rec.getLayer().displayInLayerSwitcher == true;
-                                                }
-                                            }
-                                        }],
-                                        expanded: true
-                                    },
-                                    {
-                                        plugins: [{
-                                            ptype: 'gx_baselayercontainer'
-                                            //,store: mapPanel.layers
-                                            ,loader: {
-                                                store: mapPanel.layers
-                                            }
-                                        }],
-                                        expanded: true
-                                    }                             
-                                    /*{
-                                        plugins: [
-                                            {
-                                                ptype: 'gx_baselayercontainer',
-                                                store: mapPanel.layers
-                                            }
-                                        ],
-                                        expanded: true,
-                                        text: "Base Maps"
-                                    }, {
-                                        plugins: [
-                                            {
-                                                ptype: 'gx_overlaylayercontainer',
-                                                store: mapPanel.layers
-                                            }
-                                        ],
-                                        expanded: true
-                                    }*/
-                                ]
-                            }
-                        });
-                        
-                        var getZippedShapeButton = Ext.create('Ext.button.Button', 
-                        {
-                            text: 'Get Zipped Shape',
-                            handler: function(me){
-                                var getFeatureUrl = me.layerToGet.schema.replace
-                                ('DescribeFeatureType', 'GetFeature') +
-                                    '&outputFormat=shape-zip';
-                                //http://playground:9000/geoserver/wfs?
-                                //service=WFS&request=GetFeature&version=1.1.0&typeName=
-                                //PetroResurs:Structures_PRS
-                                //&outputFormat=shape-zip
-                                //console.log([me.layerToGet, getFeatureUrl]);
-                                window.open(getFeatureUrl, '_blank');
-                            }
-                        });
-                        
-                        var layerOutlookPanel = Ext.create('Ext.panel.Panel',
-                        {
-                            layout: 'anchor',
-                            defaults: {
-                                anchor: '100%'
-                            },
-                            collapsible: true,
-                            collapsed: true,
-                            dock: 'bottom',
-                            items: [
-                                getZippedShapeButton,
-                                opacitySlider
-                            ]
-                        });
-
-                        var tree = Ext.create('GeoExt.tree.Panel', {
-                            viewConfig: {
-                                plugins: {
-                                    ptype: 'treeviewdragdrop'
-                                }
-                            },
-                            border: true,
-                            region: "west",
-                            title: "Layers",
-                            width: 200,
-                            split: true,
-                            collapsible: true,
-                            collapseMode: "header",
-                            autoScroll: true,
-                            store: store,
-                            rootVisible: false,
-                            lines: false,
-                            listeners: {
-                                itemclick: function(){
-                                    //console.log(arguments[1].data.layer);
-                                    var layer = arguments[1].data.layer;
-                                    tree.psSelectedLayer = layer;
-                                    mapPanel.petroLayerToEdit = undefined;
-                                    for(var ooo in editableLayers){
-                                        if(editableLayers[ooo].val == layer){
-                                            layerOutlookPanel.setTitle(layer.name);
-                                            layerOutlookPanel.expand();
-                                            getZippedShapeButton.layerToGet = layer;
-                                            getZippedShapeButton.enable();
-                                            opacitySlider.setLayer(layer);
-                                            opacitySlider.enable();
-                                            
-                                            mapPanel.petroLayerToEdit = layer;
-                                            /*if(mapPanel.petroEditMode){
-                                                for(var lll in editableLayers){
-                                                    if(editableLayers[lll].val.editingPanel)
-                                                        if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
-                                                            editableLayers[lll].val.editingPanel.activate();
-                                                            editableLayers[lll].val.editingPanel.div.style.display = 'block';
-                                                        }else{
-                                                            editableLayers[lll].val.editingPanel.deactivate();
-                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
-                                                        }
-                                                }
-                                            }*/
-                                            break;
-                                        }
-                                    }
-
-                                    if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
-                                        for(var lll in editableLayers){
-                                            if(editableLayers[lll].val.editingPanel)
-                                                if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
-                                                    editableLayers[lll].val.editingPanel.activate();
-                                                    editableLayers[lll].val.editingPanel.div.style.display = 'block';
-                                                }else{
-                                                    editableLayers[lll].val.editingPanel.deactivate();
-                                                    editableLayers[lll].val.editingPanel.div.style.display = 'none';
-                                                }
-                                        }
-                                    }else if(!mapPanel.petroEditMode ){
-                                        for(lll in editableLayers){
-                                            if(editableLayers[lll].val.editingPanel){
-                                                    editableLayers[lll].val.editingPanel.deactivate();
-                                                    editableLayers[lll].val.editingPanel.div.style.display = 'none';
-                                            }
-                                        }
-                                    }
-
-                                    if(mapPanel.petroSearchMode && mapPanel.petroLayerToEdit){
-                                        selectControl.activate();
-                                        selectControlHover.deactivate();
-                                        petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
-                                    }
-
-                                }
-                            }
-                            , dockedItems: [
-                                layerOutlookPanel
-                            ]
-                        });
-                        
-                        var legendPanel = Ext.create('GeoExt.panel.Legend', {
-                            layerStore: mapPanel.layers,
-                            title: "Legend",
-                            defaults: {
-                                labelCls: 'mylabel',
-                                style: 'padding:5px'
-                            },
-                            bodyStyle: 'padding:5px',
-                            split: true,
-                            collapsible: true,
-                            collapseMode: "header",
-                            width: 180,
-                            autoScroll: true,
-                            region: 'east'
-                            //preferredTypes: ["Point", "Line", "Polygon"]
-                        });                        
-                        
-                        var printPage;
-                        var printProvider = Ext.create('GeoExt.data.MapfishPrintProvider', {
-                            url: "form/proxy?url=http://oceanviewer.ru/print/pdf"
-                            ,method: 'POST'
-                            //capabilities: printCapabilities
-                            ,autoLoad: true
-                            ,listeners: {
-                                "loadcapabilities": function() {
-                                    printPage = Ext.create('GeoExt.data.PrintPage', {
-                                        printProvider: printProvider
-                                        ,customParams: {
-                                            
-                                            "outputFormat":"jpg",
-                                            "outputFilename":"map-print111",
-                                            "mapTitle":"PetroResurs",
-                                            "comment":"PetroResurs"
-                                            
-                                            //outputFormat:"jpg",
-                                            //outputFilename:"map-print"
-                                        }
-                                    });
-                                    Ext.getCmp('pdfButton').setDisabled(false);
-                                }
-                            }
-                             
-                        });
-                        //printPage = Ext.create('GeoExt.data.PrintPage', {
-                        //    printProvider: printProvider
-                        //});
-                        
-                        //var printPage = Ext.create('GeoExt.data.PrintPage', {
-                        //    printProvider: printProvider
-                        //});                        
-                        
-                        var tbar = [
-                                    {
-                                        xtype: 'button',
-                                        text: 'Pan',
-                                        tooltip: 'Pan',
-                                        toggleGroup: 'modeGr',
-                                        iconCls: 'petroButtonMapPan',
-                                        pressed: true,
-                                        toggleHandler: function(th, pressed){
-                                            if(pressed){
-                                                selectControl.deactivate();
-                                                selectControlHover.deactivate();
-                                            }
-                                        }
-                                    },
-                                    petroresConfig.userIsEditor || petroresConfig.userIsAdmin ?{
-                                        xtype: 'button',
-                                        text: 'Edit',
-                                        tooltip: 'Edit',
-                                        iconCls: 'petroButtonMapEdit',
-                                        toggleGroup: 'modeGr',
-                                        toggleHandler: function(th, state){
-                                            mapPanel.petroEditMode = state;
-                                            if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
-                                                for(var lll in editableLayers){
-                                                    if(editableLayers[lll].val.editingPanel)
-                                                        if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
-                                                            editableLayers[lll].val.editingPanel.activate();
-                                                            editableLayers[lll].val.editingPanel.div.style.display = 'block';
-                                                        }else{
-                                                            editableLayers[lll].val.editingPanel.deactivate();
-                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
-                                                        }
-                                                }
-                                            }
-                                            if(!mapPanel.petroEditMode){
-                                                for(lll in editableLayers){
-                                                    if(editableLayers[lll].val.editingPanel){
-                                                            editableLayers[lll].val.editingPanel.deactivate();
-                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }:undefined,
-                                    {
-                                        xtype: 'button',
-                                        text: 'Select',
-                                        tooltip: 'Select',
-                                        iconCls: 'petroButtonMapSelect',
-                                        toggleGroup: 'modeGr',
-                                        toggleHandler: function (th, state){
-                                            if(state){
-                                                selectControl.activate();
-                                                selectControlHover.deactivate();
-                                            }else{
-                                                selectControl.deactivate();
-                                            }
-                                        }
-                                    },
-                                    {
-                                        xtype: 'button',
-                                        text: 'Search',
-                                        icon: 'images/search.png',
-                                        tooltip: 'Search',
-                                        toggleGroup: 'modeGr'
-                                        , listeners: {
-                                            menushow: function(th){
-                                                th.toggle(true);
-                                                //return false;// !mapPanel.petroSearchMode;
-                                            }
-                                        }
-                                        ,toggleHandler: function (th, pressed){
-                                            if(!pressed){
-                                                mapPanel.petroSearchMode = false;
-                                                selectControl.deactivate();
-                                                th.menu.items.each(function(itm){itm.setChecked(false)});
-                                            }
-                                        }
-                                        /*,toggleHandler: function (th, pressed){
-                                            //mapPanel.petroSearchMode = pressed;
-                                            if(pressed){// && mapPanel.petroLayerToEdit){
-                                                selectControl.activate();
-                                                selectControlHover.deactivate();
-                                                //petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
-                                            }else if(!pressed){
-                                                selectControl.deactivate();
-                                            }
-                                        }*/
-                                        , menu: [
-                                            {
-                                                xtype: 'menucheckitem'
-                                                ,text: 'Any'
-                                                ,group: 'searchType'
-                                                ,handler: function (){
-                                                    selectControl.activate();
-                                                    selectControlHover.deactivate();
-                                                    Ext.Msg.prompt('Simple Search', 'Search for Attribute Value'
-                                                    , function(btn, text){
-                                                        text = text.toLowerCase();
-                                                        if(btn=='ok'){
-                                                            for(var lay in layers){
-                                                                var layer = layers[lay];
-                                                                if(!layer.features)
-                                                                    continue;
-                                                                
-                                                                midLoop:
-                                                                for(var featr in layer.features){
-                                                                    for(var attr in layer.features[featr].attributes){
-                                                                        var comp = layer.features[featr].attributes[attr];
-                                                                        if(comp.toLowerCase){
-                                                                            comp = comp.toLowerCase();
-                                                                        }
-                                                                        if(comp.indexOf(text)>=0){
-                                                                            selectControl.select(layer.features[featr]);
-                                                                            continue midLoop;
-                                                                        }
-                                                                    } 
-                                                                }
-                                                            }
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                            ,{
-                                                xtype: 'menucheckitem'
-                                                ,text: 'Base Layer'
-                                                , group: 'searchType'
-                                                , listeners: {
-                                                    checkchange: function(th, checked){
-                                                        mapPanel.petroSearchMode = checked;
-                                                        if(checked){
-                                                            selectControl.activate();
-                                                            selectControlHover.deactivate();
-                                                            if(mapPanel.petroSearchMode && mapPanel.petroLayerToEdit && checked){
-                                                                petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
-                                                            }
-                                                        }else{
-                                                            selectControl.deactivate();
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            
-                                        ]
-                                        
-                                    },
-                                    {
-                                        xtype: 'button',
-                                        text: 'Info',
-                                        tooltip: 'Info',
-                                        iconCls: 'petroButtonMapInfo',
-                                        toggleGroup: 'modeGr',
-                                        toggleHandler: function (th, pressed){
-                                            if(pressed){
-                                                selectControl.deactivate();
-                                                selectControlHover.activate();
-                                            }else{
-                                                selectControlHover.deactivate();
-                                            }
-                                        }
-                                        
-                                    },
-                                    '-', 
-                                    {
-                                        xtype: 'button',
-                                        tooltip: 'Find documents for selected objects',
-                                        text: 'Find Documents',
-                                        iconCls: 'petroButtonMapFindDocs',
-                                        handler: function(){
-                                            Ext.Ajax.request({
-                                                headers: {
-                                                    Accept: 'application/json'
-                                                },
-                                                url: 'rest/documents/find',
-                                                jsonData: {geoObjects: function(){
-                                                    var obj = [];
-                                                    for(var feat in wnd.openPetroWindows.geMapWindow.selectedFeatures){
-                                                        var oneFeatArr = feat.split('.');
-                                                        obj.push({
-                                                            idInTable: oneFeatArr[1],
-                                                            tableName: oneFeatArr[0]
-                                                        });
-                                                    }
-                                                    return obj;// Ext.encode(obj);
-                                                }.call()}
-                                                ,
-                                                success: function(resp, opts){
-                                                    var ret = Ext.decode(resp.responseText);
-                                                    //petroresConfig.makeAllIdsNumbers(ret);
-                                                    //console.log(["вот, получилось", ret])
-                                                    
-                                                    var wnd = Ext.getCmp('MainWindow');
-
-                                                    var stor = Ext.create('Ext.data.Store', {
-                                                        model: Ext.getStore('DocumentsJsonStore').getProxy().getModel(),
-                                                        data: ret,
-                                                        proxy: {
-                                                            type: 'memory',
-                                                            reader: {
-                                                                type: 'json',
-                                                                root: 'documents'
-                                                            }
-                                                        }
-                                                    });
-                                                    var grid = Ext.create(
-                                                        'PetroRes.view.DocumentsGridPanel', 
-                                                        {
-                                                            store: stor,
-                                                            listeners:{
-                                                                itemdblclick: function(ths, rec){
-
-                                                                    var editForm = Ext.create(
-                                                                            'PetroRes.view.DocumentFormEdit'
-                                                                        );
-                                                                    wnd.openPetroWindow('editDoc', {
-                                                                        closable: true,
-                                                                        width:wnd.getWidth()*0.9,
-                                                                        title: 'Edit Document',
-                                                                        maximizable: true,
-                                                                        maximized: true,
-                                                                        layout: 'fit',
-                                                                        items: [
-                                                                            editForm
-                                                                        ]                                    
-                                                                    });
-                                                                    editForm.loadRecord(rec);
-                                                                }
-                                                            }
-                                                        }
-                                                    );
-                                                    if(wnd.openPetroWindows.searchres){
-                                                        wnd.openPetroWindows.searchres.close();
-                                                    }
-                                                    wnd.openPetroWindow('searchres', {
-                                                        closable: true,
-                                                        width:wnd.getWidth()*0.9,
-                                                        title: 'Found Documents',
-                                                        maximizable: true,
-                                                        maximized: false,
-                                                        layout: 'fit',
-                                                        items: [
-                                                            grid
-                                                        ]                                    
-                                                    });
-
-                                                }
-                                            });
-                                        }                                        
-                                    },
-                                    '-', 
-                                    
-                                    
-                                    
-                                    //'Measure: '
-                                    ,{
-                                        xtype: 'button',
-                                        text: 'Measure',
-                                        icon: 'images/distance.png',
-                                        menu: [
-                                            Ext.create('Ext.menu.CheckItem', Ext.create('GeoExt.Action', {
-                                                //group: 'modeGr1',
-                                                iconCls: 'petroButtonMapDistance',
-                                                tooltip: 'Distance',
-                                                text: 'Distance',
-                                                id: 'measureDistanceCheck',
-                                                activateOnEnable: true,
-                                                deactivateOnDisable: true,
-                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
-                                                    displayInLayerSwitcher: false,
-                                                    geodesic: true,
-                                                    eventListeners: {
-                                                        activate: function(){
-                                                            Ext.getCmp('measureAreaCheck').setChecked(false);
-                                                        },
-                                                        measure: function(evt) {
-                                                            Ext.Msg.alert('Distance',
-                                                                'The distance is ' + evt.measure.toFixed(2) + ' '+ evt.units);
-                                                        }
-                                                    }                                        
-                                                }),
-                                                map: mapPanel.map
-                                            }))
-                                            , Ext.create('Ext.menu.CheckItem', Ext.create('GeoExt.Action', {
-                                                //group: 'modeGr1',
-                                                text: 'Area',
-                                                tooltip: 'Area',
-                                                iconCls: 'petroButtonMapArea',
-                                                activateOnEnable: true,
-                                                id: 'measureAreaCheck',
-                                                deactivateOnDisable: true,
-                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
-                                                    displayInLayerSwitcher: false,
-                                                    geodesic: true,
-                                                    eventListeners: {
-                                                        activate: function(){
-                                                            Ext.getCmp('measureDistanceCheck').setChecked(false);
-                                                        },
-                                                        measure: function(evt) {
-                                                            Ext.Msg.alert('Area',
-                                                                'The area is ' + + evt.measure.toFixed(2) + ' '+ evt.units + '<sup>2</sup>');
-                                                            //alert("The area is " + evt.measure + evt.units);
-                                                        }
-                                                    }                                        
-                                                }),
-                                                map: mapPanel.map,
-                                                listeners:{
-                                                    enable: function(){
-                                                        Ext.getCmp('measureDistanceCheck').disable();
-                                                    }
-                                                }
-                                            }))                                    
-                                        ]
-                                    }
-                                    , Ext.create('Ext.button.Button', {
-                                        tooltip: 'Download map as PDF file',
-                                        text: 'PDF',
-                                        iconCls: 'petroButtonMapPdf',
-                                        disabled: true,
-                                        id: 'pdfButton',
-                                        handler: function() {
-                                            var printWnd;
-                                            var form = Ext.create('Ext.form.Panel', {
-                                                layout: 'anchor',
-                                                defaults: {
-                                                    anchor: '100%',
-                                                    padding: 5
-                                                },
-                                                autoScroll: true,
-                                                items: [{
-                                                    xtype: "textfield",
-                                                    name: "mapTitle", // printPage.customParams.mapTitle
-                                                    fieldLabel: "Map Title",
-                                                    plugins: Ext.create('GeoExt.plugins.PrintPageField', {
-                                                        printPage: printPage
-                                                    })
-                                                }, {
-                                                    xtype: "textfield",
-                                                    name: "comment", // printPage.customParams.mapTitle
-                                                    fieldLabel: "Map Title",
-                                                    plugins: Ext.create('GeoExt.plugins.PrintPageField', {
-                                                        printPage: printPage
-                                                    })
-                                                }, {
-                                                    xtype: "combo",
-                                                    displayField: "name",
-                                                    store: printProvider.layouts, // printPage.scale
-                                                    name: "layout",
-                                                    fieldLabel: "Layout",
-                                                    typeAhead: true,
-                                                    queryMode: "local",
-                                                    forceSelection: true,
-                                                    triggerAction: "all",
-                                                    selectOnFocus: true,
-                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
-                                                        printProvider: printProvider
-                                                    })
-                                                }, {
-                                                    xtype: "combo",
-                                                    displayField: "name",
-                                                    store: printProvider.dpis, // printPage.scale
-                                                    name: "dpi",
-                                                    fieldLabel: "DPI",
-                                                    typeAhead: true,
-                                                    queryMode: "local",
-                                                    forceSelection: true,
-                                                    triggerAction: "all",
-                                                    selectOnFocus: true,
-                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
-                                                        printProvider: printProvider
-                                                    })
-                                                }, {
-                                                    xtype: "combo",
-                                                    displayField: "name",
-                                                    store: printProvider.formats, // printPage.scale
-                                                    name: "outputFormat",
-                                                    fieldLabel: "Format",
-                                                    typeAhead: true,
-                                                    queryMode: "local",
-                                                    forceSelection: true,
-                                                    triggerAction: "all",
-                                                    selectOnFocus: true,
-                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
-                                                        printProvider: printProvider
-                                                    })
-                                                }],
-                                                buttons: [
-                                                    {
-                                                        text: 'Make Print Page',
-                                                        handler: function(){
-                                                            printPage.fit(mapPanel, true);
-                                                            printProvider.print(mapPanel, printPage);
-                                                        }
-                                                    }                                            
-                                                ]
-                                            });
-                                            printWnd = Ext.create('Ext.window.Window', {
-                                                closable: true,
-                                                title: 'Print Configuration',
-                                                maximizable: false,
-                                                maximized: false,
-                                                width: 500,
-                                                layout: 'fit',
-                                                items: [
-                                                    form
-                                                ]
-                                            });
-                                            printWnd.show();
-                                        }
-                                    }),
-                                    petroresConfig.userIsAdmin ?'-':undefined, 
-                                    !petroresConfig.userIsAdmin ?undefined:{
-                                        xtype: 'button',
-                                        text: 'Save Map',
-                                        tooltip: 'Save map configuration',
-                                        iconCls: 'petroButtonMapSaveConf',
-                                        handler: function (){
-                                            
-                                            var conf =petroresConfig.layersSaver(mapPanel.map);
-                                            conf = Ext.JSON.encode(conf);
-                                            //console.log(conf);
-                                            Ext.Ajax.request({
-                                                url: 'form/maps/' + petroresConfig.defaultMap,
-                                                method: 'PUT',
-                                                jsonData: conf,
-                                                success: function(){
-                                                    Ext.Msg.alert('Status', 'Map configuration saved successfully');
-                                                },
-                                                failure: function(){
-                                                    Ext.Msg.alert('Status', 'Could not save map configuration');
-                                                }
-                                            });
-                                        }
-                                        
-                                    },
-                                    ,!petroresConfig.userIsAdmin ?undefined:{
-                                        xtype: 'button',
-                                        text: 'Add Layer',
-                                        icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
-                                        menu: [
-                                            {
-                                                xtype: 'menuitem'
-                                                ,text: 'Base Layer'
-                                                ,handler: function (){
-                                                    var addLayWnd;
-                                                    var form = Ext.create('Ext.form.Panel', {
-                                                        layout: 'anchor',
-                                                        defaults: {
-                                                            anchor: '100%',
-                                                            padding: 5
-                                                        },
-                                                        autoScroll: true,
-                                                        items: [
-                                                            {
-                                                                xtype: 'textfield',
-                                                                fieldLabel: 'Name',
-                                                                name: 'name'
-                                                            },
-                                                            {
-                                                                xtype: 'textfield',
-                                                                fieldLabel: 'URL',
-                                                                name: 'url'
-                                                            },
-                                                            {
-                                                                xtype: 'textfield',
-                                                                fieldLabel: 'Layer(s)',
-                                                                name: 'layers'
-                                                            }
-                                                        ],
-                                                        buttons: [
-                                                            {
-                                                                text: 'Add',
-                                                                handler: function(){
-                                                                    var attrs = form.getForm().getFieldValues(true);
-                                                                    mapPanel.map.addLayer(new OpenLayers.Layer.WMS(
-                                                                        attrs.name, 
-                                                                        attrs.url, 
-                                                                        {
-                                                                            layers: attrs.layers
-                                                                        }, {
-                                                                            transitionEffect: 'resize',
-                                                                            projection: 'EPSG:900913'
-                                                                        })
-                                                                    );
-                                                                    addLayWnd.close();
-                                                            }
-                                                            }                                            
-                                                        ]
-                                                    });
-                                                    addLayWnd = Ext.create('Ext.window.Window', {
-                                                        closable: true,
-                                                        title: 'Add Base Layer',
-                                                        maximizable: false,
-                                                        maximized: false,
-                                                        width: 500,
-                                                        layout: 'fit',
-                                                        items: [
-                                                            form
-                                                        ]
-                                                    });
-                                                    addLayWnd.show();
-                                                }
-                                            }
-                                            ,{
-                                                xtype: 'menuitem'
-                                                ,text: 'Info Layer'
-                                                ,handler: function (){
-                                                    var addOverLayWnd;
-                                                    var form = Ext.create('Ext.form.Panel', {
-                                                        layout: 'anchor',
-                                                        defaults: {
-                                                            anchor: '100%',
-                                                            padding: 5
-                                                        },
-                                                        autoScroll: true,
-                                                        items: [
-                                                            {
-                                                                xtype: 'textfield',
-                                                                fieldLabel: 'Name',
-                                                                name: 'name'
-                                                            },
-                                                            {
-                                                                xtype: 'textfield',
-                                                                fieldLabel: 'Layer',
-                                                                name: 'layer'
-                                                            },
-                                                            {
-                                                                xtype: 'combo',
-                                                                fieldLabel: 'Type',
-                                                                name: 'type',
-                                                                store: {
-                                                                    xtype: 'store',
-                                                                    fields: ['Type', 'code'],
-                                                                    data: [
-                                                                        {Type: 'Point', code: 'point'},
-                                                                        {Type: 'Polygon', code: 'poly'},
-                                                                        {Type: 'Line', code: 'line'}
-                                                                    ]
-                                                                },
-                                                                queryMode: 'local',
-                                                                displayField: 'Type',
-                                                                valueField: 'code'
-                                                            }
-                                                        ],
-                                                        buttons: [
-                                                            {
-                                                                text: 'Add',
-                                                                handler: function(){
-                                                                    var attrs = form.getForm().getFieldValues(true);
-                                                                    
-                                                                    var layer = new OpenLayers.Layer.Vector(attrs.name, {
-                                                                        psLayerType: attrs.type,
-                                                                        isBaseLayer: false,
-                                                                        visibility: true,
-                                                                        defaultLabelField: 'NAME',
-                                                                        defaultIdField: 'OBJECTID',
-                                                                        strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
-                                                                        protocol: new OpenLayers.Protocol.WFS({
-                                                                            url: petroresConfig.vectorWfs,
-                                                                            featureType: attrs.layer,
-                                                                            featureNS: "http://petroresurs.com/geoportal",
-                                                                            geometryName: "GEOM"
-                                                                        })
-                                                                        ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:" + attrs.layer
-                                                                        ,projection: new OpenLayers.Projection("EPSG:32639")
-                                                                        ,version: "1.1.0"
-                                                                        , eventListeners: {
-                                                                            beforefeaturesadded: function(obj){
-                                                                                petroresConfig.showFeatureEditor(obj.object, obj.features)
-                                                                            },
-                                                                            beforefeaturemodified: function(obj){
-                                                                                obj.feature.state = OpenLayers.State.UPDATE;
-                                                                                petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
-                                                                            },
-                                                                            loadend: function(eventsObj){
-                                                                                petroresConfig.loadWfsSchema(eventsObj.object);
-                                                                                petroresConfig.createEditingPanel(eventsObj.object)
-                                                                            },
-                                                                            featureselected: function(sel) {
-                                                                                wnd.openPetroWindows.geMapWindow.selectedFeatures[sel.feature.fid] = sel.feature;
-                                                                                //console.log(wnd.openPetroWindows.mapWindow.selectedFeatures);
-                                                                            },
-                                                                            featureunselected: function(sel) {
-                                                                                delete wnd.openPetroWindows.geMapWindow.selectedFeatures[sel.feature.fid];
-                                                                                //console.log(wnd.openPetroWindows.mapWindow.selectedFeatures);
-                                                                            }
-                                                                        }
-                                                                    });                                                                    
-                                                                    
-                                                                    mapPanel.map.addLayer(layer);
-                                                                    editableLayers.push(layer);
-                                                                    addOverLayWnd.close();
-                                                                    
-                                                                }
-                                                            }                                            
-                                                        ]
-                                                    });
-                                                    addOverLayWnd = Ext.create('Ext.window.Window', {
-                                                        closable: true,
-                                                        title: 'Add Info Layer',
-                                                        maximizable: false,
-                                                        maximized: false,
-                                                        width: 500,
-                                                        layout: 'fit',
-                                                        items: [
-                                                            form
-                                                        ]
-                                                    });
-                                                    addOverLayWnd.show();
-                                                }
-                                            }
-                                        ]
-                                    }
-                                    
-                                    /*,!petroresConfig.userIsAdmin ?undefined:{
-                                        xtype: 'button',
-                                        text: 'Add Layer',
-                                        icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
-                                        handler: function (){
-                                            var addLayWnd;
-                                            var form = Ext.create('Ext.form.Panel', {
-                                                layout: 'anchor',
-                                                defaults: {
-                                                    anchor: '100%',
-                                                    padding: 5
-                                                },
-                                                autoScroll: true,
-                                                items: [
-                                                    {
-                                                        xtype: 'textfield',
-                                                        fieldLabel: 'Name',
-                                                        name: 'name'
-                                                    },
-                                                    {
-                                                        xtype: 'textfield',
-                                                        fieldLabel: 'URL',
-                                                        name: 'url'
-                                                    },
-                                                    {
-                                                        xtype: 'textfield',
-                                                        fieldLabel: 'Layer(s)',
-                                                        name: 'layers'
-                                                    }
-                                                ],
-                                                buttons: [
-                                                    {
-                                                        text: 'Add',
-                                                        handler: function(){
-                                                            var attrs = form.getForm().getFieldValues(true);
-                                                            mapPanel.map.addLayer(new OpenLayers.Layer.WMS(
-                                                                attrs.name, 
-                                                                attrs.url, 
-                                                                {
-                                                                    layers: attrs.layers
-                                                                }, {
-                                                                    transitionEffect: 'resize',
-                                                                    projection: 'EPSG:900913'
-                                                                })
-                                                            );
-                                                            wnd.openPetroWindows.addLayerWnd.close();
-                                                    }
-                                                    }                                            
-                                                ]
-                                            });
-                                            addLayWnd = Ext.create('Ext.window.Window', {
-                                                closable: true,
-                                                title: 'Add WMS Layer',
-                                                maximizable: false,
-                                                maximized: false,
-                                                width: 500,
-                                                layout: 'fit',
-                                                items: [
-                                                    form
-                                                ]
-                                            });
-                                            addLayWnd.show();
-                                        }
-                                    }*/
-                                    ,!petroresConfig.userIsAdmin ?undefined:{
-                                        xtype: 'button',
-                                        text: 'Remove Layer',
-                                        icon: 'lib/ext41/examples/restful/images/delete.png',
-                                        handler: function (){
-                                            if(tree.psSelectedLayer){
-                                                Ext.MessageBox.confirm('Confirm', 
-                                                'Are you sure to delete the layer from map?',
-                                                function(btn){
-                                                    if(btn==='yes'){
-                                                        mapPanel.map.removeLayer(tree.psSelectedLayer);
-                                                    }
-                                                });
-                                            }else{
-                                                Ext.MessageBox.show({
-                                                    msg: 'Select a layer in the layer tree',
-                                                    buttons: Ext.Msg.OK
-                                                });
-                                            }
-                                        }
-                                    }
-                                ];                        
-                        var wnd = Ext.getCmp('MainWindow');
-                        wnd.openPetroWindow('geMapWindow', {
-                            closable: true,
-                            title: 'Caspian Sea',
-                            maximizable: true,
-                            maximized: true,
-                            id: 'geMapWindow',
-                            height:wnd.getHeight()*0.8,
-                            width:wnd.getWidth()*0.8,
-                            layout: 'border',
-                            selectedFeatures: {},
-                            items: [
-                                mapPanel, 
-                                tree,
-                                legendPanel
-                            ],
-                            tbar: tbar
-                        });
-                    }
-                }
-                ]
+                id: 'mapMenus',
+                items: petroresConfig.getMapMenus()
             }
         },
         petroresConfig.userIsAdmin ?
@@ -1734,4 +581,1189 @@ Ext.define('PetroRes.view.MainWindow', {
             Ext.getCmp('DocumentsCatalogMenuItem').handler();
         }
     }
+    ,openMap: function(mapConf){
+                        var mcfg = petroresConfig.layersCreator(mapConf);
+                 if(!mapConf)
+                     mapConf='';
+                 
+                        var layers = mcfg.layers;
+
+                        var vectorLayers = [];  
+                        var editableLayers = [];
+                        for(var l in layers){
+                            if(layers[l].CLASS_NAME == 'OpenLayers.Layer.Vector'){
+                                vectorLayers.push(layers[l]);
+                                //if(layers[l].editingPanel)
+                                {
+                                    editableLayers.push({
+                                        name: layers[l].name,
+                                        val: layers[l]
+                                    })
+                                }
+
+                                layers[l].events.on({
+                                    featureselected: function(sel) {
+                                        wnd.openPetroWindows['geMapWindow' + mapConf].selectedFeatures[sel.feature.fid] = sel.feature;
+                                        //console.log(wnd.openPetroWindows.mapWindow.selectedFeatures);
+                                    },
+                                    featureunselected: function(sel) {
+                                        delete wnd.openPetroWindows['geMapWindow' + mapConf].selectedFeatures[sel.feature.fid];
+                                        //console.log(wnd.openPetroWindows.mapWindow.selectedFeatures);
+                                    }
+                                });
+
+
+                            };
+                        }                        
+
+                        var selectControl = new OpenLayers.Control.SelectFeature(vectorLayers, {
+                                    clickout: false, toggle: true,
+                                    multiple: false, hover: false,
+                                    toggleKey: "ctrlKey", // ctrl key removes from selection
+                                    multipleKey: "shiftKey", // shift key adds to selection
+                                    box: true
+                                    //,displayInLayerSwitcher: false
+                                    ,eventListeners: {
+                                        deactivate: function(){
+                                            selectControl.unselectAll();
+                                        }
+                                    }
+                                });
+
+                        var selectControlHover = new OpenLayers.Control.SelectFeature(vectorLayers, {
+                                    clickout: true, toggle: false,
+                                    multiple: false, hover: false
+                                    //,displayInLayerSwitcher: false
+                                    ,eventListeners: {
+                                        deactivate: function(){
+                                            selectControlHover.unselectAll();
+                                        }
+                                    }
+                                    , onUnselect: function(){
+                                        selectControlHover.baloon.close();
+                                    }
+                                    , onSelect: function(selected){
+                                        if(selectControlHover.baloon){
+                                            selectControlHover.baloon.close();
+                                        }
+                                        var pix = mapPanel.map.getPixelFromLonLat(
+                                            new OpenLayers.LonLat(selected.geometry.bounds.right, 
+                                            selected.geometry.bounds.bottom));
+                                        selectControlHover.baloon = Ext.create('Ext.window.Window', {
+                                            title: 'Object Attributes',
+                                            layout: 'fit',
+                                            height: 300,
+                                            width: 300,
+                                            x: pix.x,
+                                            y: pix.y,
+                                            defaults:{
+                                                anchor: '100%'
+                                            },
+                                            items: [{
+                                                autoScroll: true,
+                                                xtype: 'propertygrid',
+                                                source: selected.data
+                                            }],
+                                            fbar: [{
+                                                type: 'button',
+                                                text: 'Documents',
+                                                handler: function(){
+                                                    Ext.Ajax.request({
+                                                        headers: {
+                                                            Accept: 'application/json'
+                                                        },
+                                                        url: 'rest/documents/find',
+                                                        jsonData: {geoObjects: function(){
+                                                            var obj = [];
+                                                            var feat  = selected.fid
+                                                            {
+                                                                var oneFeatArr = feat.split('.');
+                                                                obj.push({
+                                                                    idInTable: oneFeatArr[1],
+                                                                    tableName: oneFeatArr[0]
+                                                                });
+                                                            }
+                                                            return obj;// Ext.encode(obj);
+                                                        }.call()}
+                                                        ,
+                                                        success: function(resp, opts){
+                                                            var ret = Ext.decode(resp.responseText);
+                                                            //petroresConfig.makeAllIdsNumbers(ret);
+                                                            //console.log(["вот, получилось", ret])
+
+                                                            var wnd = Ext.getCmp('MainWindow');
+
+                                                            var stor = Ext.create('Ext.data.Store', {
+                                                                model: Ext.getStore('DocumentsJsonStore').getProxy().getModel(),
+                                                                data: ret,
+                                                                proxy: {
+                                                                    type: 'memory',
+                                                                    reader: {
+                                                                        type: 'json',
+                                                                        root: 'documents'
+                                                                    }
+                                                                }
+                                                            });
+                                                            var grid = Ext.create(
+                                                                'PetroRes.view.DocumentsGridPanel', 
+                                                                {
+                                                                    store: stor,
+                                                                    listeners:{
+                                                                        itemdblclick: function(ths, rec){
+
+                                                                            var editForm = Ext.create(
+                                                                                    'PetroRes.view.DocumentFormEdit'
+                                                                                );
+                                                                            wnd.openPetroWindow('editDoc', {
+                                                                                closable: true,
+                                                                                width:wnd.getWidth()*0.9,
+                                                                                title: 'Edit Document',
+                                                                                maximizable: true,
+                                                                                maximized: true,
+                                                                                layout: 'fit',
+                                                                                items: [
+                                                                                    editForm
+                                                                                ]                                    
+                                                                            });
+                                                                            editForm.loadRecord(rec);
+                                                                        }
+                                                                    }
+                                                                }
+                                                            );
+                                                            if(wnd.openPetroWindows.searchres){
+                                                                wnd.openPetroWindows.searchres.close();
+                                                            }
+                                                            wnd.openPetroWindow('searchres', {
+                                                                closable: true,
+                                                                width:wnd.getWidth()*0.9,
+                                                                title: 'Found Documents',
+                                                                maximizable: true,
+                                                                maximized: false,
+                                                                layout: 'fit',
+                                                                items: [
+                                                                    grid
+                                                                ]                                    
+                                                            });
+
+                                                        }
+                                                    });                                                    
+                                                }
+                                            }]
+                                        });
+                                        selectControlHover.baloon.show();
+                                    }
+                                    
+                                });
+                                
+                        var opacitySlider = Ext.create('GeoExt.slider.LayerOpacity',{
+                            aggressive: true,
+                            vertical: false,
+                            inverse: false,
+                            width: 'auto',
+                            fieldLabel: 'Opacity'
+                            //x: 12,
+                            //y: 60,
+                            //hidden: true
+                            , disabled: true
+                        });
+                        
+                        var mapPanel = 
+                                Ext.create('GeoExt.panel.Map', {
+                                    id: 'bigGextMapPanel' + mapConf,
+                                    map: {allOverlays: false}
+                                    //extent: new OpenLayers.Bounds(45.00, 36.18, 55, 47.50)
+                                    //, displayProjection: new OpenLayers.Projection("EPSG:4326")
+                                    //,projection: new OpenLayers.Projection("EPSG:4326")
+                                    ,extent: mcfg.extent
+                                    //new OpenLayers.Bounds(
+                                    //    5082754.0816867,
+                                    //    5417407.5350582,
+                                    //    5806765.6135031,
+                                    //    5857073.3216934
+                                    //)
+                                    , displayProjection: new OpenLayers.Projection("EPSG:900913")
+                                    ,projection: new OpenLayers.Projection("EPSG:900913")
+                                    ,layers: layers,
+                                    region: "center"
+                                    ,selectControl: selectControl
+                                    //,items: [
+                                    //    opacitySlider
+                                    //]
+                                });
+                                
+                        mapPanel.map.addControl(selectControl);
+                        mapPanel.map.addControl(selectControlHover);
+                        mapPanel.map.addControl(new OpenLayers.Control.MousePosition({
+                            displayProjection: petroresConfig.proj4326
+                        }));
+                        
+                        var store = Ext.create('Ext.data.TreeStore', {
+                            model: 'GeoExt.data.LayerTreeModel',
+                            storeId: 'BigMapLayers',
+                            root: {
+                                expanded: true,
+                                children: [
+                                    {
+                                        plugins: [{
+                                            ptype: 'gx_overlaylayercontainer'
+                                            //,store: mapPanel.layers
+                                            ,loader: {
+                                                store: mapPanel.layers
+                                                , filter: function(rec){
+                                                    //console.log(rec.getLayer());
+                                                    return !rec.getLayer().isBaseLayer && rec.getLayer().displayInLayerSwitcher == true;
+                                                }
+                                            }
+                                        }],
+                                        expanded: true
+                                    },
+                                    {
+                                        plugins: [{
+                                            ptype: 'gx_baselayercontainer'
+                                            //,store: mapPanel.layers
+                                            ,loader: {
+                                                store: mapPanel.layers
+                                            }
+                                        }],
+                                        expanded: true
+                                    }                             
+                                    /*{
+                                        plugins: [
+                                            {
+                                                ptype: 'gx_baselayercontainer',
+                                                store: mapPanel.layers
+                                            }
+                                        ],
+                                        expanded: true,
+                                        text: "Base Maps"
+                                    }, {
+                                        plugins: [
+                                            {
+                                                ptype: 'gx_overlaylayercontainer',
+                                                store: mapPanel.layers
+                                            }
+                                        ],
+                                        expanded: true
+                                    }*/
+                                ]
+                            }
+                        });
+                        
+                        var getZippedShapeButton = Ext.create('Ext.button.Button', 
+                        {
+                            text: 'Get Zipped Shape',
+                            handler: function(me){
+                                var getFeatureUrl = me.layerToGet.schema.replace
+                                ('DescribeFeatureType', 'GetFeature') +
+                                    '&outputFormat=shape-zip';
+                                //http://playground:9000/geoserver/wfs?
+                                //service=WFS&request=GetFeature&version=1.1.0&typeName=
+                                //PetroResurs:Structures_PRS
+                                //&outputFormat=shape-zip
+                                //console.log([me.layerToGet, getFeatureUrl]);
+                                window.open(getFeatureUrl, '_blank');
+                            }
+                        });
+                        
+                        var layerOutlookPanel = Ext.create('Ext.panel.Panel',
+                        {
+                            layout: 'anchor',
+                            defaults: {
+                                anchor: '100%'
+                            },
+                            collapsible: true,
+                            collapsed: true,
+                            dock: 'bottom',
+                            items: [
+                                getZippedShapeButton,
+                                opacitySlider
+                            ]
+                        });
+
+                        var tree = Ext.create('GeoExt.tree.Panel', {
+                            viewConfig: {
+                                plugins: {
+                                    ptype: 'treeviewdragdrop'
+                                }
+                            },
+                            border: true,
+                            region: "west",
+                            title: "Layers",
+                            width: 200,
+                            split: true,
+                            collapsible: true,
+                            collapseMode: "header",
+                            autoScroll: true,
+                            store: store,
+                            rootVisible: false,
+                            lines: false,
+                            listeners: {
+                                itemclick: function(){
+                                    //console.log(arguments[1].data.layer);
+                                    var layer = arguments[1].data.layer;
+                                    tree.psSelectedLayer = layer;
+                                    mapPanel.petroLayerToEdit = undefined;
+                                    for(var ooo in editableLayers){
+                                        if(editableLayers[ooo].val == layer){
+                                            layerOutlookPanel.setTitle(layer.name);
+                                            layerOutlookPanel.expand();
+                                            getZippedShapeButton.layerToGet = layer;
+                                            getZippedShapeButton.enable();
+                                            opacitySlider.setLayer(layer);
+                                            opacitySlider.enable();
+                                            
+                                            mapPanel.petroLayerToEdit = layer;
+                                            /*if(mapPanel.petroEditMode){
+                                                for(var lll in editableLayers){
+                                                    if(editableLayers[lll].val.editingPanel)
+                                                        if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
+                                                            editableLayers[lll].val.editingPanel.activate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'block';
+                                                        }else{
+                                                            editableLayers[lll].val.editingPanel.deactivate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                        }
+                                                }
+                                            }*/
+                                            break;
+                                        }
+                                    }
+
+                                    if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
+                                        for(var lll in editableLayers){
+                                            if(editableLayers[lll].val.editingPanel)
+                                                if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
+                                                    editableLayers[lll].val.editingPanel.activate();
+                                                    editableLayers[lll].val.editingPanel.div.style.display = 'block';
+                                                }else{
+                                                    editableLayers[lll].val.editingPanel.deactivate();
+                                                    editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                }
+                                        }
+                                    }else if(!mapPanel.petroEditMode ){
+                                        for(lll in editableLayers){
+                                            if(editableLayers[lll].val.editingPanel){
+                                                    editableLayers[lll].val.editingPanel.deactivate();
+                                                    editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                            }
+                                        }
+                                    }
+
+                                    if(mapPanel.petroSearchMode && mapPanel.petroLayerToEdit){
+                                        selectControl.activate();
+                                        selectControlHover.deactivate();
+                                        petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
+                                    }
+
+                                }
+                            }
+                            , dockedItems: [
+                                layerOutlookPanel
+                            ]
+                        });
+                        
+                        var legendPanel = Ext.create('GeoExt.panel.Legend', {
+                            layerStore: mapPanel.layers,
+                            title: "Legend",
+                            defaults: {
+                                labelCls: 'mylabel',
+                                style: 'padding:5px'
+                            },
+                            bodyStyle: 'padding:5px',
+                            split: true,
+                            collapsible: true,
+                            collapseMode: "header",
+                            width: 180,
+                            autoScroll: true,
+                            region: 'east'
+                            //preferredTypes: ["Point", "Line", "Polygon"]
+                        });                        
+                        
+                        var printPage;
+                        var printProvider = Ext.create('GeoExt.data.MapfishPrintProvider', {
+                            url: "form/proxy?url=http://oceanviewer.ru/print/pdf"
+                            ,method: 'POST'
+                            //capabilities: printCapabilities
+                            ,autoLoad: true
+                            ,listeners: {
+                                "loadcapabilities": function() {
+                                    printPage = Ext.create('GeoExt.data.PrintPage', {
+                                        printProvider: printProvider
+                                        ,customParams: {
+                                            
+                                            "outputFormat":"jpg",
+                                            "outputFilename":"map-print111",
+                                            "mapTitle":"PetroResurs",
+                                            "comment":"PetroResurs"
+                                            
+                                            //outputFormat:"jpg",
+                                            //outputFilename:"map-print"
+                                        }
+                                    });
+                                    Ext.getCmp('pdfButton' + mapConf).setDisabled(false);
+                                }
+                            }
+                             
+                        });
+                        //printPage = Ext.create('GeoExt.data.PrintPage', {
+                        //    printProvider: printProvider
+                        //});
+                        
+                        //var printPage = Ext.create('GeoExt.data.PrintPage', {
+                        //    printProvider: printProvider
+                        //});                        
+                        
+                        var tbar = [
+                                    {
+                                        xtype: 'button',
+                                        text: 'Pan',
+                                        tooltip: 'Pan',
+                                        toggleGroup: 'modeGr',
+                                        iconCls: 'petroButtonMapPan',
+                                        pressed: true,
+                                        toggleHandler: function(th, pressed){
+                                            if(pressed){
+                                                selectControl.deactivate();
+                                                selectControlHover.deactivate();
+                                            }
+                                        }
+                                    },
+                                    petroresConfig.userIsEditor || petroresConfig.userIsAdmin ?{
+                                        xtype: 'button',
+                                        text: 'Edit',
+                                        tooltip: 'Edit',
+                                        iconCls: 'petroButtonMapEdit',
+                                        toggleGroup: 'modeGr',
+                                        toggleHandler: function(th, state){
+                                            mapPanel.petroEditMode = state;
+                                            if(mapPanel.petroEditMode && mapPanel.petroLayerToEdit){
+                                                for(var lll in editableLayers){
+                                                    if(editableLayers[lll].val.editingPanel)
+                                                        if(editableLayers[lll].val == mapPanel.petroLayerToEdit){
+                                                            editableLayers[lll].val.editingPanel.activate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'block';
+                                                        }else{
+                                                            editableLayers[lll].val.editingPanel.deactivate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                        }
+                                                }
+                                            }
+                                            if(!mapPanel.petroEditMode){
+                                                for(lll in editableLayers){
+                                                    if(editableLayers[lll].val.editingPanel){
+                                                            editableLayers[lll].val.editingPanel.deactivate();
+                                                            editableLayers[lll].val.editingPanel.div.style.display = 'none';
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }:undefined,
+                                    {
+                                        xtype: 'button',
+                                        text: 'Select',
+                                        tooltip: 'Select',
+                                        iconCls: 'petroButtonMapSelect',
+                                        toggleGroup: 'modeGr',
+                                        toggleHandler: function (th, state){
+                                            if(state){
+                                                selectControl.activate();
+                                                selectControlHover.deactivate();
+                                            }else{
+                                                selectControl.deactivate();
+                                            }
+                                        }
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        text: 'Search',
+                                        icon: 'images/search.png',
+                                        tooltip: 'Search',
+                                        toggleGroup: 'modeGr'
+                                        , listeners: {
+                                            menushow: function(th){
+                                                th.toggle(true);
+                                                //return false;// !mapPanel.petroSearchMode;
+                                            }
+                                        }
+                                        ,toggleHandler: function (th, pressed){
+                                            if(!pressed){
+                                                mapPanel.petroSearchMode = false;
+                                                selectControl.deactivate();
+                                                th.menu.items.each(function(itm){itm.setChecked(false)});
+                                            }
+                                        }
+                                        /*,toggleHandler: function (th, pressed){
+                                            //mapPanel.petroSearchMode = pressed;
+                                            if(pressed){// && mapPanel.petroLayerToEdit){
+                                                selectControl.activate();
+                                                selectControlHover.deactivate();
+                                                //petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
+                                            }else if(!pressed){
+                                                selectControl.deactivate();
+                                            }
+                                        }*/
+                                        , menu: [
+                                            {
+                                                xtype: 'menucheckitem'
+                                                ,text: 'Any'
+                                                ,group: 'searchType'
+                                                ,handler: function (){
+                                                    selectControl.activate();
+                                                    selectControlHover.deactivate();
+                                                    Ext.Msg.prompt('Simple Search', 'Search for Attribute Value'
+                                                    , function(btn, text){
+                                                        text = text.toLowerCase();
+                                                        if(btn=='ok'){
+                                                            for(var lay in layers){
+                                                                var layer = layers[lay];
+                                                                if(!layer.features)
+                                                                    continue;
+                                                                
+                                                                midLoop:
+                                                                for(var featr in layer.features){
+                                                                    for(var attr in layer.features[featr].attributes){
+                                                                        var comp = layer.features[featr].attributes[attr];
+                                                                        if(comp.toLowerCase){
+                                                                            comp = comp.toLowerCase();
+                                                                        }
+                                                                        if(comp.indexOf(text)>=0){
+                                                                            selectControl.select(layer.features[featr]);
+                                                                            continue midLoop;
+                                                                        }
+                                                                    } 
+                                                                }
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                            ,{
+                                                xtype: 'menucheckitem'
+                                                ,text: 'Base Layer'
+                                                , group: 'searchType'
+                                                , listeners: {
+                                                    checkchange: function(th, checked){
+                                                        mapPanel.petroSearchMode = checked;
+                                                        if(checked){
+                                                            selectControl.activate();
+                                                            selectControlHover.deactivate();
+                                                            if(mapPanel.petroSearchMode && mapPanel.petroLayerToEdit && checked){
+                                                                petroresConfig.showFeatureSearcher(mapPanel.petroLayerToEdit, selectControl);
+                                                            }
+                                                        }else{
+                                                            selectControl.deactivate();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            
+                                        ]
+                                        
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        text: 'Info',
+                                        tooltip: 'Info',
+                                        iconCls: 'petroButtonMapInfo',
+                                        toggleGroup: 'modeGr',
+                                        toggleHandler: function (th, pressed){
+                                            if(pressed){
+                                                selectControl.deactivate();
+                                                selectControlHover.activate();
+                                            }else{
+                                                selectControlHover.deactivate();
+                                            }
+                                        }
+                                        
+                                    },
+                                    '-', 
+                                    {
+                                        xtype: 'button',
+                                        tooltip: 'Find documents for selected objects',
+                                        text: 'Find Documents',
+                                        iconCls: 'petroButtonMapFindDocs',
+                                        handler: function(){
+                                            Ext.Ajax.request({
+                                                headers: {
+                                                    Accept: 'application/json'
+                                                },
+                                                url: 'rest/documents/find',
+                                                jsonData: {geoObjects: function(){
+                                                    var obj = [];
+                                                    for(var feat in wnd.openPetroWindows['geMapWindow' + mapConf].selectedFeatures){
+                                                        var oneFeatArr = feat.split('.');
+                                                        obj.push({
+                                                            idInTable: oneFeatArr[1],
+                                                            tableName: oneFeatArr[0]
+                                                        });
+                                                    }
+                                                    return obj;// Ext.encode(obj);
+                                                }.call()}
+                                                ,
+                                                success: function(resp, opts){
+                                                    var ret = Ext.decode(resp.responseText);
+                                                    //petroresConfig.makeAllIdsNumbers(ret);
+                                                    //console.log(["вот, получилось", ret])
+                                                    
+                                                    var wnd = Ext.getCmp('MainWindow');
+
+                                                    var stor = Ext.create('Ext.data.Store', {
+                                                        model: Ext.getStore('DocumentsJsonStore').getProxy().getModel(),
+                                                        data: ret,
+                                                        proxy: {
+                                                            type: 'memory',
+                                                            reader: {
+                                                                type: 'json',
+                                                                root: 'documents'
+                                                            }
+                                                        }
+                                                    });
+                                                    var grid = Ext.create(
+                                                        'PetroRes.view.DocumentsGridPanel', 
+                                                        {
+                                                            store: stor,
+                                                            listeners:{
+                                                                itemdblclick: function(ths, rec){
+
+                                                                    var editForm = Ext.create(
+                                                                            'PetroRes.view.DocumentFormEdit'
+                                                                        );
+                                                                    wnd.openPetroWindow('editDoc', {
+                                                                        closable: true,
+                                                                        width:wnd.getWidth()*0.9,
+                                                                        title: 'Edit Document',
+                                                                        maximizable: true,
+                                                                        maximized: true,
+                                                                        layout: 'fit',
+                                                                        items: [
+                                                                            editForm
+                                                                        ]                                    
+                                                                    });
+                                                                    editForm.loadRecord(rec);
+                                                                }
+                                                            }
+                                                        }
+                                                    );
+                                                    if(wnd.openPetroWindows.searchres){
+                                                        wnd.openPetroWindows.searchres.close();
+                                                    }
+                                                    wnd.openPetroWindow('searchres', {
+                                                        closable: true,
+                                                        width:wnd.getWidth()*0.9,
+                                                        title: 'Found Documents',
+                                                        maximizable: true,
+                                                        maximized: false,
+                                                        layout: 'fit',
+                                                        items: [
+                                                            grid
+                                                        ]                                    
+                                                    });
+
+                                                }
+                                            });
+                                        }                                        
+                                    },
+                                    '-', 
+                                    
+                                    
+                                    
+                                    //'Measure: '
+                                    ,{
+                                        xtype: 'button',
+                                        text: 'Measure',
+                                        icon: 'images/distance.png',
+                                        menu: [
+                                            Ext.create('Ext.menu.CheckItem', Ext.create('GeoExt.Action', {
+                                                //group: 'modeGr1',
+                                                iconCls: 'petroButtonMapDistance',
+                                                tooltip: 'Distance',
+                                                text: 'Distance',
+                                                id: 'measureDistanceCheck' + mapConf,
+                                                activateOnEnable: true,
+                                                deactivateOnDisable: true,
+                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
+                                                    displayInLayerSwitcher: false,
+                                                    geodesic: true,
+                                                    eventListeners: {
+                                                        activate: function(){
+                                                            Ext.getCmp('measureAreaCheck' + mapConf).setChecked(false);
+                                                        },
+                                                        measure: function(evt) {
+                                                            Ext.Msg.alert('Distance',
+                                                                'The distance is ' + evt.measure.toFixed(2) + ' '+ evt.units);
+                                                        }
+                                                    }                                        
+                                                }),
+                                                map: mapPanel.map
+                                            }))
+                                            , Ext.create('Ext.menu.CheckItem', Ext.create('GeoExt.Action', {
+                                                //group: 'modeGr1',
+                                                text: 'Area',
+                                                tooltip: 'Area',
+                                                iconCls: 'petroButtonMapArea',
+                                                activateOnEnable: true,
+                                                id: 'measureAreaCheck' + mapConf,
+                                                deactivateOnDisable: true,
+                                                control: new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
+                                                    displayInLayerSwitcher: false,
+                                                    geodesic: true,
+                                                    eventListeners: {
+                                                        activate: function(){
+                                                            Ext.getCmp('measureDistanceCheck' + mapConf).setChecked(false);
+                                                        },
+                                                        measure: function(evt) {
+                                                            Ext.Msg.alert('Area',
+                                                                'The area is ' + + evt.measure.toFixed(2) + ' '+ evt.units + '<sup>2</sup>');
+                                                            //alert("The area is " + evt.measure + evt.units);
+                                                        }
+                                                    }                                        
+                                                }),
+                                                map: mapPanel.map,
+                                                listeners:{
+                                                    enable: function(){
+                                                        Ext.getCmp('measureDistanceCheck' + mapConf).disable();
+                                                    }
+                                                }
+                                            }))                                    
+                                        ]
+                                    }
+                                    , Ext.create('Ext.button.Button', {
+                                        tooltip: 'Download map as PDF file',
+                                        text: 'PDF',
+                                        iconCls: 'petroButtonMapPdf',
+                                        disabled: true,
+                                        id: 'pdfButton' + mapConf,
+                                        handler: function() {
+                                            var printWnd;
+                                            var form = Ext.create('Ext.form.Panel', {
+                                                layout: 'anchor',
+                                                defaults: {
+                                                    anchor: '100%',
+                                                    padding: 5
+                                                },
+                                                autoScroll: true,
+                                                items: [{
+                                                    xtype: "textfield",
+                                                    name: "mapTitle", // printPage.customParams.mapTitle
+                                                    fieldLabel: "Map Title",
+                                                    plugins: Ext.create('GeoExt.plugins.PrintPageField', {
+                                                        printPage: printPage
+                                                    })
+                                                }, {
+                                                    xtype: "textfield",
+                                                    name: "comment", // printPage.customParams.mapTitle
+                                                    fieldLabel: "Map Title",
+                                                    plugins: Ext.create('GeoExt.plugins.PrintPageField', {
+                                                        printPage: printPage
+                                                    })
+                                                }, {
+                                                    xtype: "combo",
+                                                    displayField: "name",
+                                                    store: printProvider.layouts, // printPage.scale
+                                                    name: "layout",
+                                                    fieldLabel: "Layout",
+                                                    typeAhead: true,
+                                                    queryMode: "local",
+                                                    forceSelection: true,
+                                                    triggerAction: "all",
+                                                    selectOnFocus: true,
+                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
+                                                        printProvider: printProvider
+                                                    })
+                                                }, {
+                                                    xtype: "combo",
+                                                    displayField: "name",
+                                                    store: printProvider.dpis, // printPage.scale
+                                                    name: "dpi",
+                                                    fieldLabel: "DPI",
+                                                    typeAhead: true,
+                                                    queryMode: "local",
+                                                    forceSelection: true,
+                                                    triggerAction: "all",
+                                                    selectOnFocus: true,
+                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
+                                                        printProvider: printProvider
+                                                    })
+                                                }, {
+                                                    xtype: "combo",
+                                                    displayField: "name",
+                                                    store: printProvider.formats, // printPage.scale
+                                                    name: "outputFormat",
+                                                    fieldLabel: "Format",
+                                                    typeAhead: true,
+                                                    queryMode: "local",
+                                                    forceSelection: true,
+                                                    triggerAction: "all",
+                                                    selectOnFocus: true,
+                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
+                                                        printProvider: printProvider
+                                                    })
+                                                }],
+                                                buttons: [
+                                                    {
+                                                        text: 'Make Print Page',
+                                                        handler: function(){
+                                                            printPage.fit(mapPanel, true);
+                                                            printProvider.print(mapPanel, printPage);
+                                                        }
+                                                    }                                            
+                                                ]
+                                            });
+                                            printWnd = Ext.create('Ext.window.Window', {
+                                                closable: true,
+                                                title: 'Print Configuration',
+                                                maximizable: false,
+                                                maximized: false,
+                                                width: 500,
+                                                layout: 'fit',
+                                                items: [
+                                                    form
+                                                ]
+                                            });
+                                            printWnd.show();
+                                        }
+                                    }),
+                                    petroresConfig.userIsAdmin ?'-':undefined, 
+                                    !petroresConfig.userIsAdmin ?undefined:{
+                                        xtype: 'button',
+                                        text: 'Save Map',
+                                        tooltip: 'Save map configuration',
+                                        iconCls: 'petroButtonMapSaveConf',
+                                        handler: function (){
+                                            
+                                            var conf =petroresConfig.layersSaver(mapPanel.map);
+                                            conf = Ext.JSON.encode(conf);
+                                            //console.log(conf);
+                                            Ext.Ajax.request({
+                                                url: 'form/maps/' + (mapConf===''?petroresConfig.defaultMap:mapConf + '.json'),
+                                                method: 'PUT',
+                                                jsonData: conf,
+                                                success: function(){
+                                                    petroresConfig.mapConfigs[(mapConf===''?petroresConfig.defaultMap:mapConf)] = Ext.JSON.decode(conf);
+                                                    Ext.Msg.alert('Status', 'Map configuration saved successfully');
+                                                },
+                                                failure: function(){
+                                                    Ext.Msg.alert('Status', 'Could not save map configuration');
+                                                }
+                                            });
+                                        }
+                                        
+                                    }
+                                    ,!petroresConfig.userIsAdmin ?undefined:{
+                                        xtype: 'button',
+                                        text: 'Save Map As',
+                                        tooltip: 'Save map configuration',
+                                        iconCls: 'petroButtonMapSaveConf',
+                                        handler: function (){
+                                            
+                                            Ext.Msg.prompt('Save As', 'Enter Map Name'
+                                            , function(btn, text){
+                                                if(btn==='ok'){
+                                                    var conf =petroresConfig.layersSaver(mapPanel.map);
+                                                    conf = Ext.JSON.encode(conf);
+                                                    //console.log(conf);
+                                                    Ext.Ajax.request({
+                                                        url: 'form/maps/' + (text===''?petroresConfig.defaultMap:text + '.json'),
+                                                        method: 'PUT',
+                                                        jsonData: conf,
+                                                        success: function(){
+                                                            petroresConfig.mapConfigs[(text===''?petroresConfig.defaultMap:text)] = Ext.JSON.decode(conf);
+                                                            var menuMaps = Ext.getCmp('mapMenus');
+                                                            menuMaps.items.clear();
+                                                            menuMaps.items.addAll(petroresConfig.getMapMenus());
+                                                            Ext.Msg.alert('Status', 'Map configuration saved successfully');
+                                                        },
+                                                        failure: function(){
+                                                            Ext.Msg.alert('Status', 'Could not save map configuration');
+                                                        }
+                                                    });
+                                                }
+                                            }, undefined, undefined, mapConf);
+                                        }
+                                        
+                                    }
+                                    ,!petroresConfig.userIsAdmin ?undefined:{
+                                        xtype: 'button',
+                                        text: 'Add Layer',
+                                        icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
+                                        menu: [
+                                            {
+                                                xtype: 'menuitem'
+                                                ,text: 'Base Layer'
+                                                ,handler: function (){
+                                                    var addLayWnd;
+                                                    var form = Ext.create('Ext.form.Panel', {
+                                                        layout: 'anchor',
+                                                        defaults: {
+                                                            anchor: '100%',
+                                                            padding: 5
+                                                        },
+                                                        autoScroll: true,
+                                                        items: [
+                                                            {
+                                                                xtype: 'textfield',
+                                                                fieldLabel: 'Name',
+                                                                name: 'name'
+                                                            },
+                                                            {
+                                                                xtype: 'textfield',
+                                                                fieldLabel: 'URL',
+                                                                name: 'url'
+                                                            },
+                                                            {
+                                                                xtype: 'textfield',
+                                                                fieldLabel: 'Layer(s)',
+                                                                name: 'layers'
+                                                            }
+                                                        ],
+                                                        buttons: [
+                                                            {
+                                                                text: 'Add',
+                                                                handler: function(){
+                                                                    var attrs = form.getForm().getFieldValues(true);
+                                                                    mapPanel.map.addLayer(new OpenLayers.Layer.WMS(
+                                                                        attrs.name, 
+                                                                        attrs.url, 
+                                                                        {
+                                                                            layers: attrs.layers
+                                                                        }, {
+                                                                            transitionEffect: 'resize',
+                                                                            projection: 'EPSG:900913'
+                                                                        })
+                                                                    );
+                                                                    addLayWnd.close();
+                                                            }
+                                                            }                                            
+                                                        ]
+                                                    });
+                                                    addLayWnd = Ext.create('Ext.window.Window', {
+                                                        closable: true,
+                                                        title: 'Add Base Layer',
+                                                        maximizable: false,
+                                                        maximized: false,
+                                                        width: 500,
+                                                        layout: 'fit',
+                                                        items: [
+                                                            form
+                                                        ]
+                                                    });
+                                                    addLayWnd.show();
+                                                }
+                                            }
+                                            ,{
+                                                xtype: 'menuitem'
+                                                ,text: 'Info Layer'
+                                                ,handler: function (){
+                                                    var addOverLayWnd;
+                                                    var form = Ext.create('Ext.form.Panel', {
+                                                        layout: 'anchor',
+                                                        defaults: {
+                                                            anchor: '100%',
+                                                            padding: 5
+                                                        },
+                                                        autoScroll: true,
+                                                        items: [
+                                                            {
+                                                                xtype: 'textfield',
+                                                                fieldLabel: 'Name',
+                                                                name: 'name'
+                                                            },
+                                                            {
+                                                                xtype: 'textfield',
+                                                                fieldLabel: 'Layer',
+                                                                name: 'layer'
+                                                            },
+                                                            {
+                                                                xtype: 'combo',
+                                                                fieldLabel: 'Type',
+                                                                name: 'type',
+                                                                store: {
+                                                                    xtype: 'store',
+                                                                    fields: ['Type', 'code'],
+                                                                    data: [
+                                                                        {Type: 'Point', code: 'point'},
+                                                                        {Type: 'Polygon', code: 'poly'},
+                                                                        {Type: 'Line', code: 'line'}
+                                                                    ]
+                                                                },
+                                                                queryMode: 'local',
+                                                                displayField: 'Type',
+                                                                valueField: 'code'
+                                                            }
+                                                        ],
+                                                        buttons: [
+                                                            {
+                                                                text: 'Add',
+                                                                handler: function(){
+                                                                    var attrs = form.getForm().getFieldValues(true);
+                                                                    
+                                                                    var layer = new OpenLayers.Layer.Vector(attrs.name, {
+                                                                        psLayerType: attrs.type,
+                                                                        isBaseLayer: false,
+                                                                        visibility: true,
+                                                                        defaultLabelField: 'NAME',
+                                                                        defaultIdField: 'OBJECTID',
+                                                                        strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
+                                                                        protocol: new OpenLayers.Protocol.WFS({
+                                                                            url: petroresConfig.vectorWfs,
+                                                                            featureType: attrs.layer,
+                                                                            featureNS: "http://petroresurs.com/geoportal",
+                                                                            geometryName: "GEOM"
+                                                                        })
+                                                                        ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:" + attrs.layer
+                                                                        ,projection: new OpenLayers.Projection("EPSG:32639")
+                                                                        ,version: "1.1.0"
+                                                                        , eventListeners: {
+                                                                            beforefeaturesadded: function(obj){
+                                                                                petroresConfig.showFeatureEditor(obj.object, obj.features)
+                                                                            },
+                                                                            beforefeaturemodified: function(obj){
+                                                                                obj.feature.state = OpenLayers.State.UPDATE;
+                                                                                petroresConfig.showFeatureEditor(obj.object, [obj.feature]);
+                                                                            },
+                                                                            loadend: function(eventsObj){
+                                                                                petroresConfig.loadWfsSchema(eventsObj.object);
+                                                                                petroresConfig.createEditingPanel(eventsObj.object)
+                                                                            },
+                                                                            featureselected: function(sel) {
+                                                                                wnd.openPetroWindows['geMapWindow' + mapConf].selectedFeatures[sel.feature.fid] = sel.feature;
+                                                                                //console.log(wnd.openPetroWindows.mapWindow.selectedFeatures);
+                                                                            },
+                                                                            featureunselected: function(sel) {
+                                                                                delete wnd.openPetroWindows['geMapWindow' + mapConf].selectedFeatures[sel.feature.fid];
+                                                                                //console.log(wnd.openPetroWindows.mapWindow.selectedFeatures);
+                                                                            }
+                                                                        }
+                                                                    });                                                                    
+                                                                    
+                                                                    mapPanel.map.addLayer(layer);
+                                                                    editableLayers.push(layer);
+                                                                    addOverLayWnd.close();
+                                                                    
+                                                                }
+                                                            }                                            
+                                                        ]
+                                                    });
+                                                    addOverLayWnd = Ext.create('Ext.window.Window', {
+                                                        closable: true,
+                                                        title: 'Add Info Layer',
+                                                        maximizable: false,
+                                                        maximized: false,
+                                                        width: 500,
+                                                        layout: 'fit',
+                                                        items: [
+                                                            form
+                                                        ]
+                                                    });
+                                                    addOverLayWnd.show();
+                                                }
+                                            }
+                                        ]
+                                    }
+                                    
+                                    /*,!petroresConfig.userIsAdmin ?undefined:{
+                                        xtype: 'button',
+                                        text: 'Add Layer',
+                                        icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
+                                        handler: function (){
+                                            var addLayWnd;
+                                            var form = Ext.create('Ext.form.Panel', {
+                                                layout: 'anchor',
+                                                defaults: {
+                                                    anchor: '100%',
+                                                    padding: 5
+                                                },
+                                                autoScroll: true,
+                                                items: [
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'Name',
+                                                        name: 'name'
+                                                    },
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'URL',
+                                                        name: 'url'
+                                                    },
+                                                    {
+                                                        xtype: 'textfield',
+                                                        fieldLabel: 'Layer(s)',
+                                                        name: 'layers'
+                                                    }
+                                                ],
+                                                buttons: [
+                                                    {
+                                                        text: 'Add',
+                                                        handler: function(){
+                                                            var attrs = form.getForm().getFieldValues(true);
+                                                            mapPanel.map.addLayer(new OpenLayers.Layer.WMS(
+                                                                attrs.name, 
+                                                                attrs.url, 
+                                                                {
+                                                                    layers: attrs.layers
+                                                                }, {
+                                                                    transitionEffect: 'resize',
+                                                                    projection: 'EPSG:900913'
+                                                                })
+                                                            );
+                                                            wnd.openPetroWindows.addLayerWnd.close();
+                                                    }
+                                                    }                                            
+                                                ]
+                                            });
+                                            addLayWnd = Ext.create('Ext.window.Window', {
+                                                closable: true,
+                                                title: 'Add WMS Layer',
+                                                maximizable: false,
+                                                maximized: false,
+                                                width: 500,
+                                                layout: 'fit',
+                                                items: [
+                                                    form
+                                                ]
+                                            });
+                                            addLayWnd.show();
+                                        }
+                                    }*/
+                                    ,!petroresConfig.userIsAdmin ?undefined:{
+                                        xtype: 'button',
+                                        text: 'Remove Layer',
+                                        icon: 'lib/ext41/examples/restful/images/delete.png',
+                                        handler: function (){
+                                            if(tree.psSelectedLayer){
+                                                Ext.MessageBox.confirm('Confirm', 
+                                                'Are you sure to delete the layer from map?',
+                                                function(btn){
+                                                    if(btn==='yes'){
+                                                        mapPanel.map.removeLayer(tree.psSelectedLayer);
+                                                    }
+                                                });
+                                            }else{
+                                                Ext.MessageBox.show({
+                                                    msg: 'Select a layer in the layer tree',
+                                                    buttons: Ext.Msg.OK
+                                                });
+                                            }
+                                        }
+                                    }
+                                ];                        
+                        var wnd = Ext.getCmp('MainWindow');
+                        wnd.openPetroWindow('geMapWindow' + mapConf, {
+                            closable: true,
+                            title: mapConf,
+                            maximizable: true,
+                            maximized: true,
+                            id: 'geMapWindow' + mapConf,
+                            height:wnd.getHeight()*0.8,
+                            width:wnd.getWidth()*0.8,
+                            layout: 'border',
+                            selectedFeatures: {},
+                            items: [
+                                mapPanel, 
+                                tree,
+                                legendPanel
+                            ],
+                            tbar: tbar
+                        });
+                    }
 });

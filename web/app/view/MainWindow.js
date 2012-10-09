@@ -583,8 +583,8 @@ Ext.define('PetroRes.view.MainWindow', {
     }
     ,openMap: function(mapConf){
                         var mcfg = petroresConfig.layersCreator(mapConf);
-                 if(!mapConf)
-                     mapConf='';
+                        if(!mapConf)
+                            mapConf='';
                  
                         var layers = mcfg.layers;
 
@@ -770,21 +770,17 @@ Ext.define('PetroRes.view.MainWindow', {
                         var mapPanel = 
                                 Ext.create('GeoExt.panel.Map', {
                                     id: 'bigGextMapPanel' + mapConf,
-                                    map: {allOverlays: false}
-                                    //extent: new OpenLayers.Bounds(45.00, 36.18, 55, 47.50)
-                                    //, displayProjection: new OpenLayers.Projection("EPSG:4326")
-                                    //,projection: new OpenLayers.Projection("EPSG:4326")
+                                    map: {
+                                        allOverlays: false
+                                        ,numZoomLevels: 19
+                                        //,maxResolution: 78271.516964
+                                        //,units: 'm'
+                                    }
                                     ,extent: mcfg.extent
-                                    //new OpenLayers.Bounds(
-                                    //    5082754.0816867,
-                                    //    5417407.5350582,
-                                    //    5806765.6135031,
-                                    //    5857073.3216934
-                                    //)
-                                    , displayProjection: new OpenLayers.Projection("EPSG:900913")
+                                    ,displayProjection: new OpenLayers.Projection("EPSG:900913")
                                     ,projection: new OpenLayers.Projection("EPSG:900913")
-                                    ,layers: layers,
-                                    region: "center"
+                                    ,layers: layers
+                                    ,region: "center"
                                     ,selectControl: selectControl
                                     //,items: [
                                     //    opacitySlider
@@ -1432,10 +1428,11 @@ Ext.define('PetroRes.view.MainWindow', {
                                         handler: function (){
                                             
                                             var conf =petroresConfig.layersSaver(mapPanel.map);
+                                            var encodedMapName = /*encodeURIComponent(*/mapConf/*)*/;
                                             conf = Ext.JSON.encode(conf);
                                             //console.log(conf);
                                             Ext.Ajax.request({
-                                                url: 'form/maps/' + (mapConf===''?petroresConfig.defaultMap:mapConf + '.json'),
+                                                url: 'form/maps/' + (mapConf===''?petroresConfig.defaultMap:encodedMapName + '.json'),
                                                 method: 'PUT',
                                                 jsonData: conf,
                                                 success: function(){
@@ -1459,6 +1456,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                             Ext.Msg.prompt('Save As', 'Enter Map Name'
                                             , function(btn, text){
                                                 if(btn==='ok'){
+                                                    var textNoEnc = text;
+                                                    if(text!='')text = /*encodeURIComponent(*/textNoEnc/*)*/;
                                                     var conf =petroresConfig.layersSaver(mapPanel.map);
                                                     conf = Ext.JSON.encode(conf);
                                                     //console.log(conf);
@@ -1467,10 +1466,10 @@ Ext.define('PetroRes.view.MainWindow', {
                                                         method: 'PUT',
                                                         jsonData: conf,
                                                         success: function(){
-                                                            petroresConfig.mapConfigs[(text===''?petroresConfig.defaultMap:text)] = Ext.JSON.decode(conf);
+                                                            petroresConfig.mapConfigs[(text===''?petroresConfig.defaultMap:textNoEnc)] = Ext.JSON.decode(conf);
                                                             var menuMaps = Ext.getCmp('mapMenus');
-                                                            menuMaps.items.clear();
-                                                            menuMaps.items.addAll(petroresConfig.getMapMenus());
+                                                            menuMaps.removeAll();
+                                                            menuMaps.add(petroresConfig.getMapMenus());
                                                             Ext.Msg.alert('Status', 'Map configuration saved successfully');
                                                         },
                                                         failure: function(){

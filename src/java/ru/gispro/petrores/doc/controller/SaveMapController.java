@@ -26,6 +26,8 @@ public class SaveMapController {
     @RequestMapping(value = "/{name:.*}", method = RequestMethod.GET)
     public void get(@PathVariable("name") String name, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         resp.setContentType("application/xml");
+        name = new String(name.getBytes("ISO-8859-1"), "UTF-8");
+        
         
         String startPath = req.getSession().getServletContext().getInitParameter("mapsPath");
         if(!startPath.startsWith("/")){
@@ -50,6 +52,7 @@ public class SaveMapController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public void getAll(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         resp.setContentType("text/plain");
+        resp.setCharacterEncoding("UTF-8");
         
         String startPath = req.getSession().getServletContext().getInitParameter("mapsPath");
         if(!startPath.startsWith("/")){
@@ -82,6 +85,8 @@ public class SaveMapController {
 */
         try {
             resp.setContentType("application/xml");
+            
+            name = new String(name.getBytes("ISO-8859-1"), "UTF-8");
 
             String startPath = req.getSession().getServletContext().getInitParameter("mapsPath");
             if(!startPath.startsWith("/")){

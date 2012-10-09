@@ -888,6 +888,7 @@ String sLogin = request.getRemoteUser(),
                     var mcs = res.responseText.split(/\r?\n/);
                     for(var mc in mcs){
                         var mpcfg = mcs[mc];
+                        mpcfg = /*decodeURIComponent(*/mpcfg/*)*/;
                         if(mpcfg.length>0){
                             Ext.Ajax.request({
                                 url: 'form/maps/' + mpcfg,

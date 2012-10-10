@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.gispro.petrores.doc.entities.File;
+import ru.gispro.petrores.doc.util.UserSessions;
 
 /**
  *
@@ -33,24 +34,40 @@ public class GetFileController {
     @RequestMapping(method = RequestMethod.GET)
     @Transactional
     public void get(@PathVariable("id") Long id, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        File file = entityManager.getReference(File.class, id);
-        resp.setContentType(file.getMimeType());
-        
-        java.io.File realFile = new java.io.File(getRootPath(req), file.getPath());
-        FileInputStream fis = new FileInputStream(realFile);
-        BufferedInputStream bis = new BufferedInputStream(fis);
-        
-        BufferedOutputStream bos = new BufferedOutputStream(resp.getOutputStream());
-        int byt;
-        while((byt = bis.read())>=0){
-            bos.write(byt);
+        File file = null;
+        try {
+            file = entityManager.getReference(File.class, id);
+            resp.setContentType(file.getMimeType());
+
+            java.io.File realFile = new java.io.File(getRootPath(req), file.getPath());
+            FileInputStream fis = new FileInputStream(realFile);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+
+            BufferedOutputStream bos = new BufferedOutputStream(resp.getOutputStream());
+            int byt;
+            while((byt = bis.read())>=0){
+                bos.write(byt);
+            }
+            bos.flush();
+            UserSessions.info("ru.gispro.petrores.doc.controller.GetFileController", 
+              req.getRemoteUser(), "GET_FILE", "Get file", null,
+              true,  "Get file \""+ file.getPath()+"\""); 
+            bos.close();
+            bis.close();
+            fis.close();
         }
-        bos.flush();
-        bos.close();
-        bis.close();
-        fis.close();
-    }
-    
+        catch( Exception exc){
+            UserSessions.error("ru.gispro.petrores.doc.controller.GetFileController", 
+              req.getRemoteUser(), "GET_FILE", "Get file", null,
+              false,  "Get file "+
+                        (file == null 
+                              ? (" with id \""+ id) 
+                              : ("\""+file.getPath()))+
+                      "\" error: "+exc.toString(), exc); 
+
+            throw exc;
+        }
+    }    
     private String getRootPath(HttpServletRequest req){
         if(rootPath==null){
             rootPath = req.getSession().getServletContext().getInitParameter("documentsPath");

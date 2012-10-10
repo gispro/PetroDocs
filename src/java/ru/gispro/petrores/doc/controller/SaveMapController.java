@@ -116,7 +116,7 @@ public class SaveMapController {
         catch(Exception e){
             UserSessions.error("ru.gispro.petrores.doc.controller.SaveMapController", 
                           req.getRemoteUser(), "SAVE_PROFILE", "Save profile", null,
-                          true,  "Save profile in "+name+" error: "+e.toString(), e); 
+                          false,  "Save profile in "+name+" error: "+e.toString(), e); 
             throw e;
         }
     }

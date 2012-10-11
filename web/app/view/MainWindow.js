@@ -989,8 +989,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                             
                                             "outputFormat":"jpg",
                                             "outputFilename":"map-print111",
-                                            "mapTitle":"PetroResurs",
-                                            "comment":"PetroResurs"
+                                            "mapTitle":"Petroresurs",
+                                            "comment":"Petroresurs Map"
                                             
                                             //outputFormat:"jpg",
                                             //outputFilename:"map-print"
@@ -1342,6 +1342,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     xtype: "textfield",
                                                     name: "mapTitle", // printPage.customParams.mapTitle
                                                     fieldLabel: "Map Title",
+                                                    value: "Petroresurs",
                                                     plugins: Ext.create('GeoExt.plugins.PrintPageField', {
                                                         printPage: printPage
                                                     })
@@ -1349,6 +1350,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     xtype: "textfield",
                                                     name: "comment", // printPage.customParams.mapTitle
                                                     fieldLabel: "Map Comment",
+                                                    value: "Petroresurs Map",
                                                     plugins: Ext.create('GeoExt.plugins.PrintPageField', {
                                                         printPage: printPage
                                                     })

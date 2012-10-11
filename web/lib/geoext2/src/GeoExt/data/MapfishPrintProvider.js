@@ -610,9 +610,10 @@ Ext.define('GeoExt.data.MapfishPrintProvider', {
 
        this.scales.loadRawData(this.capabilities);
        this.dpis.loadRawData(this.capabilities);
+       this.dpis.removeAt(this.dpis.getTotalCount()-1);
        this.outputFormats.loadRawData(this.capabilities);
        this.layouts.loadRawData(this.capabilities);
-
+       
        this.setOutputFormat(this.outputFormats.getAt(0));
        this.setLayout(this.layouts.getAt(0));
        this.setDpi(this.dpis.getAt(0));

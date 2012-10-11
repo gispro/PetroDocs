@@ -1348,7 +1348,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 }, {
                                                     xtype: "textfield",
                                                     name: "comment", // printPage.customParams.mapTitle
-                                                    fieldLabel: "Map Title",
+                                                    fieldLabel: "Map Comment",
                                                     plugins: Ext.create('GeoExt.plugins.PrintPageField', {
                                                         printPage: printPage
                                                     })
@@ -1383,7 +1383,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 }, {
                                                     xtype: "combo",
                                                     displayField: "name",
-                                                    store: printProvider.formats, // printPage.scale
+                                                    store: printProvider.outputFormats, // printPage.scale
                                                     name: "outputFormat",
                                                     fieldLabel: "Format",
                                                     typeAhead: true,

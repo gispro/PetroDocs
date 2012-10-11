@@ -129,6 +129,12 @@ Ext.define('GeoExt.plugins.PrintProviderField', {
                 "dpichange": this.onProviderChange,
                 scope: this
             });
+        } else if(field.store === printProvider.outputFormats) {
+            field.setValue(printProvider.outputFormat.get(field.displayField));
+            printProvider.on({
+                "outputformatchange": this.onProviderChange,
+                scope: this
+            });
         } else if(field.initialConfig.value === undefined) {
             field.setValue(printProvider.customParams[field.name]);
         }
@@ -158,6 +164,9 @@ Ext.define('GeoExt.plugins.PrintProviderField', {
                     break;
                 case printProvider.dpis:
                     printProvider.setDpi(record);
+                    break;
+                case printProvider.outputFormats:
+                    printProvider.setOutputFormat(record);
                     break;
             }
         } else {
@@ -189,6 +198,7 @@ Ext.define('GeoExt.plugins.PrintProviderField', {
         target.un("select", this.onFieldChange, this);
         target.un("valid", this.onFieldChange, this);
         var printProvider = this.printProvider || target.ownerCt.printProvider;
+        printProvider.un("outputformatchange", this.onProviderChange, this);
         printProvider.un("layoutchange", this.onProviderChange, this);
         printProvider.un("dpichange", this.onProviderChange, this);
     }

@@ -357,7 +357,7 @@ Ext.define('GeoExt.data.MapfishPrintProvider', {
             ]
         });
 
-        this.formats = Ext.create('Ext.data.JsonStore', {
+        this.outputFormats = Ext.create('Ext.data.JsonStore', {
             proxy: {
                 type: "memory",
                 reader: {
@@ -405,6 +405,16 @@ Ext.define('GeoExt.data.MapfishPrintProvider', {
     setLayout: function(layout) {
         this.layout = layout;
         this.fireEvent("layoutchange", this, layout);
+    },
+
+    /**
+     * Sets the outputFormat for this printProvider.
+     *
+     * @param {Ext.data.Record} outputFormat the record of the outputFormat.
+     */
+    setOutputFormat: function(outputFormat) {
+        this.outputFormat = outputFormat;
+        this.fireEvent("outputformatchange", this, outputFormat);
     },
 
     /**
@@ -462,6 +472,7 @@ Ext.define('GeoExt.data.MapfishPrintProvider', {
             units: map.getUnits(),
             srs: map.baseLayer.projection.getCode(),
             layout: this.layout.get("name"),
+            outputFormat: this.outputFormat.get("name"),
             dpi: this.dpi.get("value")
         }, this.customParams);
 
@@ -599,9 +610,10 @@ Ext.define('GeoExt.data.MapfishPrintProvider', {
 
        this.scales.loadRawData(this.capabilities);
        this.dpis.loadRawData(this.capabilities);
-       this.formats.loadRawData(this.capabilities);
+       this.outputFormats.loadRawData(this.capabilities);
        this.layouts.loadRawData(this.capabilities);
 
+       this.setOutputFormat(this.outputFormats.getAt(0));
        this.setLayout(this.layouts.getAt(0));
        this.setDpi(this.dpis.getAt(0));
        this.fireEvent("loadcapabilities", this, this.capabilities);

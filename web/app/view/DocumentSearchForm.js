@@ -230,7 +230,7 @@ Ext.define('PetroRes.view.DocumentSearchForm', {
                     }, 
                     {
                         xtype: 'container',
-                        layout: 'column',
+                        //layout: 'column',
                         anchor: '100%',
                         items:[
                             {
@@ -414,7 +414,7 @@ Ext.define('PetroRes.view.DocumentSearchForm', {
 
                     {
                         xtype: 'container',
-                        layout: 'column',
+                        //layout: 'column',
                         anchor: '100%',
                         items:[
                             {
@@ -825,9 +825,9 @@ Ext.define('PetroRes.view.DocumentSearchForm', {
                         id: 'geoTypeFieldSetDSF',
                         title: 'Geo Data attributes',
                         anchor: '100%',
-                        layout: {
-                            type: 'hbox'
-                        },
+                        //layout: {
+                        //    type: 'hbox'
+                        //},
                         defaults: {
                             margins:'0 15 0 0',
                             //anchor: '100%'

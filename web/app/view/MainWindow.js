@@ -1342,11 +1342,38 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     selectOnFocus: true,
                                                     plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
                                                         printProvider: printProvider
-                                                    })
+                                                    }),
+                                                    listeners: {
+                                                        select: function(th, recs){
+                                                            var cm = Ext.getCmp('dpiPrintCombo');
+                                                            if(recs[0].data.name.indexOf('A1')>=0){
+                                                                cm.store.removeAll();
+                                                                cm.store.loadData([[72], [96]]);
+                                                                cm.setValue([96]);
+                                                            }else if(recs[0].data.name.indexOf('A2')>=0){
+                                                                cm.store.removeAll();
+                                                                cm.store.loadData([[72], [96], [150]]);
+                                                                cm.setValue([150]);
+                                                            }else {
+                                                                cm.store.removeAll();
+                                                                cm.store.loadData([[72], [96], [150], [300]]);
+                                                                cm.setValue([300]);
+                                                            }
+                                                        }
+                                                    }
                                                 }, {
                                                     xtype: "combo",
                                                     displayField: "name",
-                                                    store: printProvider.dpis, // printPage.scale
+                                                    id: 'dpiPrintCombo',
+                                                    store: Ext.create('Ext.data.ArrayStore', {
+                                                        data: [
+                                                            [72],
+                                                            [96],
+                                                            [150],
+                                                            [300]
+                                                        ],
+                                                        fields: ['name']
+                                                    }),
                                                     name: "dpi",
                                                     fieldLabel: "DPI",
                                                     typeAhead: true,
@@ -1354,9 +1381,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     forceSelection: true,
                                                     triggerAction: "all",
                                                     selectOnFocus: true,
-                                                    plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
-                                                        printProvider: printProvider
-                                                    })
+                                                    value: 96
                                                 }, {
                                                     xtype: "combo",
                                                     displayField: "name",
@@ -1368,6 +1393,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     forceSelection: true,
                                                     triggerAction: "all",
                                                     selectOnFocus: true,
+                                                    value: 'pdf',
                                                     plugins: Ext.create('GeoExt.plugins.PrintProviderField', {
                                                         printProvider: printProvider
                                                     })
@@ -1661,7 +1687,7 @@ Ext.define('PetroRes.view.MainWindow', {
                         var wnd = Ext.getCmp('MainWindow');
                         wnd.openPetroWindow('geMapWindow' + mapConf, {
                             closable: true,
-                            title: mapConf,
+                            title: mapConf===''?'Caspian Sea':mapConf,
                             maximizable: true,
                             maximized: false,
                             id: 'geMapWindow' + mapConf,

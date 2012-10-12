@@ -332,13 +332,15 @@ String sLogin = request.getRemoteUser(),
                                                         fieldLabel: 'X',
                                                         name: 'petroPointX' + vertI,
                                                         //value: vertices[vertI].x
-                                                        value: tmpVertex.lon
+                                                        value: tmpVertex.lon,
+                                                        decimalPrecision: 4
                                                     }, 
                                                     {
                                                         xtype: 'numberfield',
                                                         name: 'petroPointY' + vertI,
                                                         fieldLabel: 'Y',
-                                                        value: tmpVertex.lat
+                                                        value: tmpVertex.lat,
+                                                        decimalPrecision: 4
                                                     }
                                                 ]
                                             });

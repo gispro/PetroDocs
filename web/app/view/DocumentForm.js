@@ -332,16 +332,18 @@ Ext.define('PetroRes.view.DocumentForm', {
                 items: [                
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'Short Title',
+                        //fieldLabel: 'Short Title',
+                        fieldLabel: 'Title Rus',
                         name: 'title',
-                        maxLength: 255,
+                        maxLength: 512,
                         msgTarget: 'side',
                         allowBlank: false,
                         anchor: '100%'
                     },
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'Full Title',
+                        //fieldLabel: 'Full Title',
+                        fieldLabel: 'Title Eng',
                         name: 'fullTitle',
                         maxLength: 512,
                         msgTarget: 'side',

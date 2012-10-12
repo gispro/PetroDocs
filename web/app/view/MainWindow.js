@@ -167,6 +167,7 @@ Ext.define('PetroRes.view.MainWindow', {
                 {
                     xtype: 'menuitem',
                     text: 'Register',
+                    id: 'RegisterDocumentsMenuItem',
                     handler: function(){
                         var wnd = Ext.getCmp('MainWindow');
                         wnd.openPetroWindow('newDoc', {
@@ -194,7 +195,7 @@ Ext.define('PetroRes.view.MainWindow', {
                             title: 'Find Document',
                             maximizable: true,
                             maximized: false,
-                            width:wnd.getLayout().getElementTarget().getWidth()*0.333,
+                            width:wnd.getLayout().getElementTarget().getWidth()*0.326,
                             height:wnd.getLayout().getElementTarget().getHeight(),
                             x: 0,
                             y: 0,
@@ -483,7 +484,6 @@ Ext.define('PetroRes.view.MainWindow', {
         }:undefined
         , {
             xtype: 'button',
-            //xtype: 'menuitem',
             text: 'Help',
             handler: function(){
                 var wnd = Ext.getCmp('MainWindow');
@@ -510,7 +510,6 @@ Ext.define('PetroRes.view.MainWindow', {
                                         Ext.getCmp('helpIframe').body.dom.innerHTML= 
                                             '<iframe style="border: none;" height="100%" width="100%" src="' + b.raw.url + '"></iframe>'
                                     }
-//if(a.attributes.url) Ext.getCmp('helpIframe').body.dom.innerHTML= '<iframe style="border: none;" height="100%" width="100%" src="' + a.attributes.url + '"></iframe>'
                                 }
                             },
                             rootVisible: false,
@@ -541,6 +540,31 @@ Ext.define('PetroRes.view.MainWindow', {
                 });
             }
         }
+        
+        , {
+            xtype: 'button',
+            tooltip: 'Find Documents',
+            icon: 'images/edit-find-16-3.png',
+            handler: function(){
+                Ext.getCmp('findDocMenuItem').handler();
+            }
+        }        
+        , {
+            xtype: 'button',
+            tooltip: 'Register',
+            icon: 'images/edit.png',
+            handler: function(){
+                Ext.getCmp('RegisterDocumentsMenuItem').handler();
+            }
+        }        
+        , {
+            xtype: 'button',
+            tooltip: 'Documents Catalog',
+            icon: 'lib/ext41/resources/themes/images/default/tree/folder-open.gif',
+            handler: function(){
+                Ext.getCmp('DocumentsCatalogMenuItem').handler();
+            }
+        }        
         ]
     }
     ],
@@ -767,6 +791,7 @@ Ext.define('PetroRes.view.MainWindow', {
                         mapPanel.map.addControl(new OpenLayers.Control.MousePosition({
                             displayProjection: petroresConfig.proj4326
                         }));
+                        mapPanel.map.addControl(new OpenLayers.Control.ScaleLine());
                         
                         var store = Ext.create('Ext.data.TreeStore', {
                             model: 'GeoExt.data.LayerTreeModel',
@@ -1440,6 +1465,9 @@ Ext.define('PetroRes.view.MainWindow', {
                                                 jsonData: conf,
                                                 success: function(){
                                                     petroresConfig.mapConfigs[(mapConf===''?petroresConfig.defaultMap:mapConf)] = Ext.JSON.decode(conf);
+                                                    if(mapConf===''){
+                                                        petroresConfig.layersConfig = petroresConfig.mapConfigs[petroresConfig.defaultMap];
+                                                    }
                                                     Ext.Msg.alert('Status', 'Map configuration saved successfully');
                                                 },
                                                 failure: function(){
@@ -1470,6 +1498,9 @@ Ext.define('PetroRes.view.MainWindow', {
                                                         jsonData: conf,
                                                         success: function(){
                                                             petroresConfig.mapConfigs[(text===''?petroresConfig.defaultMap:textNoEnc)] = Ext.JSON.decode(conf);
+                                                            if(text===''){
+                                                                petroresConfig.layersConfig = petroresConfig.mapConfigs[petroresConfig.defaultMap];
+                                                            }
                                                             var menuMaps = Ext.getCmp('mapMenus');
                                                             menuMaps.removeAll();
                                                             menuMaps.add(petroresConfig.getMapMenus());

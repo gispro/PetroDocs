@@ -28,14 +28,17 @@ Ext.define('PetroRes.view.MainWindow', {
     openPetroWindows: {},
     openPetroWindow: function(handler, windowCfg){
         var me = Ext.getCmp('MainWindow');//this;// Ext.getCmp('MainWindow');
-        var body = me.getLayout().getTarget();
+        var body = me.getLayout().getElementTarget();
         Ext.applyIf(windowCfg, {
             constrain: true,
             height:body.getHeight()*0.5,
             width:body.getWidth()*0.5,
-            renderTo: body,
+            //renderTo: body,
+            draggable: true,
+            floatable: true,
             listeners: {
                 close: function(){
+                    me.remove(wnd);
                     delete me.openPetroWindows[handler];
                     return true;
                 }
@@ -44,6 +47,7 @@ Ext.define('PetroRes.view.MainWindow', {
         var wnd = me.openPetroWindows[handler] ||                         
             (me.openPetroWindows[handler] = 
             Ext.create('Ext.window.Window', windowCfg));
+        me.add(wnd);
         wnd.show();
     },
     
@@ -179,52 +183,21 @@ Ext.define('PetroRes.view.MainWindow', {
                         });
                     }
                 },
-                /*{
-                    xtype: 'menuitem',
-                    text: 'Open Document',
-                    handler: function(){
-                        var wnd = Ext.getCmp('MainWindow');
-                        var docStore = Ext.getStore('DocumentsJsonStore');
-                        
-                        docStore.load({
-                            url: 'rest/documents/'+47,
-                            callback: function(records){
-                                if(records.length < 1){
-                                    return;
-                                }
-                                var curDocRec = records[0];
-                                //console.log(curUser);
-
-                                var frm = Ext.create('PetroRes.view.DocumentFormEdit');
-                                wnd.openPetroWindow('editDoc', {
-                                    closable: true,
-                                    title: 'Edit Document',
-                                    maximizable: true,
-                                    maximized: true,
-                                    height:wnd.getHeight()*0.8,
-                                    width:wnd.getWidth()*0.8,
-                                    layout: 'fit',
-                                    items: [
-                                        frm
-                                    ]
-                                });
-                                frm.getForm().loadRecord(curDocRec);
-                            }
-                        });
-                    }
-                },*/
                 {
                     xtype: 'menuitem',
                     text: 'Find',
+                    id: 'findDocMenuItem',
                     handler: function(){
                         var wnd = Ext.getCmp('MainWindow');
                         wnd.openPetroWindow('searchDoc', {
                             closable: true,
                             title: 'Find Document',
                             maximizable: true,
-                            maximized: true,
-                            height:wnd.getHeight()*0.8,
-                            width:wnd.getWidth()*0.8,
+                            maximized: false,
+                            width:wnd.getLayout().getElementTarget().getWidth()*0.333,
+                            height:wnd.getLayout().getElementTarget().getHeight(),
+                            x: 0,
+                            y: 0,
                             layout: 'fit',
                             items: [
                                 Ext.create('PetroRes.view.DocumentSearchForm')
@@ -577,8 +550,10 @@ Ext.define('PetroRes.view.MainWindow', {
     },
     listeners:{
         show: function(){
-            Ext.getCmp('MainMapMenuItem').handler();
-            Ext.getCmp('DocumentsCatalogMenuItem').handler();
+            //Ext.getCmp('MainMapMenuItem').handler();
+            var me = this;
+            me.openMap();
+            Ext.getCmp('findDocMenuItem').handler();
         }
     }
     ,openMap: function(mapConf){
@@ -1135,7 +1110,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                             }
                                             ,{
                                                 xtype: 'menucheckitem'
-                                                ,text: 'Base Layer'
+                                                ,text: 'By Attribute'
                                                 , group: 'searchType'
                                                 , listeners: {
                                                     checkchange: function(th, checked){
@@ -1324,8 +1299,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         ]
                                     }
                                     , Ext.create('Ext.button.Button', {
-                                        tooltip: 'Download map as PDF file',
-                                        text: 'PDF',
+                                        tooltip: 'Download map in different formats',
+                                        text: 'Print',
                                         iconCls: 'petroButtonMapPdf',
                                         disabled: true,
                                         id: 'pdfButton' + mapConf,
@@ -1661,71 +1636,6 @@ Ext.define('PetroRes.view.MainWindow', {
                                             }
                                         ]
                                     }
-                                    
-                                    /*,!petroresConfig.userIsAdmin ?undefined:{
-                                        xtype: 'button',
-                                        text: 'Add Layer',
-                                        icon: 'lib/ext41/resources/themes/images/default/dd/drop-add.gif',
-                                        handler: function (){
-                                            var addLayWnd;
-                                            var form = Ext.create('Ext.form.Panel', {
-                                                layout: 'anchor',
-                                                defaults: {
-                                                    anchor: '100%',
-                                                    padding: 5
-                                                },
-                                                autoScroll: true,
-                                                items: [
-                                                    {
-                                                        xtype: 'textfield',
-                                                        fieldLabel: 'Name',
-                                                        name: 'name'
-                                                    },
-                                                    {
-                                                        xtype: 'textfield',
-                                                        fieldLabel: 'URL',
-                                                        name: 'url'
-                                                    },
-                                                    {
-                                                        xtype: 'textfield',
-                                                        fieldLabel: 'Layer(s)',
-                                                        name: 'layers'
-                                                    }
-                                                ],
-                                                buttons: [
-                                                    {
-                                                        text: 'Add',
-                                                        handler: function(){
-                                                            var attrs = form.getForm().getFieldValues(true);
-                                                            mapPanel.map.addLayer(new OpenLayers.Layer.WMS(
-                                                                attrs.name, 
-                                                                attrs.url, 
-                                                                {
-                                                                    layers: attrs.layers
-                                                                }, {
-                                                                    transitionEffect: 'resize',
-                                                                    projection: 'EPSG:900913'
-                                                                })
-                                                            );
-                                                            wnd.openPetroWindows.addLayerWnd.close();
-                                                    }
-                                                    }                                            
-                                                ]
-                                            });
-                                            addLayWnd = Ext.create('Ext.window.Window', {
-                                                closable: true,
-                                                title: 'Add WMS Layer',
-                                                maximizable: false,
-                                                maximized: false,
-                                                width: 500,
-                                                layout: 'fit',
-                                                items: [
-                                                    form
-                                                ]
-                                            });
-                                            addLayWnd.show();
-                                        }
-                                    }*/
                                     ,!petroresConfig.userIsAdmin ?undefined:{
                                         xtype: 'button',
                                         text: 'Remove Layer',
@@ -1753,10 +1663,12 @@ Ext.define('PetroRes.view.MainWindow', {
                             closable: true,
                             title: mapConf,
                             maximizable: true,
-                            maximized: true,
+                            maximized: false,
                             id: 'geMapWindow' + mapConf,
-                            height:wnd.getHeight()*0.8,
-                            width:wnd.getWidth()*0.8,
+                            height:wnd.getLayout().getRenderTarget().getHeight(),
+                            width:wnd.getLayout().getRenderTarget().getWidth()*0.666,
+                            y: 0,
+                            x: wnd.getLayout().getRenderTarget().getWidth()*0.334,
                             layout: 'border',
                             selectedFeatures: {},
                             items: [

@@ -22,11 +22,10 @@ String sLogin = request.getRemoteUser(),
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <!--<link rel="stylesheet" type="text/css" href="lib/ext4/resources/css/ext-all.css"/>-->
         <link rel="stylesheet" type="text/css" href="lib/ext41/resources/css/ext-all.css"/>
         <link rel="stylesheet" type="text/css"  href="css/buttons.css"/>
-        <!--<script src="lib/openlayers/OpenLayers.js"></script>-->
-        <script src="lib/openlayers212/OpenLayers.debug.js"></script>
+        <!--<script src="lib/openlayers212/OpenLayers.debug.js"></script>-->
+        <script src="lib/openlayers212/OpenLayers.js"></script>
         <script src="lib/proj4js-combined.js"></script>
         <script type="text/javascript">
             var petrodoc_sid = '<%=sSessionID%>';
@@ -62,68 +61,10 @@ String sLogin = request.getRemoteUser(),
                 }
             }
             %>
-            //petroresConfig.vectorWfs = 'http://localhost/geoserver/wfs';
             petroresConfig.vectorWfs = '${initParam.vectorWfs}';
-            //petroresConfig.vectorWfs = 'http://playground:9000/geoserver/wfs';
-            //petroresConfig.vectorWfs = 'http://oceanviewer.ru/geoserver/wfs';
             petroresConfig.domainRootId = ${initParam.domainRootId};
-            //petroresConfig.saveStrategy = petroresConfig.makeSaveStrategy();
-            //petroresConfig.saveStrategy.events.register("success", '', function(){alert('Success')});
-            //petroresConfig.saveStrategy.events.register("failure", '', function(){alert('Failure')});  
             
             petroresConfig.defaultMap = '${initParam.defaultMap}';
-            
-            /*
-             * Creates from a structure like
-             * 
-             * {
-             *  petroType: OpenLayers.Layer.Vector,
-             *  params: [
-             *      'Seismic',
-             *      {
-             *          a: 'b'
-             *      }
-             *  ]
-             * }
-             *
-             *
-             */
-            
-            petroresConfig.create = function(config){
-                if(Ext.isObject(config) || Ext.isArray(config)){
-                    //var ret = config;// Ext.isArray(config)?[]:{};
-                    for(var attr in config){
-                        if(attr!='petroType'){
-                            var curAttr = config[attr];
-                            curAttr = petroresConfig.create(curAttr);
-                            config[attr] = curAttr;
-                        }else{
-                            config.petroType = curAttr;
-                        }
-                    }
-
-                    if(config.petroType){
-                        //var clazz = window;
-                        //var classPath = config.petroType.split('.');
-                        //for(var curClass in classPath){
-                        //    clazz = clazz[classPath[curClass]];
-                        //}
-                        function newConstr(){
-                            //return clazz.apply(this, config.params);
-                            return config.petroType.apply(this, config.params);
-                        }
-                        newConstr.prototype = config.petroType.prototype;
-                        return new newConstr();
-                        
-                    }else{
-                        return config;
-                    }
-                }else{
-                    return config;
-                }
-            }
-            
-            
             
             //set up the modification tools
             petroresConfig.DeleteFeature = OpenLayers.Class(OpenLayers.Control, {
@@ -858,14 +799,11 @@ String sLogin = request.getRemoteUser(),
         //console.log('');
         
         </script>
-        <!--<script type="text/javascript" src="lib/ext4/ext-all-debug.js"></script>-->
-        <script type="text/javascript" src="lib/ext41/ext-all-debug.js"></script>
+        <!--<script type="text/javascript" src="lib/ext41/ext-all-debug.js"></script>-->
+        <script type="text/javascript" src="lib/ext41/ext-all.js"></script>
         <script type="text/javascript" src="lib/boxselect/Boxselect.js"></script>
-        <!--<script type="text/javascript" src="/print/pdf/info.json?var=printCapabilities"></script>-->
         <script type="text/javascript" src="config/helpInfo.js"></script>
-        <!--<script type="text/javascript" src="config/layers.js"></script>-->
         <link rel="stylesheet" type="text/css" href="lib/boxselect/boxselect.css"/>
-        <!--<script type="text/javascript" src="lib/geoext2/src/GeoExt/GeoExt.js"></script>-->
         <script type="text/javascript">
             
             setInterval(function(){
@@ -905,13 +843,6 @@ String sLogin = request.getRemoteUser(),
                     }
                 }
             });
-
-            
-
-            //var mapfish = {
-            //    SERVER_BASE_URL: 'http://oceanviewer.ru/print/pdf/'
-           //}
-            
         </script>
         <script type="text/javascript" src="app.js"></script>
         <title>Petroresource Documents System</title>

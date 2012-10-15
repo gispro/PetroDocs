@@ -39,13 +39,13 @@ Ext.define('PetroRes.view.DomainDocumentsGridPanel', {
                 {
                     xtype: 'gridcolumn',
                     dataIndex: 'title',
-                    flex: 10,
-                    text: 'Short Title'
+                    flex: 7,
+                    text: 'Title Rus'
                 }, {
                     xtype: 'gridcolumn',
                     dataIndex: 'fullTitle',
-                    flex: 5,
-                    text: 'Full Title'
+                    flex: 7,
+                    text: 'Title Eng'
                 }, {
                     xtype: 'gridcolumn',
                     dataIndex: 'number',

@@ -17,12 +17,12 @@ Ext.define('PetroRes.view.DocumentsGridPanel', {
                 {
                     xtype: 'gridcolumn',
                     dataIndex: 'title',
-                    flex: 10,
+                    flex: 7,
                     text: 'Title Rus'
                 }, {
                     xtype: 'gridcolumn',
                     dataIndex: 'fullTitle',
-                    flex: 5,
+                    flex: 7,
                     text: 'Title Eng'
                 }, {
                     xtype: 'gridcolumn',

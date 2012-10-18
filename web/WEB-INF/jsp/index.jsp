@@ -740,13 +740,15 @@ String sLogin = request.getRemoteUser(),
             ];
             
             for(var mconf in petroresConfig.mapConfigs){
-                ret.push(
-                    Ext.create('Ext.menu.Item', {
-                        text: mconf,
-                        handler: function(){
-                            Ext.getCmp('MainWindow').openMap(this.text);
-                        }
-                    }));
+                if(mconf!='main'){
+                    ret.push(
+                        Ext.create('Ext.menu.Item', {
+                            text: mconf,
+                            handler: function(){
+                                Ext.getCmp('MainWindow').openMap(this.text);
+                            }
+                        }));
+                }
             }
             
             
@@ -820,7 +822,15 @@ String sLogin = request.getRemoteUser(),
                     petroresConfig.layersConfig = Ext.JSON.decode(res.responseText);
                 }
             });
-
+            
+            petroresConfig.windowsXY = Ext.util.Cookies.get('windowsXY');
+            if(!petroresConfig.windowsXY || petroresConfig.windowsXY==='[object Object]'){
+                petroresConfig.windowsXY = {};
+            }else{
+                petroresConfig.windowsXY = decodeURI(petroresConfig.windowsXY);
+                petroresConfig.windowsXY = Ext.JSON.decode(petroresConfig.windowsXY);
+            }
+            
             // loads maps list
             petroresConfig.mapConfigs = {};
             Ext.Ajax.request({

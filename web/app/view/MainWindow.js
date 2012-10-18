@@ -26,18 +26,26 @@ Ext.define('PetroRes.view.MainWindow', {
     id: 'MainWindow',
     
     openPetroWindows: {},
+    openPetroWindowsXYcache: petroresConfig.windowsXY,
     openPetroWindow: function(handler, windowCfg){
         var me = Ext.getCmp('MainWindow');//this;// Ext.getCmp('MainWindow');
         var body = me.getLayout().getElementTarget();
+        if(me.openPetroWindowsXYcache[handler]){
+            Ext.apply(windowCfg, me.openPetroWindowsXYcache[handler]);
+        }
         Ext.applyIf(windowCfg, {
             constrain: true,
-            height:body.getHeight()*0.5,
-            width:body.getWidth()*0.5,
+            height: (me.openPetroWindowsXYcache[handler]?me.openPetroWindowsXYcache[handler].height:body.getHeight()*0.5),
+            width: (me.openPetroWindowsXYcache[handler]?me.openPetroWindowsXYcache[handler].width:body.getWidth()*0.5),
             //renderTo: body,
             draggable: true,
             floatable: true,
+            x: (me.openPetroWindowsXYcache[handler]?me.openPetroWindowsXYcache[handler].x:undefined),
+            y: (me.openPetroWindowsXYcache[handler]?me.openPetroWindowsXYcache[handler].y:undefined),
             listeners: {
                 close: function(){
+                    me.openPetroWindowsXYcache[handler] = {x: wnd.x, y: wnd.y, width: wnd.width, height: wnd.height};
+                    Ext.util.Cookies.set('windowsXY', encodeURI(Ext.JSON.encode(me.openPetroWindowsXYcache)));
                     me.remove(wnd);
                     delete me.openPetroWindows[handler];
                     return true;
@@ -652,9 +660,9 @@ Ext.define('PetroRes.view.MainWindow', {
                                             title: 'Object Attributes',
                                             layout: 'fit',
                                             height: 300,
-                                            width: 300,
-                                            x: pix.x,
-                                            y: pix.y,
+                                            width: 250,
+                                            //x: pix.x,
+                                            //y: pix.y,
                                             defaults:{
                                                 anchor: '100%'
                                             },
@@ -750,6 +758,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                             }]
                                         });
                                         selectControlHover.baloon.show();
+                                        var cont = mapPanel.getLayout().getElementTarget();
+                                        selectControlHover.baloon.alignTo(cont, 'tr-tr?');
                                     }
                                     
                                 });

@@ -1,3 +1,4 @@
+<%@page import="waffle.servlet.WindowsPrincipal"%>
 <%@page import="org.apache.log4j.Level"%>
 <%@page import="org.apache.log4j.Priority"%>
 <%@page import="java.util.Enumeration"%>
@@ -33,34 +34,35 @@ String sLogin = request.getRemoteUser(),
             Proj4js.defs["EPSG:32639"] = "+proj=utm +zone=39 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
             petroresConfig = {};
             petroresConfig.pathFolderSeparator = '\<%=File.separator%>';
-            petroresConfig.loggedInAs = '${pageContext.request.userPrincipal.name}';
-            petroresConfig.userRoles = [
-            <c:forEach items="${pageContext.request.userPrincipal.roles}" varStatus="varSt" var="rol">
-                <c:if test="${varSt.count>1}">,</c:if>'${rol}'
-        </c:forEach>
-            ];
+            petroresConfig.loggedInAs = '<%=request.getUserPrincipal().getName().replace("\\", "\\\\")%>'
+            var slashPos = petroresConfig.loggedInAs.lastIndexOf('\\');
+            if(petroresConfig.loggedInAs && slashPos > 0){
+                petroresConfig.loggedInAs = petroresConfig.loggedInAs.substring(slashPos+1);
+            }
+        <c:if test="${!empty pageContext.request.userPrincipal.groups[initParam.roleAdmin]}">
+            petroresConfig.userIsAdmin = true;
+        </c:if>
+        <c:if test="${!empty pageContext.request.userPrincipal.groups[initParam.roleEditor]}">
+            petroresConfig.userIsEditor = true;
+        </c:if>
+        <c:if test="${!empty pageContext.request.userPrincipal.groups[initParam.roleReader]}">
+            petroresConfig.userIsReader = true;
+        </c:if>
             
-         <c:set var="roles" scope="page" value="${pageContext.request.userPrincipal.roles}"/>
-            <%
-            for(String role: (String[])pageContext.getAttribute("roles")){
-                if(role.equalsIgnoreCase((String)application.getInitParameter("roleReader"))){
-                    out.print("petroresConfig.userIsReader = true; //" + role + "\n");
-                    break;
-                }
-            }
-            for(String role: (String[])pageContext.getAttribute("roles")){
-                if(role.equalsIgnoreCase((String)application.getInitParameter("roleEditor"))){
-                    out.print("petroresConfig.userIsEditor = true; //" + role + "\n");
-                    break;
-                }
-            }
-            for(String role: (String[])pageContext.getAttribute("roles")){
-                if(role.equalsIgnoreCase((String)application.getInitParameter("roleAdmin"))){
-                    out.print("petroresConfig.userIsAdmin = true; //" + role + "\n");
-                    break;
-                }
-            }
-            %>
+            //petroresConfig.userRoles = [
+            //c:forEach items=" $ {pageContext.request.userPrincipal.roles}" varStatus="varSt" var="rol">
+            //    c:if test="$ {varSt.count>1}">,c:if>'$ {rol}'
+            //c:forEach>
+            //];
+            
+            // principal: ${pageContext.request.userPrincipal}
+            // roles string: ${pageContext.request.userPrincipal.rolesString}
+            // groups map: 
+           <c:forEach items="${pageContext.request.userPrincipal.groups}" var="entry">
+            // key: ${entry.key}; value: ${entry.value}
+            // acc details: name: ${entry.value.name}; fqn: ${entry.value.fqn}
+           </c:forEach>
+            
             petroresConfig.vectorWfs = '${initParam.vectorWfs}';
             petroresConfig.domainRootId = ${initParam.domainRootId};
             
@@ -97,7 +99,6 @@ String sLogin = request.getRemoteUser(),
             petroresConfig.proj4326 = new OpenLayers.Projection('EPSG:4326');
             petroresConfig.proj32639 = new OpenLayers.Projection('EPSG:32639');
             petroresConfig.projGoog = new OpenLayers.Projection('EPSG:3857');//900913');
-            petroresConfig.mapfishUrl = '${initParam.mapfishUrl}'
             petroresConfig.showFeatureViewer = function(layer, features){
                             var wnd = Ext.getCmp('MainWindow');
                             for(var featNum in features){

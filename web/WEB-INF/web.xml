@@ -26,6 +26,11 @@
         <!--<param-value>/geoserver/wfs</param-value>-->
     </context-param>
     <context-param>
+        <param-name>mapfishUrl</param-name>
+        <param-value>form/proxy?url=http://oceanviewer.ru/print/pdf</param-value>
+        <!--<param-value>/print/pdf</param-value>-->
+    </context-param>
+    <context-param>
         <param-name>mapsPath</param-name>
         <param-value>WEB-INF/maps/</param-value>
     </context-param>

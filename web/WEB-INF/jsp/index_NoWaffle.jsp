@@ -97,7 +97,6 @@ String sLogin = request.getRemoteUser(),
             petroresConfig.proj4326 = new OpenLayers.Projection('EPSG:4326');
             petroresConfig.proj32639 = new OpenLayers.Projection('EPSG:32639');
             petroresConfig.projGoog = new OpenLayers.Projection('EPSG:3857');//900913');
-            petroresConfig.mapfishUrl = '${initParam.mapfishUrl}'
             petroresConfig.showFeatureViewer = function(layer, features){
                             var wnd = Ext.getCmp('MainWindow');
                             for(var featNum in features){

@@ -508,15 +508,15 @@
         }
     }],
     "baseLayers":[{
-        "label":"sdljfh sd",
-        "url":"http://oceanviewer.ru/resources/ru_hydrometcentre_116/wms",
+        "label":"Russia",
+        "url":"http://maps.rosreestr.ru/ArcGIS/services/BaseMaps/BaseMap/MapServer/WMSServer",
         "visibility":true,
         "params":{
-            "layers":"ru_hydrometcentre_116:ru_hydrometcentre_116_5_p0578_i_pol"
+            "layers":"0"
         },
         "options":{
             "transitionEffect":"resize",
-            "projection":"EPSG:900913"
+            "projection":"EPSG:3857"
         }
     },{
         "label":"OSM",
@@ -551,6 +551,17 @@
             "transitionEffect":"resize",
             "projection":"EPSG:900913"
         }
+    },{
+        "label":"sdljfh sd",
+        "url":"http://oceanviewer.ru/resources/ru_hydrometcentre_116/wms",
+        "visibility":false,
+        "params":{
+            "layers":"ru_hydrometcentre_116:ru_hydrometcentre_116_5_p0578_i_pol"
+        },
+        "options":{
+            "transitionEffect":"resize",
+            "projection":"EPSG:900913"
+        }
     }],
-    "extent":[5069396.7109958,4934382.8441343,5927937.4125754,6419095.6813389]
+    "extent":[4698829.9979209,4792515.7196567,6298504.1256503,6556070.8360067]
 }

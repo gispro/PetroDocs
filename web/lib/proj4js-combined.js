@@ -1048,6 +1048,7 @@ Proj4js.defs['EPSG:3785'] = Proj4js.defs['EPSG:3875'];  //maintain backward comp
 Proj4js.defs['GOOGLE'] = Proj4js.defs['EPSG:3875'];
 Proj4js.defs['EPSG:900913'] = Proj4js.defs['EPSG:3875'];
 Proj4js.defs['EPSG:102113'] = Proj4js.defs['EPSG:3875'];
+Proj4js.defs['EPSG:3857'] = Proj4js.defs['EPSG:3875'];
 
 Proj4js.common = {
   PI : 3.141592653589793238, //Math.PI,
@@ -2978,9 +2979,9 @@ Proj4js.Proj.krovak = {
 		if (!this.k0) {
 			this.k0 = 0.9999;
 		}
-		this.s45 = 0.785398163397448;    /* 45° */
+		this.s45 = 0.785398163397448;    /* 45ï¿½ */
 		this.s90 = 2 * this.s45;
-		this.fi0 = this.lat0;    /* Latitude of projection centre 49° 30' */
+		this.fi0 = this.lat0;    /* Latitude of projection centre 49ï¿½ 30' */
       		/*  Ellipsoid Bessel 1841 a = 6377397.155m 1/f = 299.1528128,
       					 e2=0.006674372230614;
 		 */
@@ -2993,7 +2994,7 @@ Proj4js.Proj.krovak = {
 		this.k = Math.tan( this.u0 / 2. + this.s45) / Math.pow  (Math.tan(this.fi0 / 2. + this.s45) , this.alfa) * this.g;
 		this.k1 = this.k0;
 		this.n0 = this.a * Math.sqrt(1. - this.e2) / (1. - this.e2 * Math.pow(Math.sin(this.fi0), 2));
-		this.s0 = 1.37008346281555;       /* Latitude of pseudo standard parallel 78° 30'00" N */
+		this.s0 = 1.37008346281555;       /* Latitude of pseudo standard parallel 78ï¿½ 30'00" N */
 		this.n = Math.sin(this.s0);
 		this.ro0 = this.k1 * this.n0 / Math.tan(this.s0);
 		this.ad = this.s90 - this.uq;

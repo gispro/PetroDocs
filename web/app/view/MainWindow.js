@@ -776,8 +776,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                         //,units: 'm'
                                     }
                                     ,extent: mcfg.extent
-                                    ,displayProjection: new OpenLayers.Projection("EPSG:900913")
-                                    ,projection: new OpenLayers.Projection("EPSG:900913")
+                                    ,displayProjection: petroresConfig.projGoog // new OpenLayers.Projection("EPSG:900913")
+                                    ,projection: petroresConfig.projGoog //new OpenLayers.Projection("EPSG:900913")
                                     ,layers: layers
                                     ,region: "center"
                                     ,selectControl: selectControl
@@ -977,7 +977,7 @@ Ext.define('PetroRes.view.MainWindow', {
                         
                         var printPage;
                         var printProvider = Ext.create('GeoExt.data.MapfishPrintProvider', {
-                            url: "form/proxy?url=http://oceanviewer.ru/print/pdf"
+                            url: petroresConfig.mapfishUrl// "form/proxy?url=http://oceanviewer.ru/print/pdf"
                             ,method: 'POST'
                             //capabilities: printCapabilities
                             ,autoLoad: true
@@ -1561,7 +1561,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                                             layers: attrs.layers
                                                                         }, {
                                                                             transitionEffect: 'resize',
-                                                                            projection: 'EPSG:900913'
+                                                                            projection: petroresConfig.projGoog//'EPSG:900913'
                                                                         })
                                                                     );
                                                                     addLayWnd.close();

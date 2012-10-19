@@ -632,7 +632,7 @@ Ext.define('PetroRes.view.DocumentFormEdit', {
                                         maxLength: 50,
                                         name: 'number',
                                         msgTarget: 'side',
-                                        allowBlank: false
+                                        allowBlank: true
                                     },
                                     {
                                         xtype: 'textfield',

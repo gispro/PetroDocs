@@ -45,7 +45,6 @@ public class Document implements Serializable {
     @Basic(optional = false)
     @Column(name = "year")
     private int year;
-    @Basic(optional = false)
     @Column(name = "number")
     private String number;
     @Column(name = "archiveNumber")

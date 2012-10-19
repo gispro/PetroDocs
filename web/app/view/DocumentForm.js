@@ -434,7 +434,7 @@ Ext.define('PetroRes.view.DocumentForm', {
                                         maxLength: 50,
                                         name: 'number',
                                         msgTarget: 'side',
-                                        allowBlank: false
+                                        allowBlank: true
                                     },
                                     {
                                         xtype: 'textfield',

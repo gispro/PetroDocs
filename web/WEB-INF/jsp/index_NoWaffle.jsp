@@ -30,6 +30,7 @@ String sLogin = request.getRemoteUser(),
         <script type="text/javascript">
             var petrodoc_sid = '<%=sSessionID%>';
             OpenLayers.ProxyHost= "form/proxy?url=";
+            OpenLayers.IMAGE_RELOAD_ATTEMPTS=3;
             Proj4js.defs["EPSG:32639"] = "+proj=utm +zone=39 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
             petroresConfig = {};
             petroresConfig.pathFolderSeparator = '\<%=File.separator%>';
@@ -186,6 +187,10 @@ String sLogin = request.getRemoteUser(),
                                         var oneFieldSearch = attrs.OneFieldSearch;
                                         delete attrs.OneFieldSearch;
                                         
+                                        var bounds = new OpenLayers.Bounds();
+                                        var foundSome = false;
+                                        
+                                        
                                         bigLoop:
                                         for(var featr in layer.features){
                                             if(oneFieldSearch){
@@ -196,6 +201,8 @@ String sLogin = request.getRemoteUser(),
                                                     }
                                                     if(comp.indexOf(oneFieldSearch)>=0){
                                                         selectControl.select(layer.features[featr]);
+                                                        bounds.extend(layer.features[featr].geometry.getBounds());
+                                                        foundSome = true;
                                                         continue bigLoop;
                                                     }
                                                 }
@@ -215,9 +222,15 @@ String sLogin = request.getRemoteUser(),
                                                         continue bigLoop;
                                                     }
                                                 }
-                                                if(reallyDo)
+                                                if(reallyDo){
                                                     selectControl.select(layer.features[featr]);
+                                                    bounds.extend(layer.features[featr].geometry.getBounds());
+                                                    foundSome = true;
+                                                }
                                             }
+                                        }
+                                        if(foundSome){
+                                            layer.map.zoomToExtent(bounds);
                                         }
                                         
                                         wnd.openPetroWindows.attrWnd.close();
@@ -653,7 +666,7 @@ String sLogin = request.getRemoteUser(),
                         visibility: layer.visibility,
                         defaultLabelField: layer.defaultLabelField,
                         defaultIdField: 'OBJECTID',
-                        strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
+                        strategies: [new OpenLayers.Strategy.Fixed(), petroresConfig.makeSaveStrategy()],
                         protocol: new OpenLayers.Protocol.WFS({
                             url: petroresConfig.vectorWfs,
                             featureType: layer.featureType,
@@ -740,13 +753,15 @@ String sLogin = request.getRemoteUser(),
             ];
             
             for(var mconf in petroresConfig.mapConfigs){
-                ret.push(
-                    Ext.create('Ext.menu.Item', {
-                        text: mconf,
-                        handler: function(){
-                            Ext.getCmp('MainWindow').openMap(this.text);
-                        }
-                    }));
+                if(mconf!='main'){
+                    ret.push(
+                        Ext.create('Ext.menu.Item', {
+                            text: mconf,
+                            handler: function(){
+                                Ext.getCmp('MainWindow').openMap(this.text);
+                            }
+                        }));
+                }
             }
             
             
@@ -820,7 +835,18 @@ String sLogin = request.getRemoteUser(),
                     petroresConfig.layersConfig = Ext.JSON.decode(res.responseText);
                 }
             });
-
+            
+            petroresConfig.windowsXY = Ext.util.Cookies.get('windowsXY');
+            if(!petroresConfig.windowsXY || petroresConfig.windowsXY==='[object Object]'){
+                petroresConfig.windowsXY = {};
+            }else{
+                petroresConfig.windowsXY = decodeURI(petroresConfig.windowsXY);
+                petroresConfig.windowsXY = Ext.JSON.decode(petroresConfig.windowsXY, true);
+                if(!petroresConfig.windowsXY){
+                    petroresConfig.windowsXY = {};
+                }
+            }
+            
             // loads maps list
             petroresConfig.mapConfigs = {};
             Ext.Ajax.request({

@@ -25,6 +25,11 @@ petroresConfig.helpInfo = [
                 url:"docs/3.1.1.html",
                 id:"page-3.1.1",
                 leaf: true
+              }, {
+                text:"Регистрация каталога файлов",
+                url:"docs/3.1.2.html",
+                id:"page-3.1.2",
+                leaf: true
               }]
         },
 		{

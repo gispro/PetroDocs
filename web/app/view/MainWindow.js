@@ -45,10 +45,24 @@ Ext.define('PetroRes.view.MainWindow', {
             listeners: {
                 close: function(){
                     me.openPetroWindowsXYcache[handler] = {x: wnd.x, y: wnd.y, width: wnd.width, height: wnd.height};
-                    Ext.util.Cookies.set('windowsXY', encodeURI(Ext.JSON.encode(me.openPetroWindowsXYcache)));
+                    var ddd = new Date();
+                    ddd = new Date(ddd.getTime() + 365 * 24 * 60 * 60 * 1000);
+                    Ext.util.Cookies.set('windowsXY', encodeURI(Ext.JSON.encode(me.openPetroWindowsXYcache)), ddd);
                     me.remove(wnd);
                     delete me.openPetroWindows[handler];
                     return true;
+                },
+                move: function(){
+                    me.openPetroWindowsXYcache[handler] = {x: wnd.x, y: wnd.y, width: wnd.width, height: wnd.height};
+                    var ddd = new Date();
+                    ddd = new Date(ddd.getTime() + 365 * 24 * 60 * 60 * 1000);
+                    Ext.util.Cookies.set('windowsXY', encodeURI(Ext.JSON.encode(me.openPetroWindowsXYcache)), ddd);
+                },
+                resize: function(){
+                    me.openPetroWindowsXYcache[handler] = {x: wnd.x, y: wnd.y, width: wnd.width, height: wnd.height};
+                    var ddd = new Date();
+                    ddd = new Date(ddd.getTime() + 365 * 24 * 60 * 60 * 1000);
+                    Ext.util.Cookies.set('windowsXY', encodeURI(Ext.JSON.encode(me.openPetroWindowsXYcache)), ddd);
                 }
             }
         });
@@ -1120,6 +1134,9 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     , function(btn, text){
                                                         text = text.toLowerCase();
                                                         if(btn=='ok'){
+                                                            
+                                                            var bounds = new OpenLayers.Bounds();
+                                                            var foundSome = false;
                                                             for(var lay in layers){
                                                                 var layer = layers[lay];
                                                                 if(!layer.features)
@@ -1134,11 +1151,17 @@ Ext.define('PetroRes.view.MainWindow', {
                                                                         }
                                                                         if(comp.indexOf(text)>=0){
                                                                             selectControl.select(layer.features[featr]);
+                                                                            bounds.extend(layer.features[featr].geometry.getBounds());
+                                                                            foundSome = true;
                                                                             continue midLoop;
                                                                         }
                                                                     } 
                                                                 }
                                                             }
+                                                            if(foundSome){
+                                                                layers[0].map.zoomToExtent(bounds);
+                                                            }
+                                                                
                                                         }
                                                     });
                                                 }
@@ -1646,7 +1669,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                                         visibility: true,
                                                                         defaultLabelField: 'NAME',
                                                                         defaultIdField: 'OBJECTID',
-                                                                        strategies: [new OpenLayers.Strategy.BBOX(), petroresConfig.makeSaveStrategy()],
+                                                                        strategies: [new OpenLayers.Strategy.Fixed(), petroresConfig.makeSaveStrategy()],
                                                                         protocol: new OpenLayers.Protocol.WFS({
                                                                             url: petroresConfig.vectorWfs,
                                                                             featureType: attrs.layer,

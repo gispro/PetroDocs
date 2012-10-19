@@ -43295,6 +43295,7 @@ OpenLayers.Strategy.Fixed = OpenLayers.Class(OpenLayers.Strategy, {
         var layer = this.layer;
         layer.destroyFeatures();
         var features = resp.features;
+        if(!mapProjection)mapProjection = layer.map.getProjectionObject();
         if (features && features.length > 0) {
             if(!mapProjection.equals(layer.projection)) {
                 var geom;

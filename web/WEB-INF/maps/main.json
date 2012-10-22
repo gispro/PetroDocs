@@ -6,7 +6,7 @@
             'typeName': 'PetroResurs:Wells',
             'vectorType': 'point',
             'opacity': .5,
-            'defaultLabelField': 'NAME'
+            'defaultLabelField': 'Name'
         },
         {
             'label': 'Licenses',
@@ -14,7 +14,7 @@
             'typeName': 'PetroResurs:Licenses',
             'vectorType': 'poly',
             'opacity': 1,
-            'defaultLabelField': 'NAME',
+            'defaultLabelField': 'Name',
             'styleMap': {
                 'default': {
                     'fillColor': '#9555d4',
@@ -36,7 +36,7 @@
             'typeName': 'PetroResurs:Structures_PRS',
             'vectorType': 'poly',
             'opacity': 1,
-            'defaultLabelField': 'NAME',
+            'defaultLabelField': 'Name',
             'styleMap': {
                 "default": {
                     'fillColor': "#ddf7d0",
@@ -59,7 +59,7 @@
             'typeName': 'PetroResurs:Seismic_2D_PRS',
             'vectorType': 'line',
             'opacity': 1,
-            'defaultLabelField': 'NAME'
+            'defaultLabelField': 'Name'
         },
         {
             'label': 'Seismic 3D',
@@ -67,14 +67,14 @@
             'typeName': 'PetroResurs:Seismic_3D_PRS',
             'vectorType': 'poly',
             'opacity': 1,
-            'defaultLabelField': 'NAME'
+            'defaultLabelField': 'Name'
         }, {
             'label': 'Ecological Limitations',
             'featureType': 'Ecological_limitations',
             'typeName': 'PetroResurs:Ecological_limitations',
             'vectorType': 'poly',
             'opacity': 1,
-            'defaultLabelField': 'NAME',
+            'defaultLabelField': 'Name',
             'visibility': false
         }, {
             'label': 'Regional Geology',
@@ -82,7 +82,7 @@
             'typeName': 'PetroResurs:Regional_Geology',
             'vectorType': 'poly',
             'opacity': 1,
-            'defaultLabelField': 'NAME',
+            'defaultLabelField': 'Name',
             'visibility': false
         }
     ],

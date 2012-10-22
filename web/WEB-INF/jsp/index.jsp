@@ -828,6 +828,7 @@ String sLogin = request.getRemoteUser(),
                 });
             }, 1000 * 60 * 10);
 
+            Ext.onReady(function(){
             // loads map config
             Ext.Ajax.request({
                 url: 'form/maps/' + petroresConfig.defaultMap,
@@ -869,6 +870,7 @@ String sLogin = request.getRemoteUser(),
                         }
                     }
                 }
+            });
             });
         </script>
         <script type="text/javascript" src="app.js"></script>

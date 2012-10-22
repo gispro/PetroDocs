@@ -64,23 +64,39 @@ Ext.define('PetroRes.store.TypesJsonStore', {
                     name: 'typeExt'
                 }
             ],
-            
+
+            copies: [],
+
             copyStore: function (){
                 var records = [];
                 var newStore = new Ext.data.Store(
                     {
                         model : me.model
-                    });
+                    }
+                );
+                me.copies.push(newStore);
                 me.each(
                     function (r)
                     {
                         records.push (r.copy());
-                    });
+                    }
+                );
 
                 newStore.loadRecords(records);
-                //newStore.filter(me.filters.getRange());
                 return newStore;
-            }            
+            },
+            
+            listeners: {
+                load: function(th, recs){
+                    for(var i in recs){
+                        recs[i] = recs[i].copy();
+                    }
+                    for(var i in me.copies){
+                        me.copies[i].loadRecords(recs);
+                    }
+                }
+            }
+            
         }, cfg)]);
     }
     

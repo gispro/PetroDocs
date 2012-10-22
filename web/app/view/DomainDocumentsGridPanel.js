@@ -126,7 +126,7 @@ Ext.define('PetroRes.view.DomainDocumentsGridPanel', {
             ],
             listeners:{
                 itemdblclick: function(ths, rec){
-                    ths.editForm(rec);
+                    me.editForm(rec);
                 }
             }
         });

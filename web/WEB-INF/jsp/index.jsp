@@ -30,7 +30,7 @@ String sLogin = request.getRemoteUser(),
         <script type="text/javascript">
             var petrodoc_sid = '<%=sSessionID%>';
             OpenLayers.ProxyHost= "form/proxy?url=";
-            OpenLayers.IMAGE_RELOAD_ATTEMPTS=3;
+            OpenLayers.IMAGE_RELOAD_ATTEMPTS=5;
             Proj4js.defs["EPSG:32639"] = "+proj=utm +zone=39 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
             petroresConfig = {};
             petroresConfig.pathFolderSeparator = '\<%=File.separator%>';

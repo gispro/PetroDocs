@@ -31,7 +31,8 @@ String sLogin = request.getRemoteUser(),
             var petrodoc_sid = '<%=sSessionID%>';
             OpenLayers.ProxyHost= "form/proxy?url=";
             OpenLayers.IMAGE_RELOAD_ATTEMPTS=5;
-            Proj4js.defs["EPSG:32639"] = "+proj=utm +zone=39 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
+            Proj4js.defs["EPSG:32639"] = "+proj=utm +zone=39 +a=6378137.0 +b=6356752.31424518 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
+            //Proj4js.defs["EPSG:4326"] = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
             petroresConfig = {};
             petroresConfig.pathFolderSeparator = '\<%=File.separator%>';
             petroresConfig.loggedInAs = '${pageContext.request.userPrincipal.name}';
@@ -288,14 +289,26 @@ String sLogin = request.getRemoteUser(),
                                                         name: 'petroPointX' + vertI,
                                                         //value: vertices[vertI].x
                                                         value: tmpVertex.lon,
-                                                        decimalPrecision: 4
+                                                        decimalPrecision: 4,
+                                                        isModifiedPS: false,
+                                                        listeners: {
+                                                            change: function(th){
+                                                                th.isModifiedPS = true;
+                                                            }
+                                                        }
                                                     }, 
                                                     {
                                                         xtype: 'numberfield',
                                                         name: 'petroPointY' + vertI,
                                                         fieldLabel: 'Y',
                                                         value: tmpVertex.lat,
-                                                        decimalPrecision: 4
+                                                        decimalPrecision: 4,
+                                                        isModifiedPS: false,
+                                                        listeners: {
+                                                            change: function(th){
+                                                                th.isModifiedPS = true;
+                                                            }
+                                                        }
                                                     }
                                                 ]
                                             });
@@ -355,8 +368,15 @@ String sLogin = request.getRemoteUser(),
                                                                 tmpVertex = 
                                                                     new OpenLayers.LonLat(tmpVerticesX[vertI], tmpVerticesY[vertI]);
                                                                 tmpVertex.transform(petroresConfig.proj4326, petroresConfig.projGoog);
-                                                                vertices[vertI].move(tmpVertex.lon - vertices[vertI].x, 
-                                                                tmpVertex.lat - vertices[vertI].y);
+                                                                if(form.getForm().findField('petroPointX' + vertI).isModifiedPS
+                                                                || form.getForm().findField('petroPointY' + vertI).isModifiedPS
+                                                                ){
+                                                                    vertices[vertI].move(tmpVertex.lon - vertices[vertI].x, 
+                                                                    tmpVertex.lat - vertices[vertI].y);
+                                                                    //console.log('MOVED');
+                                                                }else{
+                                                                    //console.log('NOT MOVED');
+                                                                }
                                                                 //vertices[vertI].move(tmpVertex);
                                                                 //vertices[vertI] = tmpVertex;
                                                             }
@@ -498,9 +518,21 @@ String sLogin = request.getRemoteUser(),
                         }
                         
                         layer.saveStrategy.save();
+                        
+                        //backHack
                         for(ft in modified){
+                                //layer.drawFeature(modified[ft]);
+                                // two
+                                modified[ft].geometry.transform(petroresConfig.projGoog, petroresConfig.proj32639);
+                                // one
+                                modified[ft].geometry.transform(petroresConfig.proj4326, petroresConfig.projGoog);
+                                
                                 layer.drawFeature(modified[ft]);
                         }
+                        
+                        //for(ft in modified){
+                        //        layer.drawFeature(modified[ft]);
+                        //}
 
                     },
                     displayClass: "olControlSaveFeatures"

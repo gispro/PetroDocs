@@ -31,7 +31,7 @@ String sLogin = request.getRemoteUser(),
         <script type="text/javascript">
             var petrodoc_sid = '<%=sSessionID%>';
             OpenLayers.ProxyHost= "form/proxy?url=";
-            OpenLayers.IMAGE_RELOAD_ATTEMPTS=3;
+            OpenLayers.IMAGE_RELOAD_ATTEMPTS=5;
             Proj4js.defs["EPSG:32639"] = "+proj=utm +zone=39 +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
             petroresConfig = {};
             petroresConfig.pathFolderSeparator = '\<%=File.separator%>';
@@ -290,14 +290,26 @@ String sLogin = request.getRemoteUser(),
                                                         name: 'petroPointX' + vertI,
                                                         //value: vertices[vertI].x
                                                         value: tmpVertex.lon,
-                                                        decimalPrecision: 4
+                                                        decimalPrecision: 4,
+                                                        isModifiedPS: false,
+                                                        listeners: {
+                                                            change: function(th){
+                                                                th.isModifiedPS = true;
+                                                            }
+                                                        }
                                                     }, 
                                                     {
                                                         xtype: 'numberfield',
                                                         name: 'petroPointY' + vertI,
                                                         fieldLabel: 'Y',
                                                         value: tmpVertex.lat,
-                                                        decimalPrecision: 4
+                                                        decimalPrecision: 4,
+                                                        isModifiedPS: false,
+                                                        listeners: {
+                                                            change: function(th){
+                                                                th.isModifiedPS = true;
+                                                    }
+                                                        }
                                                     }
                                                 ]
                                             });
@@ -357,8 +369,15 @@ String sLogin = request.getRemoteUser(),
                                                                 tmpVertex = 
                                                                     new OpenLayers.LonLat(tmpVerticesX[vertI], tmpVerticesY[vertI]);
                                                                 tmpVertex.transform(petroresConfig.proj4326, petroresConfig.projGoog);
+                                                                if(form.getForm().findField('petroPointX' + vertI).isModifiedPS
+                                                                || form.getForm().findField('petroPointY' + vertI).isModifiedPS
+                                                                ){
                                                                 vertices[vertI].move(tmpVertex.lon - vertices[vertI].x, 
                                                                 tmpVertex.lat - vertices[vertI].y);
+                                                                    //console.log('MOVED');
+                                                                }else{
+                                                                    //console.log('NOT MOVED');
+                                                                }
                                                                 //vertices[vertI].move(tmpVertex);
                                                                 //vertices[vertI] = tmpVertex;
                                                             }
@@ -500,9 +519,21 @@ String sLogin = request.getRemoteUser(),
                         }
                         
                         layer.saveStrategy.save();
+                        
+                        //backHack
                         for(ft in modified){
+                                //layer.drawFeature(modified[ft]);
+                                // two
+                                modified[ft].geometry.transform(petroresConfig.projGoog, petroresConfig.proj32639);
+                                // one
+                                modified[ft].geometry.transform(petroresConfig.proj4326, petroresConfig.projGoog);
+                                
                                 layer.drawFeature(modified[ft]);
                         }
+
+                        //for(ft in modified){
+                        //        layer.drawFeature(modified[ft]);
+                        //}
 
                     },
                     displayClass: "olControlSaveFeatures"
@@ -830,6 +861,7 @@ String sLogin = request.getRemoteUser(),
                 });
             }, 1000 * 60 * 10);
 
+            Ext.onReady(function(){
             // loads map config
             Ext.Ajax.request({
                 url: 'form/maps/' + petroresConfig.defaultMap,
@@ -871,6 +903,7 @@ String sLogin = request.getRemoteUser(),
                         }
                     }
                 }
+            });
             });
         </script>
         <script type="text/javascript" src="app.js"></script>

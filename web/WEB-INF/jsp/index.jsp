@@ -100,6 +100,12 @@ String sLogin = request.getRemoteUser(),
             petroresConfig.proj32639 = new OpenLayers.Projection('EPSG:32639');
             petroresConfig.projGoog = new OpenLayers.Projection('EPSG:3857');//900913');
             petroresConfig.mapfishUrl = '${initParam.mapfishUrl}'
+            
+            petroresConfig.defaultWfsLabelField = '${initParam.defaultWfsLabelField}' // Name
+            petroresConfig.defaultWfsIdField = '${initParam.defaultWfsIdField}' // OBJECTID
+            petroresConfig.defaultWfsFeatureNS = '${initParam.defaultWfsFeatureNS}' // http://petroresurs.com/geoportal
+            petroresConfig.defaultWfsFeatureNSShort = '${initParam.defaultWfsFeatureNSShort}' // PetroResurs
+            
             petroresConfig.showFeatureViewer = function(layer, features){
                             var wnd = Ext.getCmp('MainWindow');
                             for(var featNum in features){
@@ -626,7 +632,7 @@ String sLogin = request.getRemoteUser(),
                                 projection: layer.options.projection.projCode
                             }
                         });
-                    }else{
+                    }else if(layer.displayInLayerSwitcher == true){
                         var styleMap = Ext.JSON.encode(layer.styleMap.styles);
                         styleMap = Ext.JSON.decode(styleMap);
                         for(var stName in styleMap){
@@ -697,12 +703,12 @@ String sLogin = request.getRemoteUser(),
                         isBaseLayer: false,
                         visibility: layer.visibility,
                         defaultLabelField: layer.defaultLabelField,
-                        defaultIdField: 'OBJECTID',
+                        defaultIdField: petroresConfig.defaultWfsIdField,
                         strategies: [new OpenLayers.Strategy.Fixed(), petroresConfig.makeSaveStrategy()],
                         protocol: new OpenLayers.Protocol.WFS({
                             url: petroresConfig.vectorWfs,
                             featureType: layer.featureType,
-                            featureNS: "http://petroresurs.com/geoportal",
+                            featureNS: petroresConfig.defaultWfsFeatureNS,
                             geometryName: "GEOM"
                         }),
                         styleMap: layer.styleMap?new OpenLayers.StyleMap(layer.styleMap):undefined

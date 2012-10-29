@@ -1676,16 +1676,19 @@ Ext.define('PetroRes.view.MainWindow', {
                                                                         psLayerType: attrs.type,
                                                                         isBaseLayer: false,
                                                                         visibility: true,
-                                                                        defaultLabelField: 'NAME',
-                                                                        defaultIdField: 'OBJECTID',
+                                                                        defaultLabelField: petroresConfig.defaultWfsLabelField,
+                                                                        defaultIdField: petroresConfig.defaultWfsIdField,
                                                                         strategies: [new OpenLayers.Strategy.Fixed(), petroresConfig.makeSaveStrategy()],
                                                                         protocol: new OpenLayers.Protocol.WFS({
                                                                             url: petroresConfig.vectorWfs,
                                                                             featureType: attrs.layer,
-                                                                            featureNS: "http://petroresurs.com/geoportal",
+                                                                            featureNS: petroresConfig.defaultWfsFeatureNS,
                                                                             geometryName: "GEOM"
                                                                         })
-                                                                        ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=PetroResurs:" + attrs.layer
+                                                                        ,schema: petroresConfig.vectorWfs + 
+                                                                            "/DescribeFeatureType?version=1.1.0&typename="+
+                                                                            petroresConfig.defaultWfsFeatureNSShort+":" + 
+                                                                            attrs.layer
                                                                         ,projection: new OpenLayers.Projection("EPSG:32639")
                                                                         ,version: "1.1.0"
                                                                         , eventListeners: {
@@ -1712,7 +1715,11 @@ Ext.define('PetroRes.view.MainWindow', {
                                                                     });                                                                    
                                                                     
                                                                     mapPanel.map.addLayer(layer);
-                                                                    editableLayers.push(layer);
+                                                                    //editableLayers.push(layer);
+                                                                    editableLayers.push({
+                                                                        name: layer.name,
+                                                                        val: layer
+                                                                    });
                                                                     addOverLayWnd.close();
                                                                     
                                                                 }

@@ -52,6 +52,22 @@
         <param-value>Cert Publishers</param-value>
         <!--<param-value>MO-SUB_GIS-RW</param-value>-->
     </context-param>
+    <context-param>
+        <param-name>defaultWfsLabelField</param-name>
+        <param-value>Name</param-value>
+    </context-param>
+    <context-param>
+        <param-name>defaultWfsIdField</param-name>
+        <param-value>OBJECTID</param-value>
+    </context-param>
+    <context-param>
+        <param-name>defaultWfsFeatureNS</param-name>
+        <param-value>http://petroresurs.com/geoportal</param-value>
+    </context-param>
+    <context-param>
+        <param-name>defaultWfsFeatureNSShort</param-name>
+        <param-value>PetroResurs</param-value>
+    </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>

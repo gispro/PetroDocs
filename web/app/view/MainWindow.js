@@ -1421,7 +1421,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     }
                                                 }, {
                                                     xtype: "combo",
-                                                    displayField: "name",
+                                                    displayField: "value",
                                                     id: 'dpiPrintCombo',
                                                     store: Ext.create('Ext.data.ArrayStore', {
                                                         data: [
@@ -1430,7 +1430,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                             [150],
                                                             [300]
                                                         ],
-                                                        fields: ['name']
+                                                        fields: ['value']
                                                     }),
                                                     name: "dpi",
                                                     fieldLabel: "DPI",
@@ -1439,7 +1439,16 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     forceSelection: true,
                                                     triggerAction: "all",
                                                     selectOnFocus: true,
-                                                    value: 96
+                                                    value: 96,
+                                                    listeners: {
+                                                        afterrender: function(th){
+                                                            printProvider.setDpi(th.store.getAt(1));
+                                                        },
+                                                        select: function(th, recs){
+                                                            if(recs.length>0)
+                                                                printProvider.setDpi(recs[0]);
+                                                        }
+                                                    }
                                                 }, {
                                                     xtype: "combo",
                                                     displayField: "name",

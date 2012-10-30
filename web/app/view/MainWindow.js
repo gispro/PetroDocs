@@ -1475,7 +1475,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     }                                            
                                                 ]
                                             });
-                                            printWnd = Ext.create('Ext.window.Window', {
+                                            wnd.openPetroWindow('printCommand', {
                                                 closable: true,
                                                 title: 'Print Configuration',
                                                 maximizable: false,
@@ -1486,7 +1486,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                                     form
                                                 ]
                                             });
-                                            printWnd.show();
+                                            //printWnd.show();
                                         }
                                     }),
                                     petroresConfig.userIsAdmin ?'-':undefined, 

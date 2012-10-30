@@ -683,7 +683,7 @@ Ext.define('PetroRes.view.MainWindow', {
                                             items: [{
                                                 autoScroll: true,
                                                 xtype: 'propertygrid',
-                                                source: selected.data
+                                                source: selected.attributes
                                             }],
                                             fbar: [{
                                                 type: 'button',

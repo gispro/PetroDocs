@@ -5,6 +5,7 @@
 package ru.gispro.petrores.doc.controller;
 
 import java.io.*;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -307,9 +308,21 @@ public class CreateDocumentController{// implements ServletContextAware{
                 doc.setPlacementDate(new Date());
                 doc.setWords(w2);
                 
+                Principal up = req.getUserPrincipal();
+                String upName;
+                if(up!=null){
+                    upName = up.getName();
+                    int slashPos = upName.lastIndexOf("\\");
+                    if(slashPos>0){
+                        upName = upName.substring(slashPos+1);
+                    }
+                }else{
+                    upName = null;
+                }
+                
                 Author placer = (Author) entityManager.
                         createNamedQuery("Author.findByLogin").
-                        setParameter("login", req.getUserPrincipal().getName()).
+                        setParameter("login", upName).
                         getResultList().get(0);
                 doc.setPlacer(placer);
 
@@ -612,9 +625,21 @@ public class CreateDocumentController{// implements ServletContextAware{
                 doc.setPlacementDate(new Date());
                 doc.setWords(w2);
                 
+                Principal up = req.getUserPrincipal();
+                String upName;
+                if(up!=null){
+                    upName = up.getName();
+                    int slashPos = upName.lastIndexOf("\\");
+                    if(slashPos>0){
+                        upName = upName.substring(slashPos+1);
+                    }
+                }else{
+                    upName = null;
+                }
+                
                 Author placer = (Author) entityManager.
                         createNamedQuery("Author.findByLogin").
-                        setParameter("login", req.getUserPrincipal().getName()).
+                        setParameter("login", upName).
                         getResultList().get(0);
                 doc.setPlacer(placer);
 

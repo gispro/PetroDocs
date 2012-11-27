@@ -100,7 +100,7 @@ public class EditDocumentController{// implements ServletContextAware{
                 //String path = null;
 
                 //java.io.File realPath = null;
-                //String midPath = null;
+                String midPath = null;
 
                 //ArrayList<File> files = new ArrayList<File>(3);
                 ArrayList<Author>authors = new ArrayList<Author>(3);
@@ -140,7 +140,7 @@ public class EditDocumentController{// implements ServletContextAware{
 
                             doc.setDomain(domain);
 
-                            /*midPath = domain.getPathPart();
+                            midPath = domain.getPathPart();
                             while(domain.getParent()!=null && domain.getParent().getId()!=domain.getId()){
                                 domain = domain.getParent();
                                 midPath = domain.getPathPart() + java.io.File.separator + midPath;
@@ -148,8 +148,8 @@ public class EditDocumentController{// implements ServletContextAware{
 
                             midPath = getMidPath(midPath);
 
-                            realPath = new java.io.File(getRootPath(req) + midPath);
-                            realPath.mkdirs();*/
+                            //realPath = new java.io.File(getRootPath(req) + midPath);
+                            //realPath.mkdirs();
                         }else{
 
                             if("year".equals(name)){
@@ -359,7 +359,7 @@ public class EditDocumentController{// implements ServletContextAware{
                         getResultList().get(0);
                 doc.setPlacer(placer);
 
-                entityManager.merge(doc);
+                doc = entityManager.merge(doc);
                 entityManager.flush();
 
                 //for(File f: files){
@@ -390,6 +390,13 @@ public class EditDocumentController{// implements ServletContextAware{
                 mapper.writeTree(generator, json);
                 generator.flush();
 
+                Util.inputToOutWithIndex(
+                    req.getSession().getServletContext().getInitParameter("solrUrl"), 
+                    new ByteArrayInputStream(baos.toByteArray()), 
+                    new NullOutputStream(),
+                    "solr" + doc.getFiles().iterator().next().getPath(),
+                    "application/json");
+                
                 doc.setCondensed(baos.toString("UTF-8"));
                 entityManager.flush();
             

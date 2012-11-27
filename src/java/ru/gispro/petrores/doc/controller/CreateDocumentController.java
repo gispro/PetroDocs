@@ -98,6 +98,8 @@ public class CreateDocumentController{// implements ServletContextAware{
             if(!ServletFileUpload.isMultipartContent(req)){
                 
                 doc = new Document(); 
+                
+                String midPath = null;
 
                 ArrayList<Author>authors = new ArrayList<Author>(3);
                 ArrayList<String>directories = new ArrayList<String>(3);
@@ -122,7 +124,7 @@ public class CreateDocumentController{// implements ServletContextAware{
 
                             doc.setDomain(domain);
 
-                            /*midPath = domain.getPathPart();
+                            midPath = domain.getPathPart();
                             while(domain.getParent()!=null && domain.getParent().getId()!=domain.getId()){
                                 domain = domain.getParent();
                                 midPath = domain.getPathPart() + java.io.File.separator + midPath;
@@ -130,7 +132,7 @@ public class CreateDocumentController{// implements ServletContextAware{
 
                             midPath = getMidPath(midPath);
 
-                            realPath = new java.io.File(getRootPath(req) + midPath);
+                            /*realPath = new java.io.File(getRootPath(req) + midPath);
                             realPath.mkdirs();*/
                         }else{
 
@@ -326,7 +328,7 @@ public class CreateDocumentController{// implements ServletContextAware{
                         getResultList().get(0);
                 doc.setPlacer(placer);
 
-                entityManager.merge(doc);
+                doc = entityManager.merge(doc);
                 entityManager.flush();
 
                 //for(File f: files){
@@ -356,6 +358,13 @@ public class CreateDocumentController{// implements ServletContextAware{
                 json.put("success", true);
                 mapper.writeTree(generator, json);
                 generator.flush();
+                
+                Util.inputToOutWithIndex(
+                    req.getSession().getServletContext().getInitParameter("solrUrl"), 
+                    new ByteArrayInputStream(baos.toByteArray()), 
+                    new NullOutputStream(),
+                    "solr" + doc.getFiles().iterator().next().getPath(),
+                    "application/json");
 
                 doc.setCondensed(baos.toString("UTF-8"));
                 entityManager.flush();

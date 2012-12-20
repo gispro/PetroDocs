@@ -515,10 +515,10 @@ String sLogin = request.getRemoteUser(),
                             if(ftt.state){
                                 // what the hack?
                                 // one
-                                ftt.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
-                                // two
-                                ftt.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
-                                // profit
+//                                ftt.geometry.transform(petroresConfig.projGoog, petroresConfig.proj4326);
+//                                // two
+//                                ftt.geometry.transform(petroresConfig.proj32639, petroresConfig.projGoog);
+//                                // profit
                                 edit.selectControl.unselectAll();
                                 
                                 modified.push(ftt);
@@ -531,9 +531,9 @@ String sLogin = request.getRemoteUser(),
                         for(ft in modified){
                                 //layer.drawFeature(modified[ft]);
                                 // two
-                                modified[ft].geometry.transform(petroresConfig.projGoog, petroresConfig.proj32639);
-                                // one
-                                modified[ft].geometry.transform(petroresConfig.proj4326, petroresConfig.projGoog);
+//                                modified[ft].geometry.transform(petroresConfig.projGoog, petroresConfig.proj32639);
+//                                // one
+//                                modified[ft].geometry.transform(petroresConfig.proj4326, petroresConfig.projGoog);
                                 
                                 layer.drawFeature(modified[ft]);
                         }
@@ -715,7 +715,8 @@ String sLogin = request.getRemoteUser(),
                         }),
                         styleMap: layer.styleMap?new OpenLayers.StyleMap(layer.styleMap):undefined
                         ,schema: petroresConfig.vectorWfs + "/DescribeFeatureType?version=1.1.0&typename=" + layer.typeName
-                        ,projection: new OpenLayers.Projection("EPSG:32639")
+                        //,projection: new OpenLayers.Projection("EPSG:32639")
+                        ,projection: petroresConfig.proj4326
                         ,version: "1.1.0"
                         , eventListeners: {
                             beforefeaturesadded: function(obj){

@@ -1689,7 +1689,8 @@ Ext.define('PetroRes.view.MainWindow', {
                                                                             "/DescribeFeatureType?version=1.1.0&typename="+
                                                                             petroresConfig.defaultWfsFeatureNSShort+":" + 
                                                                             attrs.layer
-                                                                        ,projection: new OpenLayers.Projection("EPSG:32639")
+                                                                        //,projection: new OpenLayers.Projection("EPSG:32639")
+                                                                        ,projection: petroresConfig.proj4326
                                                                         ,version: "1.1.0"
                                                                         , eventListeners: {
                                                                             beforefeaturesadded: function(obj){
